@@ -1,0 +1,149 @@
+---
+title: Installation
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+## CDN (Recommended for Quick Start)
+
+No build step needed. Add these to your HTML:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 1. Load Mermaid -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+
+  <!-- 2. Load Flow Player (auto mode — zero config) -->
+  <script type="module"
+          src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+</head>
+<body>
+  <div class="mermaid">
+  graph LR
+    A[Start] --> B[Process] --> C[End]
+  </div>
+</body>
+</html>
+```
+
+The script injects styles automatically. CSS is optional (e.g. for custom styling). That's it — controls appear automatically on every `.mermaid` diagram.
+
+### CDN URLs
+
+| File | URL |
+|------|-----|
+| **Auto mode (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js` |
+| **Auto mode (IIFE)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.global.js` |
+| **Auto-init (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js` |
+| **Full library (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js` |
+| **Full library (UMD)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.umd.js` |
+| **CSS (optional)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.css` |
+
+### Pin to a version
+
+```html
+<script type="module"
+  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@0.1.0/auto.js"></script>
+```
+
+## npm / pnpm / yarn
+
+```bash
+npm install mermaid-flow-player
+# or
+pnpm add mermaid-flow-player
+# or
+yarn add mermaid-flow-player
+```
+
+## Usage Examples
+
+### Zero-Config (CDN)
+
+Just load the auto mode script — every diagram gets controls:
+
+<LiveExample diagram={`
+graph LR
+  A[Build] --> B[Test] --> C[Deploy]
+`} />
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+```
+
+### Auto-Init with Options (CDN)
+
+For more control, use `autoInit` directly:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+
+<script type="module">
+  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+
+  // Wait for Mermaid to finish rendering
+  setTimeout(() => {
+    autoInit({
+      selector: '.mermaid',
+      controls: true,
+      narration: true,
+      debug: false
+    });
+  }, 1000);
+</script>
+```
+
+### Programmatic Control (CDN)
+
+Use the full API for complete control:
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('my-diagram'),
+    dim: 'others',
+    edgeMode: 'bestEffort',
+  });
+
+  await player.ready();
+  await player.play(player.path('A', 'B', 'C'), { speed: 1.5 });
+</script>
+```
+
+### With Bundler (npm)
+
+```typescript
+import { createFlowPlayer } from 'mermaid-flow-player';
+import 'mermaid-flow-player/css';
+
+const player = createFlowPlayer({
+  root: document.getElementById('diagram')
+});
+
+await player.ready();
+await player.play(player.path('A', 'B', 'C'));
+```
+
+### UMD / Global Script
+
+For non-module environments:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.umd.js"></script>
+<script>
+  const player = MermaidFlowPlayer.createFlowPlayer({
+    root: document.getElementById('diagram')
+  });
+</script>
+```
+
+## Next Steps
+
+- [Auto Modes](features/auto-modes) — Learn about the 4 auto modes
+- [Features](features) — Explore all capabilities
+- [API Reference](api/reference) — Full programmatic API

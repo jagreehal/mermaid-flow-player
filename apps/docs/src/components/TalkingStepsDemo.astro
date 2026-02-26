@@ -1,0 +1,192 @@
+---
+import { getFlowPlayerBase } from '../lib/flow-player-base.js';
+
+const playerBase = getFlowPlayerBase();
+
+const DIAGRAM = `graph LR
+  A[Start] --> B[Process] --> C[End]`;
+
+const STEPS = [
+  { id: 'A', label: 'Step 1: Start' },
+  { id: 'B', label: 'Step 2: Process' },
+  { id: 'C', label: 'Step 3: End' },
+];
+---
+
+<div class="talking-steps-demo" data-flow-player-base={playerBase}>
+  <div class="talking-steps-demo__diagram" id="talking-steps-diagram" aria-label="Talking steps diagram">
+    <!-- SVG injected by script -->
+  </div>
+  <div class="talking-steps-demo__overview" aria-live="polite" aria-atomic="true" aria-label="Step overview">
+    <h4 class="talking-steps-demo__heading">Step overview</h4>
+    <ol class="talking-steps-demo__list" id="talking-steps-list">
+      {STEPS.map((s) => (
+        <li class="talking-steps-demo__item" data-step-id={s.id}>
+          {s.label}
+        </li>
+      ))}
+    </ol>
+  </div>
+  <div class="talking-steps-demo__actions">
+    <button type="button" class="talking-steps-demo__play" id="talking-steps-play" aria-label="Play talking steps">
+      Play
+    </button>
+  </div>
+</div>
+
+<script type="module" define:vars={{ diagram: DIAGRAM, steps: STEPS, playerBase }}>
+  (async function () {
+    const diagramEl = document.getElementById('talking-steps-diagram');
+    const listEl = document.getElementById('talking-steps-list');
+    const playBtn = document.getElementById('talking-steps-play');
+    if (!diagramEl || !listEl || !playBtn) return;
+
+    const base = playerBase || '/local-dist';
+    const { createFlowPlayer } = await import(/* @vite-ignore */ `${base}/index.js`);
+
+    let player = null;
+    let scenario = null;
+
+    async function waitMermaid() {
+      if (typeof mermaid !== 'undefined' && mermaid.render) return mermaid;
+      return new Promise((resolve) => {
+        const check = () => {
+          if (typeof mermaid !== 'undefined' && mermaid.render) {
+            resolve(mermaid);
+            return;
+          }
+          setTimeout(check, 100);
+        };
+        check();
+      });
+    }
+
+    function highlightStep(stepId) {
+      listEl.querySelectorAll('[data-step-id]').forEach((el) => {
+        el.classList.toggle('talking-steps-demo__item--current', el.getAttribute('data-step-id') === stepId);
+      });
+    }
+
+    function clearHighlight() {
+      listEl.querySelectorAll('[data-step-id]').forEach((el) => {
+        el.classList.remove('talking-steps-demo__item--current');
+      });
+    }
+
+    async function init() {
+      const m = await waitMermaid();
+      const id = 'talking-steps-svg-' + Date.now();
+      const { svg } = await mermaid.render(id, diagram);
+      diagramEl.innerHTML = svg;
+      diagramEl.classList.add('mermaid');
+
+      player = createFlowPlayer({
+        root: diagramEl,
+        hooks: {
+          onStepStart(step, note) {
+            if (step.type === 'node' && step.id) {
+              highlightStep(step.id);
+              if (typeof speechSynthesis !== 'undefined' && (note || step.id)) {
+                speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(note || step.id);
+                u.rate = 0.95;
+                speechSynthesis.speak(u);
+              }
+            }
+          },
+          onStepEnd(step) {
+            // optional: could mark step as "done" here
+          },
+        },
+      });
+
+      scenario = steps.map((s) => ({ type: 'node', id: s.id, note: s.label }));
+      await player.ready();
+    }
+
+    playBtn.addEventListener('click', async () => {
+      if (!player) await init();
+      if (!player || !scenario) return;
+      clearHighlight();
+      playBtn.disabled = true;
+      try {
+        await player.reset();
+        await player.play(scenario, { speed: 1.2 });
+      } finally {
+        playBtn.disabled = false;
+        clearHighlight();
+      }
+    });
+  })();
+</script>
+
+<style>
+  .talking-steps-demo {
+    border: 1px solid var(--sl-color-gray-5, #e0e0e0);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    background: var(--sl-color-gray-7, #fafafa);
+  }
+
+  .talking-steps-demo__diagram {
+    background: var(--sl-color-gray-7, white);
+    padding: 1rem;
+    border-radius: 4px;
+    min-height: 120px;
+  }
+
+  .talking-steps-demo__diagram.mermaid {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .talking-steps-demo__heading {
+    margin: 1rem 0 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .talking-steps-demo__list {
+    margin: 0;
+    padding-left: 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .talking-steps-demo__item {
+    margin: 0.25rem 0;
+    padding: 0.2rem 0;
+  }
+
+  .talking-steps-demo__item--current {
+    font-weight: 700;
+    background: var(--sl-color-blue-2, #e0f0ff);
+    margin: 0.25rem -0.5rem;
+    padding: 0.35rem 0.5rem;
+    border-radius: 4px;
+  }
+
+  .talking-steps-demo__actions {
+    margin-top: 1rem;
+  }
+
+  .talking-steps-demo__play {
+    padding: 8px 16px;
+    background: #0066cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .talking-steps-demo__play:hover:not(:disabled) {
+    background: #0052a3;
+  }
+
+  .talking-steps-demo__play:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+</style>

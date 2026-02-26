@@ -1,0 +1,136 @@
+---
+title: User Journey Diagrams
+description: Animate user journey maps step by step
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Animate user journeys to walk through each step of the experience.
+
+## Basic User Journey
+
+<LiveExample diagram={`
+journey
+  title My Working Day
+  section Morning
+    Wake up: 3: Me
+    Commute: 1: Me
+    Coffee: 5: Me
+  section Work
+    Meetings: 2: Me, Boss
+    Code: 5: Me
+    Lunch: 4: Me, Team
+  section Evening
+    Commute home: 1: Me
+    Dinner: 4: Me, Family
+    Relax: 5: Me
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('journey-diagram'),
+    dim: 'others'
+  });
+
+  await player.ready();
+  const idx = player.index();
+  await player.play(player.path(...idx.nodes.keys()), { speed: 1.5 });
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls theme="light">
+journey
+  title My Working Day
+  section Morning
+    Wake up: 3: Me
+    Commute: 1: Me
+    Coffee: 5: Me
+  section Work
+    Meetings: 2: Me, Boss
+    Code: 5: Me
+    Lunch: 4: Me, Team
+  section Evening
+    Commute home: 1: Me
+    Dinner: 4: Me, Family
+    Relax: 5: Me
+</mermaid-flow-player>
+```
+
+## E-Commerce Journey
+
+<LiveExample diagram={`
+journey
+  title Online Shopping
+  section Discovery
+    Browse homepage: 4: Customer
+    Search products: 3: Customer
+    View product: 5: Customer
+  section Purchase
+    Add to cart: 4: Customer
+    Checkout: 2: Customer
+    Payment: 1: Customer
+  section Post-Purchase
+    Confirmation email: 4: Customer, System
+    Track delivery: 3: Customer
+    Receive item: 5: Customer
+`} />
+
+## Onboarding Journey
+
+<LiveExample diagram={`
+journey
+  title User Onboarding
+  section Sign Up
+    Landing page: 4: User
+    Registration: 3: User
+    Email verify: 2: User
+  section Setup
+    Profile: 4: User
+    Preferences: 3: User
+    Tutorial: 5: User
+  section Activation
+    First task: 4: User
+    Invite team: 3: User
+    Upgrade: 2: User, Sales
+`} />
+
+## Programmatic Control
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('journey'),
+    dim: 'others'
+  });
+
+  await player.ready();
+
+  // Walk through journey steps with narration
+  const idx = player.index();
+  const steps = Array.from(idx.nodes.keys());
+
+  await player.play(
+    steps.map(id => ({
+      type: 'node',
+      id,
+      state: 'active',
+      note: `Step: ${id}`
+    })),
+    { speed: 1.0 }
+  );
+</script>
+```
+
+## Other Diagram Types
+
+- [Flowcharts](diagram-types/flowcharts) | [Sequence](diagram-types/sequence) | [State](diagram-types/state) | [Gantt](diagram-types/gantt) | [Class](diagram-types/class) | [ER](diagram-types/er)

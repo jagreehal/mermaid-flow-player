@@ -1,0 +1,159 @@
+---
+title: Narration
+description: Auto-updating narration text during playback
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Display narration text that updates automatically as the animation progresses. For spoken narration (text-to-speech) or sound on each step, see [Event Hooks](features/event-hooks).
+
+## Basic Narration
+
+<LiveExample diagram={`
+graph LR
+  A[Build] --> B[Test] --> C[Deploy]
+`} />
+
+The autoInit mode creates narration containers automatically. For programmatic control:
+
+```html
+<div id="diagram" class="mermaid">
+graph LR
+  A[Build] --> B[Test] --> C[Deploy]
+</div>
+<div id="narration"></div>
+
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    narrationTarget: '#narration'  // CSS selector or element
+  });
+
+  await player.ready();
+  await player.play([
+    { type: 'node', id: 'A', note: 'Building the application...' },
+    { type: 'node', id: 'B', note: 'Running test suite...' },
+    { type: 'node', id: 'C', note: 'Deploying to production!' },
+  ]);
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<!-- narration is on by default; use narration="false" to disable -->
+<mermaid-flow-player controls narration theme="light">
+graph LR
+  A[Build] --> B[Test] --> C[Deploy]
+</mermaid-flow-player>
+```
+
+## Narration with autoInit
+
+The simplest way — autoInit creates a narration element for you:
+
+```html
+<script type="module">
+  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+
+  setTimeout(() => {
+    autoInit({
+      selector: '.mermaid',
+      narration: true  // Creates narration container automatically
+    });
+  }, 1000);
+</script>
+```
+
+## Narration via Data Attributes
+
+Use pipe-separated text for each step:
+
+```html
+<div class="mermaid"
+     data-flow-scenario="A,B,C"
+     data-flow-narration="Starting build|Running tests|Deploying!">
+graph LR
+  A[Build] --> B[Test] --> C[Deploy]
+</div>
+```
+
+## Step Notes
+
+Each step in a scenario can have a `note` property:
+
+```javascript
+await player.play([
+  { type: 'node', id: 'Start', state: 'active', note: 'Welcome! Let\'s begin.' },
+  { type: 'wait', ms: 500 },
+  { type: 'node', id: 'Process', state: 'active', note: 'Processing your request...' },
+  { type: 'node', id: 'Check', state: 'warning', note: 'Validating the results.' },
+  { type: 'node', id: 'Done', state: 'success', note: 'All done! Everything passed.' },
+]);
+```
+
+## Narration with Hooks
+
+Get full control over narration display:
+
+```javascript
+const player = createFlowPlayer({
+  root: document.getElementById('diagram'),
+  hooks: {
+    onStepStart: (step, narration) => {
+      if (narration) {
+        // Custom narration display
+        document.getElementById('custom-narration').innerHTML = `
+          <strong>Step:</strong> ${step.id || 'wait'}<br>
+          <em>${narration}</em>
+        `;
+      }
+    }
+  }
+});
+```
+
+## Narration Styling
+
+The default narration container has the class `mermaid-flow-narration`:
+
+```css
+.mermaid-flow-narration {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+```
+
+Customize with CSS variables:
+
+```css
+:root {
+  --mf-narration-bg: #1a1a2e;
+  --mf-narration-text: #fff;
+  --mf-narration-padding: 12px;
+  --mf-narration-font-size: 16px;
+}
+```
+
+## Accessibility
+
+Narration elements created by autoInit include ARIA attributes:
+
+```html
+<div class="mermaid-flow-narration"
+     role="status"
+     aria-live="polite"
+     aria-atomic="true"
+     aria-label="Animation narration">
+  Click play to start animation
+</div>
+```
+
+This ensures screen readers announce narration updates.

@@ -1,0 +1,129 @@
+---
+title: Interactive Mode
+description: Step through diagrams by clicking nodes
+---
+
+Click nodes to step through a diagram. The current node has a solid outline, available next nodes have a dashed outline. Just add `data-flow-mode="interactive"` to any `.mermaid` element.
+
+<pre class="mermaid" data-flow-mode="interactive">
+{`graph TD
+  A[Start] --> B{Choose Path}
+  B -->|Left| C[Option A]
+  B -->|Right| D[Option B]
+  C --> E[End]
+  D --> E`}
+</pre>
+
+<pre class="mermaid" data-flow-mode="interactive">
+{`graph TD
+  Start[Start Review] --> Check{Code Quality?}
+  Check -->|Good| Approve[Approve PR]
+  Check -->|Issues| Request[Request Changes]
+  Request --> Fix[Author Fixes]
+  Fix --> Check
+  Approve --> Merge[Merge]
+  Merge --> Deploy[Deploy]`}
+</pre>
+
+## Sequence Diagram
+
+Interactive mode works with sequence diagrams too. Click on **participants** (Client, API, Auth, DB) to step through the message flow.
+
+<pre class="mermaid" data-flow-mode="interactive">
+{`sequenceDiagram
+  participant Client
+  participant API
+  participant Auth
+  participant DB
+  Client->>API: POST /login
+  API->>Auth: Validate credentials
+  Auth->>DB: Query user
+  DB-->>Auth: User data
+  Auth-->>API: Token
+  API-->>Client: 200 OK + JWT`}
+</pre>
+
+## Zero-Config Usage
+
+No extra JavaScript needed. Include the CDN scripts and add the data attribute. The Flow Player script injects styles automatically — no separate CSS link required.
+
+```html
+<!-- 1. Mermaid -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script>mermaid.initialize({ startOnLoad: true });</script>
+
+<!-- 2. Flow Player (auto-init) -->
+<script type="module">
+  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => autoInit(), 1000);
+  });
+</script>
+
+<!-- 3. Add data-flow-mode="interactive" to your diagram -->
+<pre class="mermaid" data-flow-mode="interactive">
+graph TD
+  A[Start] --> B[Next]
+  B --> C[End]
+</pre>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player mode="interactive" controls theme="light">
+graph TD
+  A[Start] --> B{Choose Path}
+  B -->|Left| C[Option A]
+  B -->|Right| D[Option B]
+  C --> E[End]
+  D --> E
+</mermaid-flow-player>
+```
+
+Or use a URL query parameter to make **all** diagrams interactive: `?mode=interactive`
+
+## Programmatic API
+
+```javascript
+import { createFlowPlayer } from 'mermaid-flow-player';
+
+const player = createFlowPlayer({
+  root: document.getElementById('diagram'),
+  mode: 'interactive',
+  dim: 'others'
+});
+
+await player.ready();
+// First node is automatically highlighted with interactive classes.
+// Available next nodes become clickable — no extra code needed.
+
+// Programmatic navigation is also available:
+const paths = player.getAvailablePaths();
+await player.selectPath('A->B');
+```
+
+## API
+
+| Method | Description |
+|--------|-------------|
+| `nextStep()` | Advance to the next node |
+| `getAvailablePaths()` | Get edge keys from current node |
+| `selectPath(edgeKey)` | Choose a specific path at a decision point |
+| `getCurrentNode()` | Get the current node ID |
+| `reset()` | Reset to initial state |
+
+## Theming
+
+Interactive styles use CSS custom properties. Override them to customize:
+
+```css
+:root {
+  --mf-interactive-current-color: #e11d48;
+  --mf-interactive-current-width: 4px;
+  --mf-interactive-available-color: #0ea5e9;
+  --mf-interactive-dimmed-opacity: 0.2;
+}
+```

@@ -1,0 +1,262 @@
+---
+title: Themes
+description: Light, dark, and auto themes with persistence
+---
+
+import FlowPlayerScript from '~/components/FlowPlayerScript.astro';
+
+Customize the look of animated diagrams with CSS custom properties. Each `<mermaid-flow-player>` can be styled independently.
+
+## Live Theme Gallery
+
+<div class="theme-gallery" id="theme-gallery"></div>
+
+<script is:inline>{`
+(function() {
+  var flow = "graph LR\\n  A[Start] --> B{Check}\\n  B -->|Yes| C[Process]\\n  B -->|No| D[Skip]\\n  C --> E[Done]\\n  D --> E";
+  var tree = "graph TD\\n  A[Seed] --> B[Sprout]\\n  B --> C{Sunlight?}\\n  C -->|Yes| D[Grow]\\n  C -->|No| E[Wait]\\n  D --> F[Bloom]\\n  E --> C";
+  var pipe = "graph TD\\n  A[Input] --> B[Parse]\\n  B --> C{Valid?}\\n  C -->|Yes| D[Execute]\\n  C -->|No| E[Error]\\n  D --> F[Output]\\n  E --> A";
+  var darkPre = "%%{init:{'theme':'dark'}}%%\\n";
+  var forestPre = "%%{init:{'theme':'forest'}}%%\\n";
+
+  var themes = [
+    { title: "Default (Light)", cls: "", diagram: flow },
+    { title: "Dark Theme", cls: "dark-theme", diagram: darkPre + flow },
+    { title: "Ocean Theme", cls: "ocean-theme", diagram: flow },
+    { title: "Sunset Theme", cls: "sunset-theme", diagram: flow },
+    { title: "Forest Theme", cls: "forest-theme", diagram: forestPre + tree },
+    { title: "Neon Theme", cls: "neon-theme", diagram: darkPre + pipe },
+  ];
+
+  setTimeout(function() {
+    var gallery = document.getElementById("theme-gallery");
+    if (!gallery) return;
+    themes.forEach(function(t, i) {
+      setTimeout(function() {
+        var card = document.createElement("div");
+        card.className = "theme-card" + (t.cls ? " " + t.cls : "");
+        var h3 = document.createElement("h3");
+        h3.textContent = t.title;
+        card.appendChild(h3);
+        var player = document.createElement("mermaid-flow-player");
+        var pre = document.createElement("pre");
+        pre.className = "mermaid";
+        pre.textContent = t.diagram;
+        player.appendChild(pre);
+        card.appendChild(player);
+        gallery.appendChild(card);
+      }, i * 500);
+    });
+  }, 1200);
+})();
+`}</script>
+
+## How It Works
+
+Each theme is just CSS custom properties scoped to a container:
+
+### Default (Light)
+
+No extra CSS needed — uses built-in defaults.
+
+```html
+<mermaid-flow-player>
+  <pre class="mermaid">graph LR; A-->B-->C</pre>
+</mermaid-flow-player>
+```
+
+**With theme attribute:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<!-- Light theme (default) -->
+<mermaid-flow-player controls theme="light">
+graph LR; A-->B-->C
+</mermaid-flow-player>
+
+<!-- Dark theme -->
+<mermaid-flow-player controls theme="dark">
+graph LR; A-->B-->C
+</mermaid-flow-player>
+
+<!-- Auto theme (follows system preference) -->
+<mermaid-flow-player controls theme="auto">
+graph LR; A-->B-->C
+</mermaid-flow-player>
+```
+
+### Dark Theme
+
+```css
+.dark-theme {
+  --mf-control-bg: #2a2a2a;
+  --mf-control-border: #444;
+  --mf-control-text: #e0e0e0;
+  --mf-control-hover-bg: #3a3a3a;
+  --mf-narration-bg: #1e1e1e;
+  --mf-narration-text: #ccc;
+}
+```
+
+### Ocean Theme
+
+```css
+.ocean-theme {
+  --mf-control-bg: #e3f2fd;
+  --mf-control-border: #90caf9;
+  --mf-control-text: #0d47a1;
+  --mf-control-hover-bg: #bbdefb;
+  --mf-narration-bg: #e8f5e9;
+  --mf-narration-text: #1b5e20;
+}
+```
+
+### Custom Per-Element
+
+```html
+<mermaid-flow-player style="
+  --mf-control-bg: #fff3e0;
+  --mf-control-text: #e65100;
+">
+  <pre class="mermaid">graph LR; A-->B</pre>
+</mermaid-flow-player>
+```
+
+## CSS Variables Reference
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `--mf-active-color` | `#4caf50` | Active node highlight |
+| `--mf-visited-color` | `#2196f3` | Visited node color |
+| `--mf-active-stroke` | `#3b82f6` | Active node/edge stroke color |
+| `--mf-active-stroke-width` | `3px` | Active node/edge stroke width |
+| `--mf-visited-stroke` | `#3b82f6` | Visited node/edge stroke color |
+| `--mf-visited-stroke-width` | `2px` | Visited node/edge stroke width |
+| `--mf-visited-opacity` | `1` | Visited node opacity |
+| `--mf-transition-duration` | `220ms` | Animation transition speed |
+| `--mf-control-bg` | `#f5f5f5` | Button background |
+| `--mf-control-border` | `#ddd` | Button border |
+| `--mf-control-text` | `#333` | Button text color |
+| `--mf-control-hover-bg` | `#e0e0e0` | Button hover background |
+| `--mf-control-border-radius` | `4px` | Button corner radius |
+| `--mf-control-padding` | `8px 16px` | Button padding |
+| `--mf-control-gap` | `8px` | Gap between controls |
+| `--mf-narration-bg` | `#f0f0f0` | Narration bar background |
+| `--mf-narration-text` | `#333` | Narration text color |
+| `--mf-narration-padding` | `10px` | Narration padding |
+| `--mf-narration-font-size` | `14px` | Narration font size |
+
+## Theme Persistence
+
+Themes persist across page loads via `localStorage`:
+
+```javascript
+import { initTheme } from 'mermaid-flow-player';
+
+initTheme({ theme: 'auto' }); // follows prefers-color-scheme
+```
+
+## URL Configuration
+
+Set theme via URL query parameter:
+
+```
+https://your-site.com/diagrams?theme=dark
+```
+
+See [Query Parameters](features/query-params) for more.
+
+<FlowPlayerScript file="mermaid-flow-player.element.js" />
+
+<style>{`
+  .theme-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .theme-card {
+    border: 1px solid var(--sl-color-gray-5, #e0e0e0);
+    border-radius: 12px;
+    padding: 1.5rem;
+    background: var(--sl-color-gray-7, #fafafa);
+  }
+
+  .theme-card h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.1rem;
+  }
+
+  /* Dark Theme */
+  .dark-theme {
+    background: #1a1a2e;
+    border-color: #333;
+    color: #e0e0e0;
+    --mf-control-bg: #2a2a3e;
+    --mf-control-border: #444;
+    --mf-control-text: #e0e0e0;
+    --mf-control-hover-bg: #3a3a4e;
+    --mf-control-active-bg: #4a4a5e;
+    --mf-narration-bg: #1e1e2e;
+    --mf-narration-text: #ccc;
+    --mf-active-stroke: #60a5fa;
+    --mf-visited-stroke: #60a5fa;
+  }
+
+  /* Ocean Theme */
+  .ocean-theme {
+    background: #f0f8ff;
+    border-color: #90caf9;
+    --mf-control-bg: #e3f2fd;
+    --mf-control-border: #90caf9;
+    --mf-control-text: #0d47a1;
+    --mf-control-hover-bg: #bbdefb;
+    --mf-control-active-bg: #90caf9;
+    --mf-narration-bg: #e8f5e9;
+    --mf-narration-text: #1b5e20;
+  }
+
+  /* Sunset Theme */
+  .sunset-theme {
+    background: #fff8f0;
+    border-color: #ffcc80;
+    --mf-control-bg: #fff3e0;
+    --mf-control-border: #ffcc80;
+    --mf-control-text: #e65100;
+    --mf-control-hover-bg: #ffe0b2;
+    --mf-control-active-bg: #ffcc80;
+    --mf-narration-bg: #fce4ec;
+    --mf-narration-text: #b71c1c;
+  }
+
+  /* Forest Theme */
+  .forest-theme {
+    background: #f1f8e9;
+    border-color: #a5d6a7;
+    --mf-control-bg: #e8f5e9;
+    --mf-control-border: #a5d6a7;
+    --mf-control-text: #1b5e20;
+    --mf-control-hover-bg: #c8e6c9;
+    --mf-control-active-bg: #a5d6a7;
+    --mf-narration-bg: #f9fbe7;
+    --mf-narration-text: #33691e;
+  }
+
+  /* Neon Theme */
+  .neon-theme {
+    background: #0a0a1a;
+    border-color: #7c4dff;
+    color: #e0e0e0;
+    --mf-control-bg: #1a1a3e;
+    --mf-control-border: #7c4dff;
+    --mf-control-text: #b388ff;
+    --mf-control-hover-bg: #2a2a5e;
+    --mf-control-active-bg: #3a3a7e;
+    --mf-narration-bg: #0d0d2b;
+    --mf-narration-text: #ea80fc;
+    --mf-active-stroke: #7c4dff;
+    --mf-visited-stroke: #7c4dff;
+  }
+`}</style>

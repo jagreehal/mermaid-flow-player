@@ -1,0 +1,263 @@
+---
+title: Plugin System
+description: Extensible architecture with lifecycle hooks
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Extend Mermaid Flow Player with plugins that hook into the animation lifecycle. To react to steps without writing a plugin (e.g. play audio or speak with the Web Speech API), use [config-level hooks](features/event-hooks) instead.
+
+## Basic Plugin
+
+<LiveExample diagram={`
+graph LR
+  A[Start] --> B[Process] --> C[End]
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  // Define a plugin
+  const loggerPlugin = {
+    name: 'logger',
+    version: '1.0.0',
+    install(api) {
+      api.beforePlay((scenario) => {
+        console.log('Animation starting with', scenario.length, 'steps');
+      });
+      api.afterStep((step) => {
+        console.log('Completed step:', step.type, step.id || '');
+      });
+      api.afterPlay(() => {
+        console.log('Animation complete!');
+      });
+    }
+  };
+
+  // Use the plugin
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    plugins: [loggerPlugin]
+  });
+</script>
+```
+
+## Plugin Interface
+
+```typescript
+interface Plugin {
+  name: string;
+  version?: string;
+  install(api: PluginAPI): void | Promise<void>;
+  uninstall?(): void | Promise<void>;
+}
+```
+
+## Lifecycle Hooks
+
+| Hook | When It Fires |
+|------|---------------|
+| `beforeReady` | Before diagram indexing |
+| `afterReady` | After diagram is indexed |
+| `beforePlay` | Before animation starts |
+| `afterPlay` | After animation completes |
+| `beforeStep` | Before each step executes |
+| `afterStep` | After each step completes |
+| `onStateChange` | When any node/edge state changes |
+| `onError` | When an error occurs |
+
+```javascript
+const plugin = {
+  name: 'lifecycle-demo',
+  install(api) {
+    api.beforeReady(() => console.log('Indexing...'));
+    api.afterReady(() => console.log('Ready!'));
+    api.beforePlay((scenario) => console.log('Playing', scenario));
+    api.afterPlay(() => console.log('Done'));
+    api.beforeStep((step) => console.log('Step:', step));
+    api.afterStep((step) => console.log('Step done:', step));
+    api.onStateChange((event) => console.log('State:', event));
+    api.onError((err) => console.error('Error:', err));
+  }
+};
+```
+
+## Plugin API
+
+Plugins receive a `PluginAPI` object:
+
+```javascript
+const plugin = {
+  name: 'api-demo',
+  install(api) {
+    // Access the player
+    const player = api.getPlayer();
+
+    // Access the diagram index
+    const index = api.getIndex();
+    if (index) {
+      console.log('Nodes:', Array.from(index.nodes.keys()));
+    }
+
+    // Access config
+    const config = api.getConfig();
+    console.log('Debug mode:', config.debug);
+
+    // Extend the player with custom methods
+    api.extend('highlight', (nodeId) => {
+      player.setStateNode(nodeId, 'active', { pulse: true });
+    });
+  }
+};
+```
+
+## Player Extensions
+
+Plugins can add custom methods to the player:
+
+```javascript
+const tooltipPlugin = {
+  name: 'tooltips',
+  install(api) {
+    api.extend('showTooltip', (nodeId, text) => {
+      const index = api.getIndex();
+      const node = index?.nodes.get(nodeId);
+      if (node) {
+        // Add tooltip to SVG node
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = text;
+        node.appendChild(title);
+      }
+    });
+  }
+};
+
+const player = createFlowPlayer({
+  root,
+  plugins: [tooltipPlugin]
+});
+
+// Use the extension
+const showTooltip = player.getExtension('showTooltip');
+showTooltip?.('A', 'This is the start node');
+```
+
+## Analytics Plugin (Built-in)
+
+Track animation events:
+
+```javascript
+import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+// The analytics plugin is built-in
+const player = createFlowPlayer({
+  root,
+  plugins: [{
+    name: 'analytics',
+    install(api) {
+      let playCount = 0;
+      let stepCount = 0;
+      const startTime = Date.now();
+
+      api.beforePlay(() => { playCount++; });
+      api.afterStep(() => { stepCount++; });
+      api.onError((err) => {
+        console.error('Animation error:', err);
+      });
+
+      api.extend('getStats', () => ({
+        plays: playCount,
+        steps: stepCount,
+        uptime: Date.now() - startTime
+      }));
+    }
+  }]
+});
+```
+
+## Keyboard Controls Plugin (Built-in)
+
+Add keyboard shortcuts:
+
+```javascript
+const keyboardPlugin = {
+  name: 'keyboard-controls',
+  install(api) {
+    const player = api.getPlayer();
+
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case ' ':        // Space: toggle pause/resume
+          e.preventDefault();
+          player.pause();
+          break;
+        case 'r':        // R: reset
+          player.reset();
+          break;
+        case 'ArrowRight': // Right: next step (interactive mode)
+          player.nextStep();
+          break;
+      }
+    });
+  },
+  uninstall() {
+    // Clean up event listeners
+  }
+};
+```
+
+## Install/Uninstall at Runtime
+
+```javascript
+// Install after creation
+await player.installPlugin(myPlugin);
+
+// List installed plugins
+console.log(player.listPlugins());  // ['my-plugin']
+
+// Uninstall
+await player.uninstallPlugin('my-plugin');
+```
+
+## Complete Example
+
+```html
+<div id="diagram" class="mermaid">
+graph TD
+  A[Input] --> B[Validate]
+  B --> C{Valid?}
+  C -->|Yes| D[Process]
+  C -->|No| E[Error]
+</div>
+<div id="stats"></div>
+
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const statsPlugin = {
+    name: 'stats-display',
+    install(api) {
+      const el = document.getElementById('stats');
+      let steps = 0;
+
+      api.afterStep((step) => {
+        steps++;
+        el.textContent = `Steps completed: ${steps}`;
+      });
+
+      api.afterPlay(() => {
+        el.textContent += ' | Animation complete!';
+      });
+    }
+  };
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    plugins: [statsPlugin]
+  });
+
+  await player.ready();
+  await player.play(player.path('A', 'B', 'C', 'D'));
+</script>
+```

@@ -1,0 +1,519 @@
+---
+---
+
+<div class="cdn-builder">
+  <div class="builder-grid">
+    <div class="builder-controls">
+      <section class="builder-section">
+        <h3>Scripts &amp; assets</h3>
+        <div class="field">
+          <label>
+            <input type="checkbox" id="include-mermaid" name="includeMermaid" checked />
+            Include Mermaid
+          </label>
+        </div>
+        <div class="field sub">
+          <label for="mermaid-version">Mermaid version</label>
+          <select id="mermaid-version" name="mermaidVersion">
+            <option value="10">10</option>
+            <option value="11" selected>11</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="flow-entry">Flow player entry</label>
+          <select id="flow-entry" name="flowEntry">
+            <option value="auto.js">Auto (ESM)</option>
+            <option value="auto.global.js">Auto (IIFE)</option>
+            <option value="auto-init.js">Auto-init</option>
+            <option value="auto-play.js">Auto-play</option>
+            <option value="auto-enhance.js">Auto-enhance</option>
+            <option value="index.js">Full library (ESM)</option>
+            <option value="mermaid-flow-player.umd.js">Full library (UMD)</option>
+            <option value="mermaid-flow-player.element.js">Web component</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>
+            <input type="checkbox" id="include-css" name="includeCss" />
+            Include CSS (optional — script injects styles)
+          </label>
+        </div>
+        <div class="field">
+          <label for="version-pin">Version pin (e.g. 0.1.0, leave empty for latest)</label>
+          <input type="text" id="version-pin" name="versionPin" placeholder="0.1.0" />
+        </div>
+      </section>
+
+      <section class="builder-section">
+        <h3>Configuration (query params)</h3>
+        <div class="field">
+          <label for="theme">Theme</label>
+          <select id="theme" name="theme">
+            <option value="">default</option>
+            <option value="light">light</option>
+            <option value="dark">dark</option>
+            <option value="auto">auto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="dim">Dim</label>
+          <select id="dim" name="dim">
+            <option value="">default</option>
+            <option value="none">none</option>
+            <option value="others">others</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="persist">Persist</label>
+          <select id="persist" name="persist">
+            <option value="">default</option>
+            <option value="none">none</option>
+            <option value="visited">visited</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="edge">Edge</label>
+          <select id="edge" name="edge">
+            <option value="">default</option>
+            <option value="off">off</option>
+            <option value="bestEffort">bestEffort</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="speed">Speed (0.1–10)</label>
+          <input type="number" id="speed" name="speed" min="0.1" max="10" step="0.1" value="1.2" />
+        </div>
+        <div class="field">
+          <label for="stepMs">Step ms (0–10000)</label>
+          <input type="number" id="stepMs" name="stepMs" min="0" max="10000" step="100" value="1200" />
+        </div>
+        <div class="field">
+          <label for="mode">Mode</label>
+          <select id="mode" name="mode">
+            <option value="">default</option>
+            <option value="sequential">sequential</option>
+            <option value="interactive">interactive</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>
+            <input type="checkbox" id="debug" name="debug" />
+            Debug
+          </label>
+        </div>
+        <div class="field">
+          <label>
+            <input type="checkbox" id="autoplay" name="autoplay" />
+            Autoplay
+          </label>
+        </div>
+        <div class="field sub" id="trigger-wrap">
+          <label for="trigger">Trigger</label>
+          <select id="trigger" name="trigger">
+            <option value="load">load</option>
+            <option value="scroll">scroll</option>
+            <option value="click">click</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="builder-section">
+        <h3>Presets</h3>
+        <div class="preset-buttons">
+          <button type="button" data-preset="quickstart">Quick start</button>
+          <button type="button" data-preset="dark-slow">Dark + slow</button>
+          <button type="button" data-preset="interactive-debug">Interactive + debug</button>
+          <button type="button" data-preset="autoplay-scroll">Auto-play on scroll</button>
+          <button type="button" data-preset="minimal">Minimal</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="builder-output">
+      <section class="builder-section">
+        <h3>Page URL</h3>
+        <div class="field">
+          <label for="base-url">Base URL of your page</label>
+          <input type="text" id="base-url" name="baseUrl" value="https://yoursite.com/page" />
+        </div>
+        <div class="field output-field">
+          <label for="page-url">Built URL (with query string)</label>
+          <input type="text" id="page-url" name="pageUrl" readonly />
+          <button type="button" id="copy-url">Copy URL</button>
+          <span class="copy-feedback" id="copy-url-feedback" aria-live="polite"></span>
+        </div>
+      </section>
+      <section class="builder-section">
+        <h3>HTML snippet</h3>
+        <div class="field output-field">
+          <label for="html-snippet">Script and link tags for your &lt;head&gt;</label>
+          <textarea id="html-snippet" name="htmlSnippet" readonly rows="16"></textarea>
+          <button type="button" id="copy-html">Copy HTML</button>
+          <span class="copy-feedback" id="copy-html-feedback" aria-live="polite"></span>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cdn-builder {
+    border: 1px solid var(--sl-color-gray-5, #e0e0e0);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    background: var(--sl-color-gray-7, #fafafa);
+  }
+  .builder-grid {
+    display: grid;
+    gap: 2rem;
+  }
+  @media (min-width: 900px) {
+    .builder-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  .builder-section {
+    margin-bottom: 1.5rem;
+  }
+  .builder-section h3 {
+    margin: 0 0 0.75rem 0;
+    font-size: 1rem;
+    color: var(--sl-color-white, #1a1a2e);
+  }
+  .field {
+    margin-bottom: 0.75rem;
+  }
+  .field.sub {
+    margin-left: 1.25rem;
+  }
+  .field label {
+    display: block;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+    color: var(--sl-color-gray-2, #333);
+  }
+  .field input[type="checkbox"] + label,
+  .field label:has(input[type="checkbox"]) {
+    display: inline;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field select,
+  .field textarea {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--sl-color-gray-5, #ccc);
+    border-radius: 4px;
+    box-sizing: border-box;
+    background: var(--sl-color-gray-6, #fff);
+    color: var(--sl-color-white, #1a1a2e);
+  }
+  .field textarea {
+    font-family: ui-monospace, monospace;
+    font-size: 0.85rem;
+    min-height: 200px;
+  }
+  .preset-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .preset-buttons button {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--sl-color-accent, #4c78a8);
+    background: var(--sl-color-accent-low, #e7f0ff);
+    color: var(--sl-color-white, #1a1a2e);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .preset-buttons button:hover {
+    background: var(--sl-color-accent, #cce0ff);
+  }
+  .output-field {
+    position: relative;
+  }
+  .output-field button {
+    margin-top: 0.5rem;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--sl-color-accent, #1b7f2a);
+    background: var(--sl-color-accent-low, #b7f7c0);
+    color: var(--sl-color-white, #1a1a2e);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .output-field button:hover {
+    background: var(--sl-color-accent, #9ae6a3);
+  }
+  .copy-feedback {
+    margin-left: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--sl-color-accent, #1b7f2a);
+  }
+</style>
+
+<script>
+  // @ts-nocheck — vanilla DOM; elements exist at runtime
+  (function () {
+    const CDN = 'https://cdn.jsdelivr.net/npm';
+    const MERMAID_PKG = 'mermaid';
+    const PLAYER_PKG = 'mermaid-flow-player';
+
+    const defaults = {
+      theme: '',
+      dim: '',
+      persist: '',
+      edge: '',
+      speed: 1.2,
+      stepMs: 1200,
+      mode: '',
+      debug: false,
+      autoplay: false,
+      trigger: 'load',
+    };
+
+    function getEl(id) {
+      return document.getElementById(id);
+    }
+
+    function getValues() {
+      const versionPin = (getEl('version-pin').value || '').trim();
+      const v = versionPin ? `@${versionPin}` : '';
+      return {
+        includeMermaid: getEl('include-mermaid').checked,
+        mermaidVersion: getEl('mermaid-version').value,
+        flowEntry: getEl('flow-entry').value,
+        includeCss: getEl('include-css').checked,
+        versionPin: v,
+        theme: getEl('theme').value,
+        dim: getEl('dim').value,
+        persist: getEl('persist').value,
+        edge: getEl('edge').value,
+        speed: parseFloat(getEl('speed').value) || 1.2,
+        stepMs: parseInt(getEl('stepMs').value, 10) || 1200,
+        mode: getEl('mode').value,
+        debug: getEl('debug').checked,
+        autoplay: getEl('autoplay').checked,
+        trigger: getEl('trigger').value,
+        baseUrl: getEl('base-url').value.trim() || 'https://yoursite.com/page',
+      };
+    }
+
+    function buildQueryString(opts) {
+      const p = new URLSearchParams();
+      if (opts.theme) p.set('theme', opts.theme);
+      if (opts.dim) p.set('dim', opts.dim);
+      if (opts.persist) p.set('persist', opts.persist);
+      if (opts.edge) p.set('edge', opts.edge);
+      if (opts.speed !== defaults.speed) p.set('speed', String(opts.speed));
+      if (opts.stepMs !== defaults.stepMs) p.set('stepMs', String(opts.stepMs));
+      if (opts.mode) p.set('mode', opts.mode);
+      if (opts.debug) p.set('debug', '');
+      if (opts.autoplay) {
+        p.set('autoplay', '');
+        if (opts.trigger && opts.trigger !== 'load') p.set('trigger', opts.trigger);
+      }
+      const s = p.toString();
+      return s ? '?' + s : '';
+    }
+
+    function buildHtmlSnippet(opts) {
+      const v = opts.versionPin;
+      const lines = [];
+
+      if (opts.includeMermaid) {
+        const mermaidUrl = `${CDN}/${MERMAID_PKG}@${opts.mermaidVersion}/dist/mermaid.min.js`;
+        lines.push(`  <script src="${mermaidUrl}"><\/script>`);
+      }
+
+      if (opts.includeCss) {
+        const cssUrl = `${CDN}/${PLAYER_PKG}${v}/mermaid-flow-player.css`;
+        lines.push(`  <link rel="stylesheet" href="${cssUrl}" />`);
+      }
+
+      const entry = opts.flowEntry;
+      const playerBase = `${CDN}/${PLAYER_PKG}${v}`;
+      const isUmd = entry === 'mermaid-flow-player.umd.js';
+      const isElement = entry === 'mermaid-flow-player.element.js';
+
+      if (isUmd) {
+        lines.push(`  <script src="${playerBase}/${entry}"><\/script>`);
+        lines.push('  <!-- Global: MermaidFlowPlayer -->');
+      } else if (isElement) {
+        lines.push(`  <script src="${playerBase}/${entry}"><\/script>`);
+        lines.push('  <!-- Use <mermaid-flow-player> in body -->');
+      } else {
+        const typeModule = entry !== 'auto.global.js';
+        const attr = typeModule ? ' type="module" ' : ' ';
+        lines.push(`  <script${attr}src="${playerBase}/${entry}"><\/script>`);
+      }
+
+      const qs = buildQueryString(opts);
+      if (qs) {
+        lines.push('');
+        lines.push('  <!-- Add these query params to your page URL: ' + qs + ' -->');
+      }
+
+      return lines.join('\n');
+    }
+
+    function update() {
+      const opts = getValues();
+      const qs = buildQueryString(opts);
+      const base = opts.baseUrl.replace(/\?.*$/, '');
+      getEl('page-url').value = base + qs;
+      getEl('html-snippet').value = buildHtmlSnippet(opts);
+
+      const triggerWrap = getEl('trigger-wrap');
+      triggerWrap.style.opacity = opts.autoplay ? '1' : '0.5';
+      getEl('trigger').disabled = !opts.autoplay;
+    }
+
+    function setPreset(name) {
+      const mermaid = getEl('include-mermaid');
+      const css = getEl('include-css');
+      const flowEntry = getEl('flow-entry');
+      const versionPin = getEl('version-pin');
+      const theme = getEl('theme');
+      const dim = getEl('dim');
+      const persist = getEl('persist');
+      const edge = getEl('edge');
+      const speed = getEl('speed');
+      const stepMs = getEl('stepMs');
+      const mode = getEl('mode');
+      const debug = getEl('debug');
+      const autoplay = getEl('autoplay');
+      const trigger = getEl('trigger');
+
+      const presets = {
+        quickstart: () => {
+          mermaid.checked = true;
+          flowEntry.value = 'auto.js';
+          css.checked = false;
+          versionPin.value = '';
+          theme.value = '';
+          dim.value = '';
+          persist.value = '';
+          edge.value = '';
+          speed.value = '1.2';
+          stepMs.value = '1200';
+          mode.value = '';
+          debug.checked = false;
+          autoplay.checked = false;
+          trigger.value = 'load';
+        },
+        'dark-slow': () => {
+          mermaid.checked = true;
+          flowEntry.value = 'auto.js';
+          css.checked = true;
+          versionPin.value = '';
+          theme.value = 'dark';
+          dim.value = '';
+          persist.value = '';
+          edge.value = '';
+          speed.value = '0.5';
+          stepMs.value = '1200';
+          mode.value = '';
+          debug.checked = false;
+          autoplay.checked = false;
+          trigger.value = 'load';
+        },
+        'interactive-debug': () => {
+          mermaid.checked = true;
+          flowEntry.value = 'auto-init.js';
+          css.checked = true;
+          versionPin.value = '';
+          theme.value = '';
+          dim.value = '';
+          persist.value = '';
+          edge.value = '';
+          speed.value = '1.2';
+          stepMs.value = '1200';
+          mode.value = 'interactive';
+          debug.checked = true;
+          autoplay.checked = false;
+          trigger.value = 'load';
+        },
+        'autoplay-scroll': () => {
+          mermaid.checked = true;
+          flowEntry.value = 'auto-play.js';
+          css.checked = true;
+          versionPin.value = '';
+          theme.value = '';
+          dim.value = '';
+          persist.value = '';
+          edge.value = '';
+          speed.value = '1.2';
+          stepMs.value = '1200';
+          mode.value = '';
+          debug.checked = false;
+          autoplay.checked = true;
+          trigger.value = 'scroll';
+        },
+        minimal: () => {
+          mermaid.checked = true;
+          flowEntry.value = 'auto.js';
+          css.checked = true;
+          versionPin.value = '';
+          theme.value = '';
+          dim.value = '';
+          persist.value = '';
+          edge.value = '';
+          speed.value = '1.2';
+          stepMs.value = '1200';
+          mode.value = '';
+          debug.checked = false;
+          autoplay.checked = false;
+          trigger.value = 'load';
+        },
+      };
+
+      const fn = presets[name];
+      if (fn) fn();
+      update();
+    }
+
+    function showCopyFeedback(el, msg) {
+      el.textContent = msg;
+      setTimeout(() => { el.textContent = ''; }, 2000);
+    }
+
+    function init() {
+      const form = document.querySelector('.cdn-builder');
+      if (!form) return;
+
+      form.addEventListener('change', update);
+      form.addEventListener('input', update);
+
+      form.querySelectorAll('.preset-buttons button').forEach((btn) => {
+        btn.addEventListener('click', () => setPreset(btn.getAttribute('data-preset')));
+      });
+
+      getEl('copy-url').addEventListener('click', () => {
+        const url = getEl('page-url').value;
+        navigator.clipboard.writeText(url).then(() => {
+          showCopyFeedback(getEl('copy-url-feedback'), 'Copied!');
+        });
+      });
+
+      getEl('copy-html').addEventListener('click', () => {
+        const html = getEl('html-snippet').value;
+        navigator.clipboard.writeText(html).then(() => {
+          showCopyFeedback(getEl('copy-html-feedback'), 'Copied!');
+        });
+      });
+
+      update();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

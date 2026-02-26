@@ -1,0 +1,169 @@
+---
+title: ER Diagrams
+description: Animate entity-relationship diagrams
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Animate entity-relationship diagrams to walk through database schemas.
+
+## Basic ER Diagram
+
+<LiveExample diagram={`
+erDiagram
+  USER {
+    int id PK
+    string name
+    string email
+  }
+  POST {
+    int id PK
+    string title
+    string body
+    int user_id FK
+  }
+  COMMENT {
+    int id PK
+    string text
+    int post_id FK
+    int user_id FK
+  }
+  USER ||--o{ POST : writes
+  USER ||--o{ COMMENT : makes
+  POST ||--o{ COMMENT : has
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('er-diagram'),
+    dim: 'others',
+    edgeMode: 'bestEffort'
+  });
+
+  await player.ready();
+  await player.play(player.path('USER', 'POST', 'COMMENT'));
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls edge="bestEffort" theme="light">
+erDiagram
+  USER {
+    int id PK
+    string name
+    string email
+  }
+  POST {
+    int id PK
+    string title
+    string body
+    int user_id FK
+  }
+  COMMENT {
+    int id PK
+    string text
+    int post_id FK
+    int user_id FK
+  }
+  USER ||--o{ POST : writes
+  USER ||--o{ COMMENT : makes
+  POST ||--o{ COMMENT : has
+</mermaid-flow-player>
+```
+
+## E-Commerce Schema
+
+<LiveExample diagram={`
+erDiagram
+  CUSTOMER {
+    int id PK
+    string name
+    string email
+  }
+  ORDER {
+    int id PK
+    date created
+    string status
+    int customer_id FK
+  }
+  PRODUCT {
+    int id PK
+    string name
+    decimal price
+  }
+  ORDER_ITEM {
+    int id PK
+    int quantity
+    int order_id FK
+    int product_id FK
+  }
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ ORDER_ITEM : contains
+  PRODUCT ||--o{ ORDER_ITEM : included_in
+`} />
+
+## SaaS Multi-Tenant Schema
+
+<LiveExample diagram={`
+erDiagram
+  TENANT {
+    int id PK
+    string name
+    string plan
+  }
+  USER {
+    int id PK
+    string email
+    int tenant_id FK
+  }
+  ROLE {
+    int id PK
+    string name
+  }
+  PERMISSION {
+    int id PK
+    string action
+    string resource
+  }
+  TENANT ||--|{ USER : has
+  USER }|--|{ ROLE : assigned
+  ROLE }|--|{ PERMISSION : grants
+`} />
+
+## Programmatic Control
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('er'),
+    dim: 'others',
+    edgeMode: 'bestEffort'
+  });
+
+  await player.ready();
+
+  // Walk through entities and their relationships
+  await player.play([
+    { type: 'node', id: 'CUSTOMER', state: 'active', note: 'Customer entity' },
+    { type: 'edge', from: 'CUSTOMER', to: 'ORDER', state: 'active' },
+    { type: 'node', id: 'ORDER', state: 'active', note: 'Order entity' },
+    { type: 'edge', from: 'ORDER', to: 'ORDER_ITEM', state: 'active' },
+    { type: 'node', id: 'ORDER_ITEM', state: 'active', note: 'Junction table' },
+    { type: 'edge', from: 'PRODUCT', to: 'ORDER_ITEM', state: 'active' },
+    { type: 'node', id: 'PRODUCT', state: 'success', note: 'Product catalog' },
+  ]);
+</script>
+```
+
+## Other Diagram Types
+
+- [Flowcharts](diagram-types/flowcharts) | [Sequence](diagram-types/sequence) | [State](diagram-types/state) | [Gantt](diagram-types/gantt) | [Journey](diagram-types/journey) | [Class](diagram-types/class)

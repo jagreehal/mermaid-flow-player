@@ -1,0 +1,184 @@
+---
+title: Auto Modes
+description: Zero-config usage with automatic enhancement
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Mermaid Flow Player provides 4 auto modes for progressive enhancement — from zero-config to fully customized.
+
+## auto() — Full Auto Mode
+
+The simplest way: load one script and every diagram gets controls.
+
+<LiveExample diagram={`
+graph LR
+  A[Build] --> B[Test]
+  B --> C[Deploy]
+`} />
+
+```html
+<!-- Just add this script — that's it -->
+<script type="module"
+  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+```
+
+**Web Component equivalent:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<!-- No auto mode needed — the web component handles everything -->
+<mermaid-flow-player controls theme="light">
+graph LR
+  A[Build] --> B[Test]
+  B --> C[Deploy]
+</mermaid-flow-player>
+```
+
+What `auto()` does:
+1. Parses URL query parameters for config
+2. Enhances diagrams with `data-flow-*` attributes first
+3. Adds controls and narration to remaining `.mermaid` elements
+
+## autoInit() — Controls & Narration
+
+More control over initialization. Adds play controls and narration to matching diagrams.
+
+<LiveExample diagram={`
+graph TD
+  Start --> Process
+  Process --> Check{Success?}
+  Check -->|Yes| Done
+  Check -->|No| Retry
+  Retry --> Process
+`} />
+
+```html
+<script type="module">
+  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+
+  // Wait for Mermaid to render, then initialize
+  setTimeout(() => {
+    autoInit({
+      selector: '.mermaid',
+      controls: true,
+      narration: true,
+      debug: false
+    });
+  }, 1000);
+</script>
+```
+
+### autoInit Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `selector` | `string` | `'.mermaid'` | CSS selector for diagram containers |
+| `controls` | `boolean` | `true` | Show play/pause/reset controls |
+| `narration` | `boolean` | `true` | Show narration text |
+| `debug` | `boolean` | `false` | Enable debug logging |
+| `queryConfig` | `QueryConfig` | `{}` | Override URL-parsed config |
+
+## autoPlay() — Trigger-Based
+
+Auto-plays diagrams on page load, scroll into view, or click.
+
+<LiveExample diagram={`
+graph LR
+  A[Load Page] --> B[Scroll Into View]
+  B --> C[Animation Starts]
+`} />
+
+```html
+<script type="module">
+  import { autoPlay } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-play.js';
+
+  autoPlay({
+    trigger: 'scroll',  // 'load' | 'scroll' | 'click'
+    speed: 1.5
+  });
+</script>
+```
+
+### Trigger Types
+
+| Trigger | Behavior |
+|---------|----------|
+| `'load'` | Plays immediately when page loads |
+| `'scroll'` | Plays when diagram scrolls into viewport |
+| `'click'` | Plays when user clicks the diagram |
+
+## autoEnhance() — Data Attributes
+
+Only enhances diagrams that have `data-flow-*` attributes — surgical control.
+
+<LiveExample diagram={`
+graph LR
+  A[Config] --> B[Enhance] --> C[Animate]
+`} />
+
+```html
+<!-- Only this diagram gets enhanced -->
+<div class="mermaid" data-flow-scenario="A,B,C">
+graph LR
+  A --> B --> C
+</div>
+
+<!-- This one is left alone -->
+<div class="mermaid">
+graph LR
+  X --> Y --> Z
+</div>
+
+<script type="module">
+  import { autoEnhance } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-enhance.js';
+  autoEnhance();
+</script>
+```
+
+### Supported Data Attributes
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-flow-scenario` | Comma-separated node IDs to animate |
+| `data-flow-speed` | Animation speed multiplier |
+| `data-flow-dim` | Dimming behavior: `none` or `others` |
+| `data-flow-narration` | Narration text (pipe-separated per step) |
+| `data-flow-debug` | Enable debug logging |
+
+## Choosing an Auto Mode
+
+| Mode | Use Case |
+|------|----------|
+| `auto()` | Quick demos, prototypes — zero config |
+| `autoInit()` | Production sites — control over options |
+| `autoPlay()` | Presentations, scroll-driven narratives |
+| `autoEnhance()` | Mixed pages — only enhance specific diagrams |
+
+## Complete CDN Example
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <div class="mermaid">
+  graph TD
+    A[User Request] --> B[Validate]
+    B --> C{Valid?}
+    C -->|Yes| D[Process]
+    C -->|No| E[Reject]
+    D --> F[Respond]
+    E --> F
+  </div>
+
+  <script type="module">
+    import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+    setTimeout(() => autoInit({ controls: true, narration: true }), 1000);
+  </script>
+</body>
+</html>
+```

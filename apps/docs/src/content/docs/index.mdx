@@ -1,0 +1,86 @@
+---
+title: Mermaid Flow Player
+description: Animate Mermaid diagrams with a semantic API
+template: splash
+hero:
+  title: Mermaid Flow Player
+  tagline: Animate Mermaid-rendered diagrams with a semantic API. Target nodes by stable IDs and play animation scenarios — no Mermaid internals required.
+  actions:
+    - text: Get Started
+      link: installation
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/jagreehal/mermaid-flow-player
+      icon: external
+      variant: minimal
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+## See It in Action
+
+<LiveExample diagram={`
+graph LR
+  A[Build] --> B[Test]
+  B --> C{Pass?}
+  C -->|Yes| D[Deploy]
+  C -->|No| E[Fix]
+  E --> A
+`} />
+
+Click **Play** above to watch the animation step through each node.
+
+## Quick Start (CDN)
+
+Add two script tags — that's it:
+
+```html
+<!-- 1. Mermaid -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+
+<!-- 2. Mermaid Flow Player (auto mode — zero config) -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+```
+
+The script injects styles automatically. Optional: add the CSS link if you want to load styles separately (e.g. for custom styling).
+
+Every `.mermaid` diagram on the page gets play controls automatically.
+
+## Quick Start (npm)
+
+```bash
+npm install mermaid-flow-player
+```
+
+```typescript
+import { createFlowPlayer } from 'mermaid-flow-player';
+import 'mermaid-flow-player/css';
+
+const player = createFlowPlayer({
+  root: document.getElementById('diagram')
+});
+
+await player.ready();
+await player.play(player.path('A', 'B', 'C'));
+```
+
+## Features
+
+- **Zero-config** — Auto modes work out of the box
+- **7 Diagram Types** — [Flowcharts](diagram-types/flowcharts), [Sequence](diagram-types/sequence), [State](diagram-types/state), [Gantt](diagram-types/gantt), [Journey](diagram-types/journey), [Class](diagram-types/class), [ER](diagram-types/er)
+- **30+ Easing Functions** — [Animations & easing](features/animations)
+- **4 Auto Modes** — [Auto, AutoInit, AutoPlay, AutoEnhance](features/auto-modes)
+- **Scenario Builder** — [Fluent chainable API](features/builder-api)
+- **Plugin System** — [Extensible architecture](features/plugins)
+- **Themes** — [Light, dark, auto with persistence](features/themes)
+- **Edge Animation** — [Multi-strategy detection](features/edge-detection)
+- **Interactive Mode** — [Step-through with path selection](features/interactive)
+- **Narration** — [Auto-updating narration text](features/narration)
+- **URL Config** — [Query parameter configuration](features/query-params)
+
+## Next Steps
+
+- [Installation](installation) — CDN and npm setup
+- [Features](features) — Explore all capabilities
+- [API Reference](api/reference) — Full API docs

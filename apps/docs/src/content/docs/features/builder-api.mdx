@@ -1,0 +1,219 @@
+---
+title: Scenario Builder
+description: Fluent chainable API for building animation scenarios
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Build complex animation scenarios with a fluent, chainable API.
+
+## Basic Builder
+
+<LiveExample diagram={`
+graph LR
+  A[Start] --> B[Process]
+  B --> C{Check}
+  C -->|Yes| D[Success]
+  C -->|No| E[Retry]
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer, createScenarioBuilder }
+    from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({ root: document.getElementById('diagram') });
+  await player.ready();
+
+  const scenario = createScenarioBuilder()
+    .node('A', { note: 'Starting...' })
+    .node('B', { note: 'Processing...' })
+    .node('C', { note: 'Checking result' })
+    .node('D', { state: 'success', note: 'Done!' })
+    .build();
+
+  await player.play(scenario);
+</script>
+```
+
+## Chainable Methods
+
+```javascript
+const scenario = createScenarioBuilder()
+  .node('A')                          // Highlight node A
+  .edge('A', 'B')                     // Highlight edge A→B
+  .node('B')                          // Highlight node B
+  .wait(500)                          // Pause 500ms
+  .node('C', { state: 'success' })    // Highlight C as success
+  .reset()                            // Reset diagram
+  .build();
+```
+
+## With Edges
+
+<LiveExample diagram={`
+graph LR
+  A[Build] --> B[Test]
+  B --> C[Deploy]
+  C --> D[Monitor]
+`} />
+
+```javascript
+const scenario = createScenarioBuilder()
+  .node('A', { note: 'Build step' })
+  .edge('A', 'B')
+  .node('B', { note: 'Test step' })
+  .edge('B', 'C')
+  .node('C', { note: 'Deploy step' })
+  .edge('C', 'D')
+  .node('D', { state: 'success', note: 'Live!' })
+  .build();
+```
+
+## Repeat
+
+Loop a sequence multiple times:
+
+```javascript
+const scenario = createScenarioBuilder()
+  .node('Start')
+  .repeat(3, (builder) => {
+    builder
+      .node('Process')
+      .node('Check')
+      .wait(200);
+  })
+  .node('End', { state: 'success' })
+  .build();
+```
+
+## Conditional
+
+Branch based on runtime conditions:
+
+```javascript
+const isProduction = window.location.hostname !== 'localhost';
+
+const scenario = createScenarioBuilder()
+  .node('Build')
+  .node('Test')
+  .conditional(
+    () => isProduction,
+    (builder) => builder.node('Deploy').node('Monitor'),  // True branch
+    (builder) => builder.node('Preview')                   // False branch
+  )
+  .build();
+```
+
+## Direct Play
+
+Skip `build()` and play directly:
+
+```javascript
+const builder = createScenarioBuilder()
+  .node('A')
+  .node('B')
+  .node('C');
+
+// Play without building first
+await builder.play(player, { speed: 1.5 });
+```
+
+## Flowchart Builder
+
+Specialized methods for flowcharts:
+
+```javascript
+import { FlowchartBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const scenario = new FlowchartBuilder()
+  .terminal('Start')          // Start/end node
+  .process('Init')            // Processing step
+  .process('Transform')       // Another process
+  .decision('Valid')           // Decision point
+  .process('Save')
+  .terminal('End')
+  .build();
+```
+
+## Sequence Builder
+
+Specialized methods for sequence diagrams:
+
+```javascript
+import { SequenceBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const scenario = new SequenceBuilder()
+  .participant('Client')
+  .message('Client', 'Server', { note: 'HTTP Request' })
+  .activate('Server')
+  .message('Server', 'DB', { note: 'Query' })
+  .message('DB', 'Server', { note: 'Result' })
+  .deactivate('Server')
+  .message('Server', 'Client', { note: 'Response' })
+  .build();
+```
+
+## State Builder
+
+Specialized methods for state diagrams:
+
+```javascript
+import { StateBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const scenario = new StateBuilder()
+  .state('Idle', { note: 'Waiting' })
+  .transition('Idle', 'Loading', { note: 'User clicked' })
+  .state('Loading', { note: 'Fetching data...' })
+  .transition('Loading', 'Ready', { note: 'Data received' })
+  .state('Ready', { state: 'success', note: 'Done!' })
+  .build();
+```
+
+## Scenario Registry
+
+Register reusable scenario templates:
+
+```javascript
+import { createRegistry, createScenarioBuilder }
+  from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const registry = createRegistry();
+
+// Register a template
+registry.register('happy-path', {
+  name: 'happy-path',
+  description: 'Animate the success path',
+  build: (params) => createScenarioBuilder()
+    .node(params?.start || 'A')
+    .node(params?.middle || 'B')
+    .node(params?.end || 'C', { state: 'success' })
+    .build()
+});
+
+// Use it
+const scenario = registry.build('happy-path', {
+  start: 'Login',
+  middle: 'Validate',
+  end: 'Dashboard'
+});
+
+await player.play(scenario);
+
+// List registered templates
+console.log(registry.list());  // ['happy-path']
+```
+
+## Builder Methods Reference
+
+| Method | Description |
+|--------|-------------|
+| `.node(id, opts?)` | Add a node step |
+| `.edge(from, to, opts?)` | Add an edge step |
+| `.wait(ms)` | Add a delay |
+| `.reset(opts?)` | Add a reset step |
+| `.repeat(n, fn)` | Repeat a sequence N times |
+| `.parallel(...steps)` | Run steps in parallel |
+| `.conditional(cond, trueFn, falseFn?)` | Conditional branching |
+| `.build()` | Build the scenario as Step[] |
+| `.play(player, opts?)` | Build and play directly |

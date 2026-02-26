@@ -1,0 +1,404 @@
+---
+title: API Reference
+description: Complete API documentation
+---
+
+Complete reference for Mermaid Flow Player API.
+
+## CDN Import
+
+```html
+<script type="module">
+  import {
+    createFlowPlayer,
+    createScenarioBuilder,
+    createRegistry,
+    createEdgeDetector,
+  } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+</script>
+```
+
+## createFlowPlayer(options)
+
+Creates a new flow player instance.
+
+### Options
+
+```typescript
+interface FlowPlayerOptions {
+  root: HTMLElement;                         // Required: diagram container
+  narrationTarget?: HTMLElement | string;    // Narration display element
+  dim?: 'none' | 'others';                  // Default: 'others'
+  persist?: 'none' | 'visited';             // Default: 'visited'
+  edgeMode?: 'off' | 'bestEffort' | 'manual';
+  edgeDetection?: EdgeDetectionConfig;
+  easing?: EasingConfig;
+  speed?: number;                            // Default: 1.2
+  timing?: { stepMs: number };
+  mode?: 'sequential' | 'interactive';
+  plugins?: Plugin[];
+  debug?: boolean;
+  hooks?: {
+    onStepStart?: (step: Step, narration?: string) => void;
+    onStepEnd?: (step: Step) => void;
+    onError?: (err: unknown) => void;
+    onPathChoice?: (availablePaths: string[]) => void;
+  };
+}
+```
+
+### Example
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    dim: 'others',
+    persist: 'visited',
+    edgeMode: 'bestEffort',
+    speed: 1.5,
+    debug: true
+  });
+</script>
+```
+
+## FlowPlayer Methods
+
+### ready(): Promise\<void\>
+
+Wait for diagram to be indexed. **Must** be called before `play()`.
+
+```javascript
+await player.ready();
+```
+
+### play(scenario, options?): Promise\<void\>
+
+Play an animation scenario.
+
+```javascript
+await player.play(
+  player.path('A', 'B', 'C'),
+  { speed: 1.2, loop: false }
+);
+```
+
+**Play options:**
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `speed` | `number` | Speed multiplier (default: 1.2) |
+| `loop` | `boolean` | Loop the scenario |
+
+### pause(): void
+
+Pause the currently playing animation.
+
+### resume(): void
+
+Resume a paused animation.
+
+### stop(): void
+
+Stop the currently playing animation.
+
+### reset(options?): void
+
+Reset diagram to initial state.
+
+```javascript
+player.reset();
+player.reset({ keepVisited: true });  // Keep visited state
+```
+
+### index(): GraphIndex | null
+
+Get the indexed nodes and edges.
+
+```javascript
+const idx = player.index();
+console.log(idx.nodes);  // Map<string, SVGGElement>
+console.log(idx.edges);  // Map<string, SVGGElement>
+console.log(idx.type);   // 'flowchart' | 'sequence' | 'state' | ...
+```
+
+### path(...ids): Step[]
+
+Create a scenario from node IDs.
+
+```javascript
+const scenario = player.path('A', 'B', 'C');
+await player.play(scenario);
+```
+
+### assertIds(ids): void
+
+Validate that all node IDs exist. Throws if any are missing.
+
+```javascript
+player.assertIds(['A', 'B', 'C']);
+```
+
+### destroy(): void
+
+Clean up and remove all event listeners.
+
+### setStateNode(id, state, opts?): void
+
+Manually set a node's state.
+
+```javascript
+player.setStateNode('A', 'active', { pulse: true, dimOthers: true });
+player.setStateNode('B', 'success');
+player.setStateNode('C', 'error');
+```
+
+**States:** `'idle'` | `'active'` | `'visited'` | `'success'` | `'error'` | `'warning'` | `'disabled'`
+
+### setStateEdge(from, to, state, opts?): void
+
+Manually set an edge's state.
+
+```javascript
+player.setStateEdge('A', 'B', 'active', { dimOthers: true });
+```
+
+## Diagram-Specific Helpers
+
+### participant(id, opts?)
+
+Highlight a participant in sequence diagrams.
+
+```javascript
+const step = player.participant('Alice', { note: 'Initiator' });
+```
+
+### message(from, to, opts?)
+
+Highlight a message in sequence diagrams.
+
+```javascript
+const step = player.message('Alice', 'Bob', { note: 'Request' });
+```
+
+### state(id, opts?)
+
+Highlight a state in state diagrams.
+
+```javascript
+const step = player.state('Idle', { note: 'Initial state' });
+```
+
+### transition(from, to, opts?)
+
+Highlight a transition in state diagrams.
+
+```javascript
+const step = player.transition('Idle', 'Active', { note: 'Start' });
+```
+
+## Interactive Mode
+
+Enable step-through with path selection:
+
+```javascript
+const player = createFlowPlayer({
+  root: document.getElementById('diagram'),
+  mode: 'interactive',
+  hooks: {
+    onPathChoice: (paths) => {
+      console.log('Available paths:', paths);
+    }
+  }
+});
+
+await player.ready();
+
+// Step through one node at a time
+await player.nextStep();
+
+// Check available paths from current node
+const paths = player.getAvailablePaths();
+
+// Choose a path
+await player.selectPath('A->B');
+
+// Get current position
+const current = player.getCurrentNode();
+```
+
+## Auto Modes
+
+### auto(options?)
+
+Full auto mode — zero config.
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+```
+
+### autoInit(options?)
+
+Add controls and narration.
+
+```html
+<script type="module">
+  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+  setTimeout(() => autoInit({ controls: true, narration: true }), 1000);
+</script>
+```
+
+### autoPlay(options?)
+
+Auto-play with triggers.
+
+```html
+<script type="module">
+  import { autoPlay } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-play.js';
+  autoPlay({ trigger: 'scroll', speed: 1.5 });
+</script>
+```
+
+### autoEnhance(options?)
+
+Enhance diagrams with data attributes only.
+
+```html
+<script type="module">
+  import { autoEnhance } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-enhance.js';
+  autoEnhance();
+</script>
+```
+
+## Scenario Builder
+
+### createScenarioBuilder(type?)
+
+Create a builder for any diagram type:
+
+```javascript
+import { createScenarioBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const builder = createScenarioBuilder('flowchart');
+const scenario = builder
+  .node('A', { state: 'active', note: 'Start here' })
+  .node('B', { state: 'active' })
+  .edge('A', 'B')
+  .wait(500)
+  .node('C', { state: 'success' })
+  .build();
+```
+
+### Diagram-Specific Builders
+
+```javascript
+// Flowchart builder
+const flow = createScenarioBuilder('flowchart');
+flow.terminal('Start').process('Init').decision('Check').terminal('End');
+
+// Sequence builder
+const seq = createScenarioBuilder('sequence');
+seq.participant('Alice').message('Alice', 'Bob').activate('Bob').deactivate('Bob');
+
+// State builder
+const state = createScenarioBuilder('state');
+state.state('Idle').transition('Idle', 'Active').state('Active');
+```
+
+### Builder Methods
+
+| Method | Description |
+|--------|-------------|
+| `.node(id, opts?)` | Add a node step |
+| `.edge(from, to, opts?)` | Add an edge step |
+| `.wait(ms)` | Add a delay |
+| `.reset(opts?)` | Add a reset step |
+| `.repeat(n, fn)` | Repeat a sequence N times |
+| `.parallel(...steps)` | Run steps in parallel |
+| `.conditional(cond, trueFn, falseFn?)` | Conditional branching |
+| `.build()` | Build the scenario |
+| `.play(player, opts?)` | Build and play directly |
+
+## Scenario Registry
+
+```javascript
+import { createRegistry } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const registry = createRegistry();
+
+// Register a reusable template
+registry.register('happy-path', {
+  name: 'happy-path',
+  description: 'Animate the success path',
+  build: (params) => [
+    { type: 'node', id: params?.start || 'A', state: 'active' },
+    { type: 'node', id: params?.end || 'C', state: 'success' },
+  ]
+});
+
+// Build and play
+const scenario = registry.build('happy-path', { start: 'Login', end: 'Dashboard' });
+await player.play(scenario);
+```
+
+## Plugin System
+
+```javascript
+import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const myPlugin = {
+  name: 'my-plugin',
+  version: '1.0.0',
+  install(api) {
+    api.beforePlay((scenario) => console.log('Starting:', scenario));
+    api.afterStep((step) => console.log('Completed step:', step));
+    api.onError((err) => console.error('Error:', err));
+  }
+};
+
+const player = createFlowPlayer({
+  root: document.getElementById('diagram'),
+  plugins: [myPlugin]
+});
+```
+
+See [Plugins](features/plugins) for full documentation.
+
+## Step Types
+
+```typescript
+// Node step
+{ type: 'node', id: 'A', state: 'active', pulse: true, note: 'text', ms: 500 }
+
+// Edge step
+{ type: 'edge', from: 'A', to: 'B', state: 'active', ms: 300 }
+
+// Wait step
+{ type: 'wait', ms: 1000 }
+
+// Reset step
+{ type: 'reset', keepVisited: true }
+```
+
+## Type Definitions
+
+Full TypeScript definitions are available when installing via npm:
+
+```typescript
+import type {
+  FlowPlayer,
+  FlowPlayerOptions,
+  Step,
+  Scenario,
+  State,
+  GraphIndex,
+  Plugin,
+  PluginAPI,
+  EasingFunction,
+  EasingConfig,
+  ScenarioBuilder,
+  ScenarioTemplate,
+} from 'mermaid-flow-player';
+```

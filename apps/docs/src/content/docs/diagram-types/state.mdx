@@ -1,0 +1,132 @@
+---
+title: State Diagrams
+description: Animate state machine diagrams with transitions
+---
+
+Animate state machines showing states and transitions. Click any state to navigate through the machine.
+
+## Basic State Machine
+
+<pre class="mermaid" data-flow-mode="interactive">
+{`stateDiagram-v2
+  [*] --> Idle
+  Idle --> Processing : Start
+  Processing --> Success : Complete
+  Processing --> Error : Fail
+  Error --> Idle : Retry
+  Success --> [*]`}
+</pre>
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    dim: 'others'
+  });
+
+  await player.ready();
+  await player.play(player.path('Idle', 'Processing', 'Success'));
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player mode="interactive" controls theme="light">
+stateDiagram-v2
+  [*] --> Idle
+  Idle --> Processing : Start
+  Processing --> Success : Complete
+  Processing --> Error : Fail
+  Error --> Idle : Retry
+  Success --> [*]
+</mermaid-flow-player>
+```
+
+## Order Lifecycle
+
+<pre class="mermaid" data-flow-mode="interactive">
+{`stateDiagram-v2
+  [*] --> Draft
+  Draft --> Submitted : Submit
+  Submitted --> Reviewing : Assign
+  Reviewing --> Approved : Approve
+  Reviewing --> Rejected : Reject
+  Rejected --> Draft : Revise
+  Approved --> Shipped : Ship
+  Shipped --> Delivered : Deliver
+  Delivered --> [*]`}
+</pre>
+
+## Connection States
+
+<pre class="mermaid" data-flow-mode="interactive">
+{`stateDiagram-v2
+  [*] --> Disconnected
+  Disconnected --> Connecting : connect()
+  Connecting --> Connected : success
+  Connecting --> Disconnected : timeout
+  Connected --> Disconnected : disconnect()
+  Connected --> Reconnecting : error
+  Reconnecting --> Connected : success
+  Reconnecting --> Disconnected : max_retries`}
+</pre>
+
+## Nested States
+
+<pre class="mermaid" data-flow-mode="interactive">
+{`stateDiagram-v2
+  [*] --> Active
+  state Active {
+    [*] --> Running
+    Running --> Paused : pause
+    Paused --> Running : resume
+  }
+  Active --> Stopped : stop
+  Stopped --> Active : start
+  Stopped --> [*]`}
+</pre>
+
+## State Builder
+
+```javascript
+import { StateBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const scenario = new StateBuilder()
+  .state('Idle', { note: 'Waiting for input' })
+  .transition('Idle', 'Processing', { note: 'Start task' })
+  .state('Processing', { note: 'Working...' })
+  .transition('Processing', 'Success', { note: 'Done!' })
+  .state('Success', { state: 'success' })
+  .build();
+
+await player.play(scenario);
+```
+
+## Programmatic Control
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('state-diagram'),
+    mode: 'interactive',
+    dim: 'others'
+  });
+
+  await player.ready();
+  // First node is automatically highlighted.
+  // Click states to navigate — or use the API:
+  const paths = player.getAvailablePaths();
+  await player.selectPath(paths[0]);
+</script>
+```
+
+## Other Diagram Types
+
+- [Flowcharts](diagram-types/flowcharts) | [Sequence](diagram-types/sequence) | [Gantt](diagram-types/gantt) | [Journey](diagram-types/journey) | [Class](diagram-types/class) | [ER](diagram-types/er)

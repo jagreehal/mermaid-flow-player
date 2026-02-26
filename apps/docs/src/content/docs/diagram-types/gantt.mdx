@@ -1,0 +1,125 @@
+---
+title: Gantt Charts
+description: Animate Gantt chart tasks and timelines
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Animate project timelines, highlighting tasks and sections.
+
+## Project Timeline
+
+<LiveExample diagram={`
+gantt
+  title Project Timeline
+  dateFormat  YYYY-MM-DD
+  section Planning
+  Requirements : a1, 2024-01-01, 10d
+  Design       : a2, after a1, 15d
+  section Development
+  Frontend     : b1, after a2, 20d
+  Backend      : b2, after a2, 25d
+  section Testing
+  QA           : c1, after b2, 10d
+  UAT          : c2, after c1, 5d
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('gantt-diagram'),
+    dim: 'others'
+  });
+
+  await player.ready();
+  const idx = player.index();
+  // Gantt charts index tasks and sections
+  await player.play(player.path(...idx.nodes.keys()));
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls theme="light">
+gantt
+  title Project Timeline
+  dateFormat  YYYY-MM-DD
+  section Planning
+  Requirements : a1, 2024-01-01, 10d
+  Design       : a2, after a1, 15d
+  section Development
+  Frontend     : b1, after a2, 20d
+  Backend      : b2, after a2, 25d
+  section Testing
+  QA           : c1, after b2, 10d
+  UAT          : c2, after c1, 5d
+</mermaid-flow-player>
+```
+
+## Sprint Planning
+
+<LiveExample diagram={`
+gantt
+  title Sprint 12
+  dateFormat  YYYY-MM-DD
+  section Auth
+  Login page       : done, auth1, 2024-03-01, 3d
+  OAuth integration : active, auth2, after auth1, 5d
+  section Dashboard
+  Layout           : dash1, after auth1, 4d
+  Charts           : dash2, after dash1, 3d
+  section API
+  Endpoints        : api1, 2024-03-01, 6d
+  Documentation    : api2, after api1, 2d
+`} />
+
+## Release Schedule
+
+<LiveExample diagram={`
+gantt
+  title Release v2.0
+  dateFormat  YYYY-MM-DD
+  section Milestones
+  Alpha        : milestone, m1, 2024-04-01, 0d
+  Beta         : milestone, m2, 2024-05-01, 0d
+  RC           : milestone, m3, 2024-05-15, 0d
+  GA           : milestone, m4, 2024-06-01, 0d
+  section Work
+  Core features : a1, 2024-03-01, 30d
+  Bug fixes     : a2, after a1, 14d
+  Docs          : a3, after a2, 14d
+  Polish        : a4, after a3, 14d
+`} />
+
+## Programmatic Control
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('gantt'),
+    dim: 'others'
+  });
+
+  await player.ready();
+
+  // Animate through tasks sequentially
+  await player.play([
+    { type: 'node', id: 'a1', state: 'active', note: 'Requirements phase' },
+    { type: 'node', id: 'a2', state: 'active', note: 'Design phase' },
+    { type: 'node', id: 'b1', state: 'active', note: 'Frontend development' },
+    { type: 'node', id: 'b2', state: 'active', note: 'Backend development' },
+    { type: 'node', id: 'c1', state: 'success', note: 'Testing complete' },
+  ], { speed: 1.5 });
+</script>
+```
+
+## Other Diagram Types
+
+- [Flowcharts](diagram-types/flowcharts) | [Sequence](diagram-types/sequence) | [State](diagram-types/state) | [Journey](diagram-types/journey) | [Class](diagram-types/class) | [ER](diagram-types/er)

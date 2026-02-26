@@ -1,0 +1,182 @@
+---
+title: Class Diagrams
+description: Animate class diagrams showing classes and relationships
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Animate class diagrams to walk through class hierarchies and relationships.
+
+## Basic Class Diagram
+
+<LiveExample diagram={`
+classDiagram
+  class Animal {
+    +String name
+    +int age
+    +makeSound()
+  }
+  class Dog {
+    +String breed
+    +fetch()
+  }
+  class Cat {
+    +String color
+    +purr()
+  }
+  Animal <|-- Dog
+  Animal <|-- Cat
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('class-diagram'),
+    dim: 'others',
+    edgeMode: 'bestEffort'
+  });
+
+  await player.ready();
+  await player.play(player.path('Animal', 'Dog', 'Cat'));
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls edge="bestEffort" theme="light">
+classDiagram
+  class Animal {
+    +String name
+    +int age
+    +makeSound()
+  }
+  class Dog {
+    +String breed
+    +fetch()
+  }
+  class Cat {
+    +String color
+    +purr()
+  }
+  Animal <|-- Dog
+  Animal <|-- Cat
+</mermaid-flow-player>
+```
+
+## Design Pattern: Strategy
+
+<LiveExample diagram={`
+classDiagram
+  class PaymentStrategy {
+    <<interface>>
+    +pay(amount) bool
+  }
+  class CreditCard {
+    -String number
+    +pay(amount) bool
+  }
+  class PayPal {
+    -String email
+    +pay(amount) bool
+  }
+  class Crypto {
+    -String wallet
+    +pay(amount) bool
+  }
+  class Checkout {
+    -PaymentStrategy strategy
+    +setStrategy(s)
+    +processPayment(amount)
+  }
+  PaymentStrategy <|.. CreditCard
+  PaymentStrategy <|.. PayPal
+  PaymentStrategy <|.. Crypto
+  Checkout --> PaymentStrategy
+`} />
+
+## MVC Architecture
+
+<LiveExample diagram={`
+classDiagram
+  class Model {
+    -data
+    +getData()
+    +setData(d)
+    +notify()
+  }
+  class View {
+    +render(data)
+    +onUserAction()
+  }
+  class Controller {
+    -Model model
+    -View view
+    +handleInput()
+    +updateView()
+  }
+  Controller --> Model
+  Controller --> View
+  View ..> Model : observes
+`} />
+
+## Relationships
+
+<LiveExample diagram={`
+classDiagram
+  class University {
+    +String name
+  }
+  class Department {
+    +String name
+  }
+  class Professor {
+    +String name
+    +teach()
+  }
+  class Student {
+    +String name
+    +study()
+  }
+  class Course {
+    +String title
+    +int credits
+  }
+  University "1" *-- "many" Department : contains
+  Department "1" o-- "many" Professor : employs
+  Professor "1" --> "many" Course : teaches
+  Student "many" --> "many" Course : enrolls
+`} />
+
+## Programmatic Control
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('class-diag'),
+    dim: 'others',
+    edgeMode: 'bestEffort'
+  });
+
+  await player.ready();
+
+  // Highlight inheritance hierarchy
+  await player.play([
+    { type: 'node', id: 'Animal', state: 'active', note: 'Base class' },
+    { type: 'edge', from: 'Animal', to: 'Dog', state: 'active' },
+    { type: 'node', id: 'Dog', state: 'active', note: 'Extends Animal' },
+    { type: 'edge', from: 'Animal', to: 'Cat', state: 'active' },
+    { type: 'node', id: 'Cat', state: 'active', note: 'Extends Animal' },
+  ]);
+</script>
+```
+
+## Other Diagram Types
+
+- [Flowcharts](diagram-types/flowcharts) | [Sequence](diagram-types/sequence) | [State](diagram-types/state) | [Gantt](diagram-types/gantt) | [Journey](diagram-types/journey) | [ER](diagram-types/er)

@@ -1,0 +1,168 @@
+---
+title: Event Hooks
+description: React to step start/end with audio, speech, and custom UI
+---
+
+import TalkingStepsDemo from '~/components/TalkingStepsDemo.astro';
+
+# Event Hooks
+
+React to each animation step with **event hooks**: play audio, speak the step (text-to-speech), or update your own UI as the diagram runs. No plugin required — use the `hooks` option when creating the player.
+
+## Talking steps demo
+
+Click **Play** below. Each step is spoken and highlighted in the list. This uses the Web Speech API and the `onStepStart` hook.
+
+<TalkingStepsDemo />
+
+## How it works
+
+When you call `player.play(scenario, options)`, the player runs each step in order. For every step it:
+
+1. Calls **`onStepStart(step, note)`** — you can play sound, speak, or update UI.
+2. Updates the diagram (highlights the node or edge) and the narration target if the step has a `note`.
+3. Waits for the step duration.
+4. Calls **`onStepEnd(step)`** — you can clean up or record completion.
+
+Hooks are passed once when you create the player:
+
+```javascript
+const player = createFlowPlayer({
+  root: document.getElementById('diagram'),
+  hooks: {
+    onStepStart(step, note) {
+      // step: { type: 'node', id: 'A', note?: string } or { type: 'edge', from, to }, etc.
+      // note: the step's note (for node steps), or undefined
+      console.log('Step started:', step.id || step, note);
+    },
+    onStepEnd(step) {
+      console.log('Step ended:', step);
+    },
+    onError(err) {
+      console.error('Playback error:', err);
+    },
+  },
+});
+```
+
+Give each step a `note` so the built-in narration area shows text and your hook can speak it:
+
+```javascript
+const scenario = [
+  { type: 'node', id: 'A', note: 'Step 1: Start' },
+  { type: 'node', id: 'B', note: 'Step 2: Process' },
+  { type: 'node', id: 'C', note: 'Step 3: End' },
+];
+await player.play(scenario, { speed: 1.2 });
+```
+
+## Speech (talking steps)
+
+Use the **Web Speech API** in `onStepStart` to speak the note or step id:
+
+```javascript
+hooks: {
+  onStepStart(step, note) {
+    if (typeof speechSynthesis !== 'undefined' && (note || (step.type === 'node' && step.id))) {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(note || step.id);
+      u.rate = 0.95;
+      speechSynthesis.speak(u);
+    }
+  },
+}
+```
+
+Browsers may require a user gesture (e.g. a click) before allowing speech. The demo above triggers speech from the Play button click.
+
+## Using events with the web component
+
+With the **API** you pass `hooks` into `createFlowPlayer()`. With the **web component** (`<mermaid-flow-player>`) you cannot pass a function via HTML or attributes. Use the same behavior by giving the element an `id` and subscribing to its events: the player dispatches `mfp:*` CustomEvents on the element (e.g. step start ≈ `mfp:step`).
+
+Example: TTS with the web component. Add an `id` to the element, then listen for `mfp:step` and use `e.detail.step` and `e.detail.narration` (same as `onStepStart(step, note)`):
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player id="my-player" controls>
+flowchart LR
+  A[Start] --> B[Process] --> C[End]
+</mermaid-flow-player>
+
+<script>
+  document.getElementById('my-player').addEventListener('mfp:step', (e) => {
+    const { step, narration } = e.detail;
+    if (typeof speechSynthesis !== 'undefined' && (narration || (step.type === 'node' && step.id))) {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(narration || step.id);
+      u.rate = 0.95;
+      speechSynthesis.speak(u);
+    }
+  });
+</script>
+```
+
+To get step notes spoken, use the `note` property on node steps in the diagram’s scenario (the element builds the scenario from the diagram; notes come from the step’s `note` when present). Browsers may require a user gesture before allowing speech; the Play button on the component counts.
+
+**Event reference** — the element fires these CustomEvents (same as the API’s hooks / lifecycle). All use the `mfp:` prefix and `bubbles: true`; payload is in `event.detail`:
+
+| Event | When | `detail` |
+|-------|------|----------|
+| `mfp:ready` | Diagram indexed | `{ nodeCount, edgeCount }` |
+| `mfp:play` | Playback started | `{ stepCount }` |
+| `mfp:step` | Start of each step | `{ step, narration }` (same as `onStepStart(step, note)`) |
+| `mfp:stateChange` | Node or edge state changed | `{ type, id, state }` (type is `'node'` or `'edge'`) |
+| `mfp:pause` | Playback paused | — |
+| `mfp:resume` | Playback resumed | — |
+| `mfp:done` | Playback finished | — |
+| `mfp:reset` | Player reset | — |
+| `mfp:navigate` | Interactive: user chose next node | `{ from, to }` |
+| `mfp:error` | Mermaid/render error | `{ code, message, detail? }` |
+
+## Step overview UI
+
+Keep a list of steps and highlight the current one in `onStepStart`:
+
+```javascript
+const listEl = document.getElementById('step-list');
+
+hooks: {
+  onStepStart(step) {
+    if (step.type !== 'node') return;
+    listEl.querySelectorAll('[data-step-id]').forEach((el) => {
+      el.classList.toggle('current', el.getAttribute('data-step-id') === step.id);
+    });
+  },
+}
+```
+
+Clear the highlight when playback finishes (e.g. in a button handler after `await player.play(...)` or in a plugin’s `afterPlay`).
+
+## Optional: play a sound
+
+Play a short sound when a step starts:
+
+```javascript
+hooks: {
+  onStepStart() {
+    const audio = new Audio('/path/to/beep.mp3');
+    audio.volume = 0.3;
+    audio.play().catch(() => {}); // ignore autoplay errors
+  },
+}
+```
+
+Browsers often block sound until the user has interacted with the page (e.g. clicked Play). Use a user-triggered action before calling `player.play()` so the first step’s sound is allowed.
+
+## Plugin alternative
+
+If you prefer to use the **plugin system** instead of config-level hooks, you get the same timing with `beforeStep` and `afterStep`:
+
+- [Plugin System](features/plugins) — `api.beforeStep(step)` and `api.afterStep(step)` run before and after each step.
+
+Plugins are useful when you want to package your behavior (e.g. analytics or sound) and reuse it across multiple players.
+
+## Next steps
+
+- [Narration](features/narration) — Use `narrationTarget` and step `note` for on-screen text.
+- [Plugin System](features/plugins) — Lifecycle hooks and extensions.

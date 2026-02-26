@@ -1,0 +1,12 @@
+---
+import { getFlowPlayerBase } from '../lib/flow-player-base.js';
+
+interface Props {
+  file: string;
+}
+
+const { file } = Astro.props;
+const base = getFlowPlayerBase();
+const src = `${base}/${file}`;
+---
+<script is:inline src={src}></script>

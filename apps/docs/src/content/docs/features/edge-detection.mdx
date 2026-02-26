@@ -1,0 +1,156 @@
+---
+title: Edge Detection
+description: Multi-strategy edge animation system
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Multi-strategy edge detection for animating connections between nodes.
+
+## Enable Edge Animation
+
+<LiveExample diagram={`
+graph LR
+  A[Start] --> B[Process]
+  B --> C{Check}
+  C -->|Yes| D[Success]
+  C -->|No| E[Retry]
+  E --> B
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    edgeMode: 'bestEffort'  // Enable edge animation
+  });
+
+  await player.ready();
+  await player.play([
+    { type: 'node', id: 'A', state: 'active' },
+    { type: 'edge', from: 'A', to: 'B', state: 'active' },
+    { type: 'node', id: 'B', state: 'active' },
+    { type: 'edge', from: 'B', to: 'C', state: 'active' },
+    { type: 'node', id: 'C', state: 'active' },
+  ]);
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls edge="bestEffort" theme="light">
+graph LR
+  A[Start] --> B[Process]
+  B --> C{Check}
+  C -->|Yes| D[Success]
+  C -->|No| E[Retry]
+  E --> B
+</mermaid-flow-player>
+```
+
+## Edge Modes
+
+| Mode | Description |
+|------|-------------|
+| `'off'` | No edge animation (default) |
+| `'bestEffort'` | Automatically detect and animate edges |
+| `'manual'` | Only animate edges you define manually |
+
+## Detection Strategies
+
+The edge detector tries multiple strategies in order:
+
+### 1. Title (Most Reliable)
+
+Parses the `<title>` element inside SVG edge groups. This is the most reliable method.
+
+### 2. Data Attributes
+
+Uses `data-from` and `data-to` attributes if present on edge elements.
+
+### 3. Text Matching
+
+Regex pattern matching on edge text content. Fragile — used as last resort.
+
+### 4. Path Tracing (Experimental)
+
+Geometric analysis of SVG path endpoints to determine connections.
+
+### 5. Manual
+
+User-provided edge definitions via fallback config.
+
+## Configure Detection
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    edgeMode: 'bestEffort',
+    edgeDetection: {
+      // Try strategies in this order
+      strategy: ['title', 'data-attr', 'text'],
+
+      // Manual fallback for edges that can't be detected
+      fallback: [
+        { from: 'A', to: 'B' },
+        { from: 'B', to: 'C' }
+      ],
+
+      // Log detection process
+      debug: true
+    }
+  });
+</script>
+```
+
+## Manual Edge Mode
+
+When auto-detection doesn't work, define edges manually:
+
+```javascript
+const player = createFlowPlayer({
+  root: document.getElementById('diagram'),
+  edgeMode: 'manual',
+  edgeDetection: {
+    fallback: [
+      { from: 'Start', to: 'Process' },
+      { from: 'Process', to: 'Check' },
+      { from: 'Check', to: 'Success' },
+      { from: 'Check', to: 'Retry' },
+    ]
+  }
+});
+```
+
+## Animate Edges in Scenarios
+
+```javascript
+await player.play([
+  { type: 'node', id: 'A', state: 'active' },
+  { type: 'edge', from: 'A', to: 'B', state: 'active' },
+  { type: 'node', id: 'B', state: 'active' },
+  { type: 'edge', from: 'B', to: 'C', state: 'active' },
+  { type: 'node', id: 'C', state: 'success' },
+]);
+```
+
+## Debug Mode
+
+Enable `debug: true` to see which strategy detected each edge:
+
+```javascript
+const player = createFlowPlayer({
+  root,
+  edgeMode: 'bestEffort',
+  edgeDetection: { debug: true }
+});
+// Check console for: [mermaid-flow-player] Edge A->B detected via title strategy
+```

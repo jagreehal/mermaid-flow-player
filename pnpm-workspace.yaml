@@ -1,0 +1,3 @@
+# Docs-only repo (source lives in mermaid-flow-player-src)
+packages:
+  - 'apps/*'

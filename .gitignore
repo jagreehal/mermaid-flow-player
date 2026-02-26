@@ -1,0 +1,33 @@
+node_modules
+dist
+
+# Build artifacts & test output
+coverage/
+test-output/
+*.tsbuildinfo
+packages/mermaid-flow-player/src/player-css-embedded.ts
+apps/docs/public/local-dist
+
+# Playwright
+.playwright-cli/
+.playwright-mcp/
+**/test-results/
+**/playwright-report/
+
+# Monorepo
+.turbo/
+
+# Temp & system files
+___temp___
+temp-cdn-test/
+.worktrees
+.DS_Store
+/*.png
+
+# IDE
+.vscode/
+.idea/
+.cursor/
+
+# Lock files (pnpm only)
+package-lock.json

@@ -1,0 +1,144 @@
+---
+title: Sequence Diagrams
+description: Animate sequence diagrams showing participant interactions
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Animate interactions between participants with messages, activations, and notes.
+
+## Basic Sequence
+
+<LiveExample diagram={`
+sequenceDiagram
+  Alice->>Bob: Hello Bob
+  Bob->>Sarah: Hi Sarah
+  Sarah->>Alice: Hey Alice!
+  Alice->>Sarah: How are you?
+  Sarah-->>Alice: Great thanks!
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    dim: 'others'
+  });
+
+  await player.ready();
+  const idx = player.index();
+  // Sequence diagrams index participants and messages
+  await player.play(player.path(...idx.nodes.keys()));
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls edge="bestEffort" theme="light">
+sequenceDiagram
+  Alice->>Bob: Hello Bob
+  Bob->>Sarah: Hi Sarah
+  Sarah->>Alice: Hey Alice!
+  Alice->>Sarah: How are you?
+  Sarah-->>Alice: Great thanks!
+</mermaid-flow-player>
+```
+
+## API Request Flow
+
+<LiveExample diagram={`
+sequenceDiagram
+  participant Client
+  participant API
+  participant Auth
+  participant DB
+  Client->>API: POST /login
+  API->>Auth: Validate credentials
+  Auth->>DB: Query user
+  DB-->>Auth: User data
+  Auth-->>API: Token
+  API-->>Client: 200 OK + JWT
+`} />
+
+## With Activations
+
+<LiveExample diagram={`
+sequenceDiagram
+  participant Browser
+  participant Server
+  participant Cache
+  Browser->>+Server: GET /data
+  Server->>+Cache: Check cache
+  Cache-->>-Server: Cache miss
+  Server->>+Cache: Fetch & store
+  Cache-->>-Server: Data
+  Server-->>-Browser: Response
+`} />
+
+## With Notes
+
+<LiveExample diagram={`
+sequenceDiagram
+  participant U as User
+  participant S as System
+  participant E as Email
+  U->>S: Register
+  Note over S: Validate input
+  S->>E: Send verification
+  Note over E: Queue email
+  E-->>U: Verification link
+  U->>S: Click verify
+  Note over S: Activate account
+  S-->>U: Welcome!
+`} />
+
+## Sequence Builder
+
+```javascript
+import { SequenceBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+const scenario = new SequenceBuilder()
+  .participant('Alice')
+  .message('Alice', 'Bob', { note: 'Greeting' })
+  .activate('Bob')
+  .message('Bob', 'Alice', { note: 'Response' })
+  .deactivate('Bob')
+  .build();
+
+await player.play(scenario);
+```
+
+## Programmatic Control
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('seq-diagram'),
+    dim: 'others'
+  });
+
+  await player.ready();
+
+  // Use diagram-specific helpers
+  await player.play([
+    player.participant('Client', { note: 'Browser' }),
+    player.message('Client', 'API', { note: 'Request' }),
+    player.activation('API', { start: true }),
+    player.message('API', 'DB', { note: 'Query' }),
+    player.message('DB', 'API', { note: 'Result' }),
+    player.activation('API', { start: false }),
+    player.message('API', 'Client', { note: 'Response' }),
+  ]);
+</script>
+```
+
+## Other Diagram Types
+
+- [Flowcharts](diagram-types/flowcharts) | [State](diagram-types/state) | [Gantt](diagram-types/gantt) | [Journey](diagram-types/journey) | [Class](diagram-types/class) | [ER](diagram-types/er)

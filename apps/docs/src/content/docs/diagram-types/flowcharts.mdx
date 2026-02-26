@@ -1,0 +1,164 @@
+---
+title: Flowchart Diagrams
+description: Animate flowchart diagrams with all features
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Flowcharts are the most common diagram type. All features work seamlessly.
+
+## Basic Flowchart
+
+<LiveExample diagram={`
+graph TB
+  Start([Start]) --> Init[Initialize]
+  Init --> Process[Process Data]
+  Process --> Check{Valid?}
+  Check -->|Yes| Save[(Save)]
+  Check -->|No| Error[Handle Error]
+  Save --> End([End])
+  Error --> End
+`} />
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    edgeMode: 'bestEffort',
+    dim: 'others'
+  });
+
+  await player.ready();
+  await player.play(
+    player.path('Start', 'Init', 'Process', 'Check', 'Save', 'End'),
+    { speed: 1.2 }
+  );
+</script>
+```
+
+**Web Component:**
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls theme="light">
+graph TB
+  Start([Start]) --> Init[Initialize]
+  Init --> Process[Process Data]
+  Process --> Check{Valid?}
+  Check -->|Yes| Save[(Save)]
+  Check -->|No| Error[Handle Error]
+  Save --> End([End])
+  Error --> End
+</mermaid-flow-player>
+```
+
+## Left-to-Right Flow
+
+<LiveExample diagram={`
+graph LR
+  A[Start] --> B{Decision}
+  B -->|Option 1| C[Action 1]
+  B -->|Option 2| D[Action 2]
+  B -->|Option 3| E[Action 3]
+  C --> F[Merge]
+  D --> F
+  E --> F
+  F --> G[End]
+`} />
+
+## CI/CD Pipeline
+
+<LiveExample diagram={`
+graph LR
+  A[Commit] --> B[Build]
+  B --> C[Unit Tests]
+  C --> D{Tests Pass?}
+  D -->|Yes| E[Deploy Staging]
+  D -->|No| F[Fix & Retry]
+  E --> G[Integration Tests]
+  G --> H{All Green?}
+  H -->|Yes| I[Deploy Production]
+  H -->|No| F
+  F --> A
+`} />
+
+## With Scenario Builder
+
+```html
+<script type="module">
+  import { createFlowPlayer, FlowchartBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  const player = createFlowPlayer({ root: document.getElementById('diagram') });
+  await player.ready();
+
+  const scenario = new FlowchartBuilder()
+    .terminal('Start')
+    .process('Init')
+    .process('Process')
+    .decision('Check')
+    .node('Save')
+    .terminal('End')
+    .build();
+
+  await player.play(scenario);
+</script>
+```
+
+## With States
+
+```javascript
+// Highlight different states
+await player.play([
+  { type: 'node', id: 'Start', state: 'active', note: 'Beginning' },
+  { type: 'node', id: 'Process', state: 'active', note: 'Processing...' },
+  { type: 'node', id: 'Check', state: 'warning', note: 'Validating' },
+  { type: 'node', id: 'Save', state: 'success', note: 'Saved!' },
+  { type: 'node', id: 'Error', state: 'error', note: 'Failed!' },
+]);
+```
+
+## Subgraphs
+
+<LiveExample diagram={`
+graph TB
+  subgraph Frontend
+    A[UI] --> B[API Client]
+  end
+  subgraph Backend
+    C[API Server] --> D[Database]
+  end
+  B --> C
+`} />
+
+## All Node Shapes
+
+<LiveExample diagram={`
+graph LR
+  A([Stadium]) --> B[[Subroutine]]
+  B --> C[(Database)]
+  C --> D((Circle))
+  D --> E{Diamond}
+  E --> F[Rectangle]
+`} />
+
+## Features
+
+- Auto-detection of flowchart type (graph/flowchart keyword)
+- Edge animation (best-effort)
+- All node shapes supported (rectangle, diamond, stadium, cylinder, circle, etc.)
+- Subgraphs supported
+- Left-to-right (LR), top-to-bottom (TB), and other orientations
+- Interactive step-through
+- Theme support
+
+## Other Diagram Types
+
+- [Sequence Diagrams](diagram-types/sequence)
+- [State Diagrams](diagram-types/state)
+- [Gantt Charts](diagram-types/gantt)
+- [User Journeys](diagram-types/journey)
+- [Class Diagrams](diagram-types/class)
+- [ER Diagrams](diagram-types/er)

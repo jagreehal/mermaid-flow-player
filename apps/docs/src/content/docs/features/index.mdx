@@ -1,0 +1,38 @@
+---
+title: Features
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Mermaid Flow Player provides a rich set of features for animating diagrams.
+
+<LiveExample diagram={`
+graph LR
+  A[Auto Modes] --> B[Animations]
+  B --> C[Edge Detection]
+  C --> D[Themes]
+  D --> E[Plugins]
+`} />
+
+## Core Features
+
+- **[Auto Modes](features/auto-modes)** — Zero-config usage with 4 progressive enhancement layers
+- **[Animations & Easing](features/animations)** — 30+ easing functions for professional timing
+- **[Edge Detection](features/edge-detection)** — Multi-strategy edge animation system
+- **[Interactive Mode](features/interactive)** — Step-through diagrams with path selection
+- **[Narration](features/narration)** — Auto-updating narration text during playback
+
+## Builder & Composition
+
+- **[Scenario Builder](features/builder-api)** — Fluent chainable API for building scenarios
+- **[Plugins](features/plugins)** — Extensible architecture with lifecycle hooks
+
+## Configuration
+
+- **[Themes](features/themes)** — Light, dark, and auto themes with persistence
+- **[Query Parameters](features/query-params)** — Configure via URL parameters
+
+## Diagram Types
+
+All features work with [7 diagram types](diagram-types/flowcharts):
+Flowcharts, Sequence, State, Gantt, Journey, Class, and ER diagrams.

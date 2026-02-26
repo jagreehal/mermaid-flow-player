@@ -1,0 +1,148 @@
+---
+title: Query Parameters
+description: Configure via URL parameters
+---
+
+import LiveExample from '~/components/LiveExample.astro';
+
+Configure Mermaid Flow Player via URL query parameters — no code changes needed.
+
+## Supported Parameters
+
+<LiveExample diagram={`
+graph LR
+  A[URL Params] --> B[Parse]
+  B --> C[Apply Config]
+  C --> D[Animate]
+`} />
+
+| Parameter | Values | Description |
+|-----------|--------|-------------|
+| `theme` | `light`, `dark`, `auto` | Set theme |
+| `speed` | Number (e.g. `1.5`) | Animation speed multiplier |
+| `dim` | `none`, `others` | Dimming behavior |
+| `persist` | `none`, `visited` | State persistence |
+| `edge` | `off`, `bestEffort`, `manual` | Edge animation mode |
+| `stepMs` | Number (e.g. `800`) | Milliseconds per step |
+| `mode` | `sequential`, `interactive` | Playback mode |
+| `selector` | CSS selector (e.g. `.my-diagram`) | Diagram root selector for auto modes (default: `.mermaid`) |
+| `debug` | (flag, no value needed) | Enable debug logging |
+| `autoplay` | (flag) | Auto-play on load |
+| `trigger` | `load`, `scroll`, `click` | Auto-play trigger |
+
+## Examples
+
+### Dark Theme, Slow Speed
+
+```
+https://your-site.com/docs?theme=dark&speed=0.5
+```
+
+### Debug Mode
+
+```
+https://your-site.com/docs?debug
+```
+
+### Interactive Mode
+
+```
+https://your-site.com/docs?mode=interactive
+```
+
+### Fast with Edge Animation
+
+```
+https://your-site.com/docs?speed=2.0&edge=bestEffort
+```
+
+### Auto-Play on Scroll
+
+```
+https://your-site.com/docs?autoplay&trigger=scroll
+```
+
+### Custom Diagram Selector
+
+Use a CSS selector other than `.mermaid` so only those elements get controls. Per-diagram behaviour (mode, dim, etc.) is still controlled via data attributes or multiple `autoInit()` calls.
+
+```
+https://your-site.com/docs?selector=.my-diagram
+```
+
+The **web component** (`<mermaid-flow-player>`) does not use a global selector; each instance is self-contained and uses its own root.
+
+## Configuration Precedence
+
+Parameters are merged with other config sources. Higher precedence wins:
+
+1. **JavaScript API** (highest) — `createFlowPlayer({ speed: 2 })`
+2. **URL query parameters** — `?speed=1.5`
+3. **HTML data attributes** — `data-flow-speed="1.0"`
+4. **Defaults** (lowest) — built-in defaults
+
+## Parsing
+
+Query parameters are parsed automatically by `auto()` and `autoInit()`:
+
+```html
+<!-- These auto modes read URL params automatically -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+```
+
+For programmatic use:
+
+```html
+<script type="module">
+  import { parseQueryParams, createFlowPlayer }
+    from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+  // Parse URL params
+  const config = parseQueryParams();
+  console.log(config);
+  // { theme: 'dark', speed: 1.5, debug: true, ... }
+
+  // Use parsed config
+  const player = createFlowPlayer({
+    root: document.getElementById('diagram'),
+    dim: config.dim,
+    persist: config.persist,
+    edgeMode: config.edgeMode,
+    timing: config.stepMs ? { stepMs: config.stepMs } : undefined,
+    debug: config.debug,
+  });
+</script>
+```
+
+## Caching
+
+Query parameters are parsed once and cached for performance:
+
+```javascript
+import { parseQueryParams, clearQueryConfigCache }
+  from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+
+// First call parses and caches
+const config1 = parseQueryParams();
+
+// Subsequent calls return cached result
+const config2 = parseQueryParams();
+
+// Force re-parse (e.g., after URL change)
+clearQueryConfigCache();
+const config3 = parseQueryParams();
+```
+
+## Use Case: Shareable Diagram Links
+
+Create links that configure the viewing experience:
+
+```html
+<a href="diagrams/architecture?theme=dark&speed=0.8&edge=bestEffort">
+  View Architecture (Dark, Slow, with Edges)
+</a>
+
+<a href="diagrams/architecture?mode=interactive&debug">
+  Explore Architecture (Interactive + Debug)
+</a>
+```
