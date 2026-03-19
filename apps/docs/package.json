@@ -22,7 +22,7 @@
     "astro": "^5.18.0",
     "@astrojs/starlight": "^0.37.6",
     "@astrojs/check": "^0.9.6",
-    "@tailwindcss/vite": "^4.2.1",
+    "@tailwindcss/vite": "^4.2.2",
     "tailwindcss": "^4.2.1",
     "starlight-theme-next": "^0.3.3",
     "@fontsource/geist-sans": "^5.2.5",
