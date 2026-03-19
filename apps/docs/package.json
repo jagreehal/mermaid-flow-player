@@ -24,7 +24,7 @@
     "@astrojs/check": "^0.9.6",
     "@tailwindcss/vite": "^4.2.1",
     "tailwindcss": "^4.2.1",
-    "starlight-theme-next": "^0.3.3",
+    "starlight-theme-next": "^0.4.0",
     "@fontsource/geist-sans": "^5.2.5",
     "@fontsource/geist-mono": "^5.2.7"
   },
