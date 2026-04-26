@@ -1,18 +1,21 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+
+/* Mono only — matches the wrangler-deploy docs treatment.
+   Body uses the system font stack (no @fontsource import needed). */
+@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/jetbrains-mono/500.css";
+@import "@fontsource/jetbrains-mono/600.css";
+
 @import "../custom.css";
 
 /* Starlight uses data-theme="dark" on :root for dark mode */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -52,5 +55,512 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* =====================================================================
+   STARLIGHT FONT FAMILIES
+   Override Starlight's default stacks with our pairing.
+   ===================================================================== */
+:root {
+  --sl-font: var(--font-body);
+  --sl-font-mono: var(--font-mono);
+  --sl-font-system: var(--font-body);
+  --sl-font-system-mono: var(--font-mono);
+}
+
+/* =====================================================================
+   PROSE TYPOGRAPHY
+   Editorial backbone: distinctive display headings, generous whitespace,
+   capped measure for body. Light text on dark gets a leading bump.
+   ===================================================================== */
+.sl-markdown-content {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: calc(1.7 + var(--leading-add, 0));
+  color: var(--ink-2);
+  max-width: 72ch;
+}
+
+/* Wider measure for pages with showcase grids, code blocks, etc.
+   Allow the pages themselves to opt out of the cap by wrapping their
+   content in `.wide` or similar (Starlight provides full-width frontmatter). */
+.sl-markdown-content > .showcase-grid,
+.sl-markdown-content > pre,
+.sl-markdown-content > .expressive-code,
+.sl-markdown-content > .live-example,
+.sl-markdown-content > .cdn-builder,
+.sl-markdown-content > mermaid-flow-player,
+.sl-markdown-content > .mermaid {
+  max-width: none;
+}
+
+.sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
+  font-family: var(--font-display);
+  color: var(--ink-1);
+  font-weight: 600;
+  letter-spacing: var(--tracking-snug);
+  line-height: 1.1;
+  /* Bricolage Grotesque has an opsz axis — let it kick in on big sizes */
+  font-optical-sizing: auto;
+}
+
+.sl-markdown-content > h1,
+.sl-markdown-content > :is(h1):first-child {
+  font-size: var(--text-display-sm);
+  letter-spacing: var(--tracking-tight);
+  font-weight: 600;
+  line-height: 1.02;
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.sl-markdown-content > h2 {
+  font-size: var(--text-2xl);
+  margin-top: var(--space-3xl);
+  margin-bottom: var(--space-md);
+  /* hairline rule above each h2 to give the page architectural rhythm */
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--line-1);
+}
+
+.sl-markdown-content > h2:first-child,
+.sl-markdown-content > h2.no-rule {
+  border-top: none;
+  padding-top: 0;
+  margin-top: var(--space-2xl);
+}
+
+.sl-markdown-content > h3 {
+  font-size: var(--text-xl);
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-sm);
+  font-weight: 600;
+}
+
+.sl-markdown-content > h4 {
+  font-size: var(--text-lg);
+  margin-top: var(--space-xl);
+  margin-bottom: var(--space-xs);
+}
+
+.sl-markdown-content p {
+  margin-block: var(--space-md);
+}
+
+.sl-markdown-content :is(ul, ol) {
+  margin-block: var(--space-md);
+  padding-inline-start: 1.4em;
+}
+
+.sl-markdown-content li + li {
+  margin-top: var(--space-2xs);
+}
+
+/* Links: subtle underline, accent color on hover.
+   Exclude any link that's a styled component (home buttons, path cards, etc.)
+   so this rule doesn't fight component-level color decisions. */
+.sl-markdown-content a:not(.sl-anchor-link, .home__btn, .home__path, .home__feats-list a) {
+  color: var(--ink-1);
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition: color 160ms var(--ease-out-quart);
+}
+.sl-markdown-content a:not(.sl-anchor-link, .home__btn, .home__path, .home__feats-list a):hover {
+  color: var(--accent-strong);
+}
+
+/* Inline code */
+.sl-markdown-content :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  padding: 0.12em 0.38em;
+  border-radius: var(--radius-xs);
+  background: var(--surface-2);
+  color: var(--ink-1);
+  border: 1px solid var(--line-1);
+}
+
+/* Strong */
+.sl-markdown-content strong {
+  color: var(--ink-1);
+  font-weight: 600;
+}
+
+/* Blockquotes: hairline rule, no card chrome */
+.sl-markdown-content blockquote {
+  margin: var(--space-lg) 0;
+  padding: 0 0 0 var(--space-lg);
+  border-inline-start: 1px solid var(--line-2);
+  color: var(--ink-3);
+  font-style: normal;
+}
+
+/* Tables: minimal, hairline grid */
+.sl-markdown-content table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--text-sm);
+  margin: var(--space-lg) 0;
+}
+.sl-markdown-content :is(th, td) {
+  text-align: left;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--line-1);
+}
+.sl-markdown-content th {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-3);
+}
+
+/* =====================================================================
+   STARLIGHT CHROME — sidebar, nav, search
+   Calmer surfaces, hairline separators, tighter typography.
+   ===================================================================== */
+.sidebar-pane,
+.sl-sidebar-state {
+  background: var(--surface-0);
+}
+
+.sidebar-pane {
+  border-inline-end: 1px solid var(--line-1);
+}
+
+/* Sidebar group labels — quiet, mono, uppercase */
+.sidebar-content summary > .group-label > .large,
+.sidebar-content > nav > ul > li > details > summary,
+.sidebar-content ul ul li > a,
+.sidebar-content ul li > a {
+  font-family: var(--font-body);
+}
+
+.sidebar-content summary > .group-label,
+.sidebar-content .group-label .large {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-3);
+}
+
+.sidebar-content a {
+  color: var(--ink-2);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  padding-block: 0.3rem;
+  transition: color 140ms var(--ease-out-quart),
+              background-color 140ms var(--ease-out-quart);
+}
+.sidebar-content a:hover {
+  color: var(--ink-1);
+  background: var(--surface-2);
+}
+.sidebar-content a[aria-current="page"] {
+  color: var(--accent-strong);
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+
+/* Header: hairline separator, no card chrome */
+.header,
+.page-header {
+  background: color-mix(in oklch, var(--surface-0), transparent 8%);
+  backdrop-filter: saturate(140%) blur(8px);
+}
+
+/* Site title in header — display face for tiny brand presence */
+.site-title,
+.header .site-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: var(--tracking-snug);
+  color: var(--ink-1);
+}
+
+/* Right-side TOC */
+.right-sidebar {
+  font-family: var(--font-body);
+}
+.right-sidebar h2,
+starlight-toc > nav > p {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  color: var(--ink-3) !important;
+}
+.right-sidebar a {
+  font-size: var(--text-sm);
+  color: var(--ink-3);
+  transition: color 140ms var(--ease-out-quart);
+}
+.right-sidebar a:hover,
+.right-sidebar a[aria-current="true"] {
+  color: var(--accent-strong);
+}
+
+/* =====================================================================
+   HOMEPAGE: suppress Starlight splash-template hero
+   We render our own hero inside .home; hide the built-in one site-wide
+   only on pages that include the .home wrapper.
+   ===================================================================== */
+body:has(.home) .hero {
+  display: none !important;
+}
+body:has(.home) main .sl-container,
+body:has(.home) main {
+  padding-top: 0;
+}
+
+/* Neutralize MDX paragraph wrapping inside button/link components on
+   the homepage. Otherwise <p> margins push the icon to a new line and
+   <p> color rules override component color decisions. */
+.home p {
+  margin: 0;
+}
+.home__btn p,
+.home__path p {
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  display: inline;
+}
+
+/* =====================================================================
+   PLAYER ISOLATION
+   The Mermaid Flow Player web component owns its own theming. Reset
+   inheritable design tokens at its root so our doc-level accent /
+   palette never leaks into its buttons, panels, or controls.
+   The themes / custom-styles documentation pages are the only place
+   the player should be re-styled — and they do it on their own scope.
+   ===================================================================== */
+mermaid-flow-player {
+  --accent: revert;
+  --accent-strong: revert;
+  --accent-soft: revert;
+  --accent-foreground: revert;
+  --primary: revert;
+  --primary-foreground: revert;
+  --secondary: revert;
+  --secondary-foreground: revert;
+  --background: revert;
+  --foreground: revert;
+  --card: revert;
+  --card-foreground: revert;
+  --popover: revert;
+  --popover-foreground: revert;
+  --muted: revert;
+  --muted-foreground: revert;
+  --border: revert;
+  --input: revert;
+  --ring: revert;
+  --radius: revert;
+  --radius-sm: revert;
+  --radius-md: revert;
+  --radius-lg: revert;
+  --destructive: revert;
+}
+
+/* Search button in header */
+[data-open-modal] {
+  border: 1px solid var(--line-1);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  color: var(--ink-3);
+}
+[data-open-modal]:hover {
+  border-color: var(--line-2);
+  color: var(--ink-1);
+}
+
+/* =====================================================================
+   CODE BLOCKS (Expressive Code / Starlight code panes)
+   Let Expressive Code own the visual frame — we only style:
+   - the wrapper margin
+   - the frame's surface, border, and corner radius
+   - the code typography (font, size, leading)
+   - the copy button
+   No double-frame: the outer .expressive-code wrapper is invisible.
+   ===================================================================== */
+.expressive-code {
+  margin: var(--space-lg) 0;
+  /* override EC default spacing variables for tighter, calmer rendering */
+  --ec-uiPadBlk: var(--space-sm);
+  --ec-uiPadInl: var(--space-md);
+  --ec-codePadBlk: var(--space-md);
+  --ec-codePadInl: var(--space-md);
+  --ec-codeFontSize: var(--text-sm);
+  --ec-codeLineHt: 1.55;
+  --ec-codeFontFml: var(--font-mono);
+  --ec-uiFontSize: var(--text-xs);
+  --ec-uiFontFml: var(--font-mono);
+  --ec-brdRad: var(--radius-md);
+  --ec-brdWd: 1px;
+  --ec-brdCol: var(--line-1);
+  --ec-frm-edBg: var(--surface-1);
+  --ec-frm-edActTabBg: var(--surface-2);
+  --ec-frm-edActTabIndBtmCol: var(--accent);
+  --ec-frm-edActTabFg: var(--ink-1);
+  --ec-frm-edTabBarBg: var(--surface-1);
+  --ec-frm-edTabBarBrdBtmCol: var(--line-1);
+  --ec-frm-trmTtbBg: var(--surface-1);
+  --ec-frm-trmTtbFg: var(--ink-3);
+  --ec-frm-trmTtbBrdBtmCol: var(--line-1);
+  --ec-frm-trmBg: var(--surface-1);
+  --ec-frm-inlBtnFg: var(--ink-3);
+  --ec-frm-inlBtnBg: transparent;
+  --ec-frm-inlBtnBgHvOpa: 0.08;
+  --ec-frm-inlBtnBgActOpa: 0.12;
+  --ec-frm-tooltipSuccessBg: var(--accent);
+  --ec-frm-tooltipSuccessFg: var(--accent-foreground);
+}
+
+/* The EC frame: ensure no extra outer chrome from us */
+.expressive-code .frame {
+  box-shadow: none;
+}
+
+/* Header band (filename / language tab) — quiet mono caption */
+.expressive-code .frame .header {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.expressive-code .frame.has-title:not(.is-terminal) .header {
+  border-bottom: 1px solid var(--line-1);
+}
+
+/* Code text itself */
+.expressive-code pre,
+.expressive-code pre > code {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tame the line-numbers gutter if present */
+.expressive-code .ec-line .gutter {
+  color: var(--ink-4);
+  font-size: var(--text-xs);
+}
+
+/* Plain <pre> blocks (rare — most are EC) */
+.sl-markdown-content pre:not(.expressive-code pre) {
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line-1);
+  background: var(--surface-1);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  margin: var(--space-lg) 0;
+  overflow-x: auto;
+}
+
+/* =====================================================================
+   FOCUS RINGS — accessible and on-brand
+   ===================================================================== */
+:where(a, button, summary, [role="button"], input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* =====================================================================
+   SHOWCASE GRID — used on features/showcase.mdx and inline.
+   No card-on-everything; hairline-framed cells with mono coordinate label.
+   ===================================================================== */
+.showcase-grid {
+  display: grid;
+  gap: var(--space-md);
+  grid-template-columns: 1fr;
+  margin: var(--space-lg) 0;
+}
+
+@media (min-width: 720px) {
+  .showcase-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-lg);
+  }
+}
+
+.showcase-card {
+  display: grid;
+  gap: var(--space-sm);
+  padding: var(--space-md) 0 0;
+  border-top: 1px solid var(--line-1);
+  background: transparent;
+  transition: border-color 180ms var(--ease-out-quart);
+}
+
+.showcase-card:hover {
+  border-top-color: var(--accent);
+}
+
+.showcase-card h3 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--ink-3);
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-xs);
+}
+
+/* The little numeric coordinate that prefixes every cell — added by counter */
+.showcase-grid {
+  counter-reset: showcase;
+}
+.showcase-card {
+  counter-increment: showcase;
+}
+.showcase-card h3::before {
+  content: counter(showcase, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--ink-4);
+  letter-spacing: var(--tracking-wide);
+}
+
+.showcase-card h3 code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: none;
+  letter-spacing: 0;
+  padding: 0.12em 0.38em;
+  border-radius: var(--radius-xs);
+  background: var(--surface-2);
+  border: 1px solid var(--line-1);
+  color: var(--ink-1);
+}
+
+.showcase-card mermaid-flow-player {
+  width: 100%;
+}
+
+/* =====================================================================
+   REDUCED MOTION
+   ===================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

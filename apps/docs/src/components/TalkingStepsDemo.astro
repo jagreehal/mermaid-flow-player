@@ -41,8 +41,7 @@ const STEPS = [
     const playBtn = document.getElementById('talking-steps-play');
     if (!diagramEl || !listEl || !playBtn) return;
 
-    const base = playerBase || '/local-dist';
-    const { createFlowPlayer } = await import(/* @vite-ignore */ `${base}/index.js`);
+    const { createFlowPlayer } = await import(/* @vite-ignore */ `${playerBase}/index.js`);
 
     let player = null;
     let scenario = null;

@@ -3,37 +3,24 @@ title: Scenario Builder
 description: Fluent chainable API for building animation scenarios
 ---
 
-import LiveExample from '~/components/LiveExample.astro';
-
 Build complex animation scenarios with a fluent, chainable API.
 
 ## Basic Builder
 
-<LiveExample diagram={`
-graph LR
-  A[Start] --> B[Process]
-  B --> C{Check}
-  C -->|Yes| D[Success]
-  C -->|No| E[Retry]
-`} />
+```javascript
+import { createFlowPlayer, createScenarioBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
-```html
-<script type="module">
-  import { createFlowPlayer, createScenarioBuilder }
-    from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+const player = createFlowPlayer({ root: document.getElementById('diagram') });
+await player.ready();
 
-  const player = createFlowPlayer({ root: document.getElementById('diagram') });
-  await player.ready();
+const scenario = createScenarioBuilder()
+  .node('A', { note: 'Starting...' })
+  .node('B', { note: 'Processing...' })
+  .node('C', { note: 'Checking result' })
+  .node('D', { state: 'success', note: 'Done!' })
+  .build();
 
-  const scenario = createScenarioBuilder()
-    .node('A', { note: 'Starting...' })
-    .node('B', { note: 'Processing...' })
-    .node('C', { note: 'Checking result' })
-    .node('D', { state: 'success', note: 'Done!' })
-    .build();
-
-  await player.play(scenario);
-</script>
+await player.play(scenario);
 ```
 
 ## Chainable Methods
@@ -50,13 +37,6 @@ const scenario = createScenarioBuilder()
 ```
 
 ## With Edges
-
-<LiveExample diagram={`
-graph LR
-  A[Build] --> B[Test]
-  B --> C[Deploy]
-  C --> D[Monitor]
-`} />
 
 ```javascript
 const scenario = createScenarioBuilder()
@@ -124,7 +104,7 @@ await builder.play(player, { speed: 1.5 });
 Specialized methods for flowcharts:
 
 ```javascript
-import { FlowchartBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { FlowchartBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const scenario = new FlowchartBuilder()
   .terminal('Start')          // Start/end node
@@ -141,7 +121,7 @@ const scenario = new FlowchartBuilder()
 Specialized methods for sequence diagrams:
 
 ```javascript
-import { SequenceBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { SequenceBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const scenario = new SequenceBuilder()
   .participant('Client')
@@ -159,7 +139,7 @@ const scenario = new SequenceBuilder()
 Specialized methods for state diagrams:
 
 ```javascript
-import { StateBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { StateBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const scenario = new StateBuilder()
   .state('Idle', { note: 'Waiting' })
@@ -176,7 +156,7 @@ Register reusable scenario templates:
 
 ```javascript
 import { createRegistry, createScenarioBuilder }
-  from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const registry = createRegistry();
 

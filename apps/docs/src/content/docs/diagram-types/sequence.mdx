@@ -20,7 +20,7 @@ sequenceDiagram
 
 ```html
 <script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
   const player = createFlowPlayer({
     root: document.getElementById('diagram'),
@@ -37,7 +37,7 @@ sequenceDiagram
 **Web Component:**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
 
 <mermaid-flow-player controls edge="bestEffort" theme="light">
 sequenceDiagram
@@ -100,7 +100,7 @@ sequenceDiagram
 ## Sequence Builder
 
 ```javascript
-import { SequenceBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { SequenceBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const scenario = new SequenceBuilder()
   .participant('Alice')
@@ -117,7 +117,7 @@ await player.play(scenario);
 
 ```html
 <script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
   const player = createFlowPlayer({
     root: document.getElementById('seq-diagram'),

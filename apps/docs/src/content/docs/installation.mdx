@@ -1,52 +1,133 @@
 ---
 title: Installation
+description: Drop one script onto a page and any Mermaid diagram becomes a player.
 ---
 
-import LiveExample from '~/components/LiveExample.astro';
+import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
 
-## CDN (Recommended for Quick Start)
+## CDN — one script
 
-No build step needed. Add these to your HTML:
+Both CDN entry points auto-load Mermaid from a CDN if it isn't already on the page. You don't need a separate Mermaid `<script>` — pick one entry point and you're done.
+
+### Web component
+
+Best when you're authoring new markup:
 
 ```html
-<!DOCTYPE html>
-<html>
-<head>
-  <!-- 1. Load Mermaid -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
 
-  <!-- 2. Load Flow Player (auto mode — zero config) -->
-  <script type="module"
-          src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
-</head>
-<body>
-  <div class="mermaid">
-  graph LR
-    A[Start] --> B[Process] --> C[End]
-  </div>
-</body>
-</html>
+<mermaid-flow-player controls>
+  flowchart LR
+  A[Start] --> B[Process] --> C[End]
+</mermaid-flow-player>
 ```
 
-The script injects styles automatically. CSS is optional (e.g. for custom styling). That's it — controls appear automatically on every `.mermaid` diagram.
+### Auto mode
+
+Best when you have existing `.mermaid` divs (e.g. on a docs site or blog):
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
+
+<div class="mermaid">
+  flowchart LR
+  A[Start] --> B[Process] --> C[End]
+</div>
+```
+
+`auto.js` waits for the DOM, ensures Mermaid is loaded, renders every `.mermaid` block, then adds controls + narration.
+
+Already loading Mermaid yourself? Either entry point detects `window.mermaid` and uses your version instead of fetching its own.
 
 ### CDN URLs
 
 | File | URL |
 |------|-----|
-| **Auto mode (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js` |
-| **Auto mode (IIFE)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.global.js` |
-| **Auto-init (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js` |
-| **Full library (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js` |
-| **Full library (UMD)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.umd.js` |
-| **CSS (optional)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.css` |
+| **Web Component** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js` |
+| **Auto mode (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js` |
+| **Auto mode (IIFE)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.global.js` |
+| **Auto-init (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js` |
+| **Full library (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js` |
+| **Full library (UMD)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.umd.js` |
+| **CSS (optional)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.css` |
 
-### Pin to a version
+## Live Demos
 
-```html
-<script type="module"
-  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@0.1.0/auto.js"></script>
-```
+### Basic Example
+
+<FlowPlayerElement
+  controls
+  diagram={`graph LR
+  A[Build] --> B[Test] --> C[Deploy]`}
+/>
+
+### Full Controls + Minimap
+
+<FlowPlayerElement
+  controls
+  minimap
+  diagram={`graph LR
+  A[Load] --> B[Process] --> C[Save]
+  B --> D[Validate]`}
+/>
+
+### Dark Theme
+
+<FlowPlayerElement
+  controls
+  theme="dark"
+  diagram={`graph TD
+  A[API] --> B[Check]
+  B --> C[Process]
+  B --> D[Error]
+  C --> E[Response]`}
+/>
+
+### Interactive Mode
+
+<FlowPlayerElement
+  mode="interactive"
+  controls
+  diagram={`graph TD
+  A[Start] --> B[Option1]
+  A --> C[Option2]
+  B --> D[Done]
+  C --> D`}
+/>
+
+### Auto-Play + Speed
+
+<FlowPlayerElement
+  autoplay
+  speed="2"
+  diagram={`graph LR
+  A[Step1] --> B[Step2] --> C[Step3] --> D[Done]`}
+/>
+
+### Sequence Diagram
+
+<FlowPlayerElement
+  controls
+  diagram={`sequenceDiagram
+  participant Client
+  participant Server
+  participant DB
+  Client->>Server: Request
+  Server->>DB: Query
+  DB-->>Server: Result
+  Server-->>Client: Response`}
+/>
+
+### State Diagram
+
+<FlowPlayerElement
+  controls
+  diagram={`stateDiagram-v2
+  Idle --> Loading
+  Loading --> Ready
+  Ready --> Processing
+  Processing --> Ready`}
+/>
 
 ## npm / pnpm / yarn
 
@@ -58,51 +139,11 @@ pnpm add mermaid-flow-player
 yarn add mermaid-flow-player
 ```
 
-## Usage Examples
-
-### Zero-Config (CDN)
-
-Just load the auto mode script — every diagram gets controls:
-
-<LiveExample diagram={`
-graph LR
-  A[Build] --> B[Test] --> C[Deploy]
-`} />
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
-```
-
-### Auto-Init with Options (CDN)
-
-For more control, use `autoInit` directly:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-
-<script type="module">
-  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
-
-  // Wait for Mermaid to finish rendering
-  setTimeout(() => {
-    autoInit({
-      selector: '.mermaid',
-      controls: true,
-      narration: true,
-      debug: false
-    });
-  }, 1000);
-</script>
-```
-
-### Programmatic Control (CDN)
-
-Use the full API for complete control:
+## Programmatic Control (CDN)
 
 ```html
 <script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
   const player = createFlowPlayer({
     root: document.getElementById('my-diagram'),
@@ -115,32 +156,23 @@ Use the full API for complete control:
 </script>
 ```
 
-### With Bundler (npm)
+## Web Component Attributes
 
-```typescript
-import { createFlowPlayer } from 'mermaid-flow-player';
-import 'mermaid-flow-player/css';
-
-const player = createFlowPlayer({
-  root: document.getElementById('diagram')
-});
-
-await player.ready();
-await player.play(player.path('A', 'B', 'C'));
-```
-
-### UMD / Global Script
-
-For non-module environments:
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.umd.js"></script>
-<script>
-  const player = MermaidFlowPlayer.createFlowPlayer({
-    root: document.getElementById('diagram')
-  });
-</script>
-```
+| Attribute | Values | Default | Description |
+|-----------|--------|---------|-------------|
+| `controls` | presence attribute, `none`, or comma-separated tokens like `play-pause,previous,next,speed,all-paths` | all sequential controls / `restart` in interactive mode | Which controls to show |
+| `mode` | `sequential`, `interactive` | `sequential` | Playback mode |
+| `theme` | `light`, `dark`, `auto` | — | Color theme |
+| `speed` | number (0.5-10) | `1.2` | Animation speed |
+| `narration` | `true`, `false` | `true` | Show narration area |
+| `narration-text` | string | — | Initial narration text |
+| `minimap` | — | — | Show minimap |
+| `edge` | `off`, `bestEffort` | `bestEffort` | Edge animation mode |
+| `visited` | `true`, `false` | `true` | Track visited nodes |
+| `autoplay` | — | — | Start playing on load |
+| `debug` | — | — | Enable debug logging |
+| `sync-url` | — | — | Sync state to URL |
+| `auto-center` | — | — | Auto-center on active node |
 
 ## Next Steps
 

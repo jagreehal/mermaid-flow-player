@@ -19,7 +19,7 @@ Animate state machines showing states and transitions. Click any state to naviga
 
 ```html
 <script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
   const player = createFlowPlayer({
     root: document.getElementById('diagram'),
@@ -34,7 +34,7 @@ Animate state machines showing states and transitions. Click any state to naviga
 **Web Component:**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
 
 <mermaid-flow-player mode="interactive" controls theme="light">
 stateDiagram-v2
@@ -94,7 +94,7 @@ stateDiagram-v2
 ## State Builder
 
 ```javascript
-import { StateBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { StateBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const scenario = new StateBuilder()
   .state('Idle', { note: 'Waiting for input' })
@@ -111,7 +111,7 @@ await player.play(scenario);
 
 ```html
 <script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
   const player = createFlowPlayer({
     root: document.getElementById('state-diagram'),

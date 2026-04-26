@@ -1,7 +1,7 @@
 ---
 ---
 
-<div class="cdn-builder">
+<div class="cdn-builder sl-markdown-no-margin">
   <div class="builder-grid">
     <div class="builder-controls">
       <section class="builder-section">
@@ -158,44 +158,53 @@
 
 <style>
   .cdn-builder {
-    border: 1px solid var(--sl-color-gray-5, #e0e0e0);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-    background: var(--sl-color-gray-7, #fafafa);
+    margin: var(--space-lg) 0;
+    padding: 0;
+    font-family: var(--font-body);
+    color: var(--ink-2);
   }
   .builder-grid {
     display: grid;
-    gap: 2rem;
+    gap: var(--space-2xl);
   }
   @media (min-width: 900px) {
     .builder-grid {
       grid-template-columns: 1fr 1fr;
+      gap: var(--space-2xl);
     }
   }
   .builder-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-xl);
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--line-1);
   }
   .builder-section h3 {
-    margin: 0 0 0.75rem 0;
-    font-size: 1rem;
-    color: var(--sl-color-white, #1a1a2e);
+    margin: 0 0 var(--space-md) 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
   }
   .field {
-    margin-bottom: 0.75rem;
+    margin-bottom: var(--space-sm);
   }
   .field.sub {
-    margin-left: 1.25rem;
+    margin-left: var(--space-md);
   }
   .field label {
     display: block;
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
-    color: var(--sl-color-gray-2, #333);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2xs);
+    color: var(--ink-2);
   }
   .field input[type="checkbox"] + label,
   .field label:has(input[type="checkbox"]) {
     display: inline;
+    font-size: var(--text-sm);
+    color: var(--ink-1);
+    margin-left: var(--space-2xs);
   }
   .field input[type="text"],
   .field input[type="number"],
@@ -203,56 +212,90 @@
   .field textarea {
     width: 100%;
     max-width: 100%;
-    padding: 0.4rem 0.5rem;
-    font-size: 0.9rem;
-    border: 1px solid var(--sl-color-gray-5, #ccc);
-    border-radius: 4px;
+    padding: var(--space-xs) var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    border: 1px solid var(--line-1);
+    border-radius: var(--radius-sm);
     box-sizing: border-box;
-    background: var(--sl-color-gray-6, #fff);
-    color: var(--sl-color-white, #1a1a2e);
+    background: var(--surface-1);
+    color: var(--ink-1);
+    transition: border-color 150ms var(--ease-out-quart);
+  }
+  .field input[type="text"]:focus,
+  .field input[type="number"]:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--ink-1);
+    outline: none;
   }
   .field textarea {
-    font-family: ui-monospace, monospace;
-    font-size: 0.85rem;
-    min-height: 200px;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.6;
+    min-height: 220px;
   }
   .preset-buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: var(--space-2xs);
   }
   .preset-buttons button {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
-    border: 1px solid var(--sl-color-accent, #4c78a8);
-    background: var(--sl-color-accent-low, #e7f0ff);
-    color: var(--sl-color-white, #1a1a2e);
-    border-radius: 4px;
+    padding: var(--space-xs) var(--space-sm);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    border: 1px solid var(--line-1);
+    background: transparent;
+    color: var(--ink-2);
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition:
+      border-color 150ms var(--ease-out-quart),
+      background-color 150ms var(--ease-out-quart),
+      color 150ms var(--ease-out-quart);
   }
   .preset-buttons button:hover {
-    background: var(--sl-color-accent, #cce0ff);
+    border-color: var(--ink-1);
+    color: var(--ink-1);
+    background: var(--surface-2);
+  }
+  .preset-buttons button:active {
+    transform: scale(0.98);
   }
   .output-field {
     position: relative;
   }
   .output-field button {
-    margin-top: 0.5rem;
-    padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
-    border: 1px solid var(--sl-color-accent, #1b7f2a);
-    background: var(--sl-color-accent-low, #b7f7c0);
-    color: var(--sl-color-white, #1a1a2e);
-    border-radius: 4px;
+    margin-top: var(--space-xs);
+    padding: var(--space-xs) var(--space-md);
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    border: 1px solid var(--ink-1);
+    background: var(--ink-1);
+    color: var(--surface-0);
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition:
+      background-color 180ms var(--ease-out-quart),
+      border-color 180ms var(--ease-out-quart);
   }
   .output-field button:hover {
-    background: var(--sl-color-accent, #9ae6a3);
+    background: var(--accent-strong);
+    border-color: var(--accent-strong);
+    color: var(--accent-foreground);
+  }
+  .output-field button:active {
+    transform: scale(0.98);
   }
   .copy-feedback {
-    margin-left: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--sl-color-accent, #1b7f2a);
+    margin-left: var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--accent);
   }
 </style>
 

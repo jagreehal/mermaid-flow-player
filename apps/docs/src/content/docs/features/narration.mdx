@@ -7,6 +7,37 @@ import LiveExample from '~/components/LiveExample.astro';
 
 Display narration text that updates automatically as the animation progresses. For spoken narration (text-to-speech) or sound on each step, see [Event Hooks](features/event-hooks).
 
+## Default narration text
+
+When `narration` is enabled but you don't pass `narration-text`, the panel shows a sensible mode-aware placeholder so it never renders blank:
+
+| Mode | Default text |
+|------|--------------|
+| `sequential` | `Press Play to start` |
+| `interactive` | `Click a highlighted node to begin` |
+
+Override with the `narration-text` attribute. Pass an empty string explicitly (`narration-text=""`) to suppress the default. Once the player advances to the first step, per-step `note` values take over as before.
+
+```html
+<!-- Uses the mode-aware default ("Press Play to start") -->
+<mermaid-flow-player controls narration>
+  flowchart LR
+  A[Build] --> B[Test] --> C[Deploy]
+</mermaid-flow-player>
+
+<!-- Custom prompt -->
+<mermaid-flow-player controls narration narration-text="Step through the deploy">
+  flowchart LR
+  A[Build] --> B[Test] --> C[Deploy]
+</mermaid-flow-player>
+
+<!-- Explicitly blank -->
+<mermaid-flow-player controls narration narration-text="">
+  flowchart LR
+  A[Build] --> B[Test] --> C[Deploy]
+</mermaid-flow-player>
+```
+
 ## Basic Narration
 
 <LiveExample diagram={`
@@ -24,7 +55,7 @@ graph LR
 <div id="narration"></div>
 
 <script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
   const player = createFlowPlayer({
     root: document.getElementById('diagram'),
@@ -43,7 +74,7 @@ graph LR
 **Web Component:**
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
 
 <!-- narration is on by default; use narration="false" to disable -->
 <mermaid-flow-player controls narration theme="light">
@@ -58,7 +89,7 @@ The simplest way — autoInit creates a narration element for you:
 
 ```html
 <script type="module">
-  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js';
 
   setTimeout(() => {
     autoInit({

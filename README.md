@@ -1,29 +1,45 @@
 # mermaid-flow-player
 
-Animate Mermaid-rendered diagrams (flowcharts, etc.) with a semantic API: target nodes by ID (e.g. `A`, `B`, `X1`) and play scenarios (steps over time) without depending on Mermaid's internal DOM structure.
+Animate Mermaid-rendered diagrams (flowcharts, sequence, state, gantt, journey, class, ER) with a semantic API: target nodes by ID (e.g. `A`, `B`, `X1`) and play scenarios (steps over time) without depending on Mermaid's internal DOM structure.
 
 Published to [npm](https://www.npmjs.com/package/mermaid-flow-player). Use via **CDN** with no install required, or `npm install mermaid-flow-player`.
 
-## Quick start (CDN)
+## Quick start (one script)
 
-One script: CSS is bundled and injected by the library. Add Mermaid, then the flow player:
+Drop a single script onto a page and any Mermaid diagram becomes a player. Mermaid is auto-loaded from CDN if it isn't already present, styles are injected for you, and controls + narration wire themselves up.
+
+### Web component
 
 ```html
-<!-- 1. Mermaid -->
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
 
-<!-- 2. Flow player (auto mode: zero config, styles injected automatically) -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+<mermaid-flow-player controls>
+  flowchart LR
+  A[Build] --> B[Test] --> C[Deploy]
+</mermaid-flow-player>
 ```
 
-Every `.mermaid` diagram gets play controls automatically. Or use the API with the full library (one script, styles still injected):
+### Auto mode (existing `.mermaid` divs)
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+
+<div class="mermaid">
+  flowchart LR
+  A[Build] --> B[Test] --> C[Deploy]
+</div>
+```
+
+Both paths auto-load Mermaid from CDN if missing — you don't need a separate Mermaid script tag. Already have Mermaid loaded? They detect it and reuse your version.
+
+### Programmatic
 
 ```html
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
 
   const player = createFlowPlayer({
-    root: document.getElementById('diagram')
+    root: document.getElementById('diagram'),
   });
 
   await player.ready();
@@ -55,13 +71,32 @@ Use stable, simple node IDs in your Mermaid diagram (e.g. `A`, `B`, `X1`) so `pa
 ## Features
 
 ### Multi-Diagram Support
+
 Auto-detects and animates **7 diagram types**:
+
 - Flowcharts, Sequence Diagrams, State Diagrams, Gantt Charts, User Journey, Class Diagrams, ER Diagrams
 
 All diagram types use the same animation API; just change your Mermaid diagram type and the player adapts automatically.
 
 ### Narration
-Automatically update narration text as animation progresses:
+
+Display narration text that updates automatically as the animation progresses.
+
+```html
+<mermaid-flow-player controls narration>
+  flowchart LR
+  A[Build] --> B[Test] --> C[Deploy]
+</mermaid-flow-player>
+```
+
+When `narration` is enabled but `narration-text` isn't provided, the panel shows a sensible default until the first step:
+
+- Sequential mode: `Press Play to start`
+- Interactive mode: `Click a highlighted node to begin`
+
+Override with the `narration-text` attribute, or pass an empty string (`narration-text=""`) to suppress the default.
+
+For programmatic control, pass per-step `note` strings:
 
 ```ts
 createFlowPlayer({
@@ -76,6 +111,7 @@ await player.play([
 ```
 
 ### Animation Easing
+
 Control animation timing with **30+ easing functions**: standard CSS, back, elastic, bounce, power curves, and custom `cubic-bezier()`.
 
 ```ts
@@ -92,6 +128,7 @@ createFlowPlayer({
 ```
 
 ### Enhanced Edge Animation
+
 **Multi-strategy edge detection** with automatic fallback:
 
 ```ts
@@ -106,6 +143,7 @@ createFlowPlayer({
 ```
 
 ### Scenario Builder API
+
 Build complex animations with a **fluent, chainable API**:
 
 ```ts
@@ -122,6 +160,7 @@ await createScenarioBuilder()
 Features: chainable methods, diagram-specific builders (flowchart, sequence, state), `repeat()`, `conditional()`, template registry.
 
 ### Plugin System
+
 Extend functionality with lifecycle hooks:
 
 ```ts
@@ -136,18 +175,8 @@ const player = createFlowPlayer({
 
 **Built-in plugins:** AnalyticsPlugin (event tracking), KeyboardControlsPlugin (Space/R/Arrow keys).
 
-### Web Component
-Drop-in `<mermaid-flow-player>` custom element. Diagram from inner text (or `diagram` attribute):
-
-```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
-
-<mermaid-flow-player autoplay controls>
-  graph LR; A-->B-->C
-</mermaid-flow-player>
-```
-
 ### Interactive Mode
+
 Step-through with user-controlled path selection:
 
 ```ts
@@ -156,7 +185,18 @@ await player.nextStep();
 ```
 
 ### Auto Modes
-Zero-config usage:
+
+Beyond full-auto (`auto.js`), there are smaller entry points for specific patterns:
+
+| Entry | What it does |
+|-------|--------------|
+| `auto.js` | Loads Mermaid + renders + adds controls + narration to every `.mermaid` (one script) |
+| `auto-init.js` | Adds controls + narration to existing rendered diagrams (assumes Mermaid already loaded) |
+| `auto-enhance.js` | Reads `data-flow-*` attributes to build scenarios |
+| `auto-play.js` | Autoplays diagrams on load / scroll-into-view / click |
+| `mermaid-flow-player.element.js` | The web component (also auto-loads Mermaid) |
+
+Programmatic equivalent:
 
 ```ts
 import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js';
@@ -164,6 +204,7 @@ autoInit({ controls: true, narration: true });
 ```
 
 ### URL Query Parameter Configuration
+
 Configure via URL without JavaScript: `page.html?theme=dark&speed=1.5&dim=none`
 
 | Parameter | Values | Default |
@@ -177,6 +218,10 @@ Configure via URL without JavaScript: `page.html?theme=dark&speed=1.5&dim=none`
 | `selector` | CSS selector (e.g. `.my-diagram`) | `.mermaid` (auto modes only) |
 | `debug` | (presence) | `false` |
 | `autoplay` | (presence) | `false` |
+
+## Documentation
+
+Full documentation, live examples, CDN URL builder, and API reference: [jagreehal.github.io/mermaid-flow-player](https://jagreehal.github.io/mermaid-flow-player).
 
 ## License
 

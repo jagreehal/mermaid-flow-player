@@ -33,21 +33,31 @@ export default defineConfig({
         // Mermaid CDN
         {
           tag: 'script',
-          attrs: { src: 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js' },
+          attrs: {
+            src: 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js',
+            defer: true,
+          },
         },
-        // Mermaid initialization
+        // Flow Player web component
         {
           tag: 'script',
-          content: 'mermaid.initialize({ startOnLoad: true, theme: "default" });',
+          attrs: {
+            src: 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js',
+            defer: true,
+          },
         },
-        // Flow Player autoInit (injects styles automatically). Base from PUBLIC_FLOW_PLAYER_BASE.
+        // Flow Player autoInit for .mermaid elements
         {
           tag: 'script',
           attrs: { type: 'module' },
           content: `
             import { autoInit } from '${flowPlayerBase}/auto-init.js';
             document.addEventListener('DOMContentLoaded', () => {
-              setTimeout(() => { autoInit(); }, 1000);
+              setTimeout(() => {
+                autoInit({
+                  selector: '.sl-markdown-content > .mermaid, .sl-markdown-content > pre.mermaid, .live-example > .mermaid, .live-example > pre.mermaid',
+                });
+              }, 1000);
             });
           `,
         },
@@ -59,6 +69,7 @@ export default defineConfig({
           label: 'Features',
           items: [
             { label: 'Overview', slug: 'features' },
+            { label: 'Showcase', slug: 'features/showcase' },
             { label: 'Auto Modes', slug: 'features/auto-modes' },
             { label: 'Animations & Easing', slug: 'features/animations' },
             { label: 'Edge Detection', slug: 'features/edge-detection' },

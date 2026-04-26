@@ -1,0 +1,20 @@
+---
+type Props = {
+  diagram: string;
+  [key: string]: unknown;
+};
+
+const { diagram, ...attrs } = Astro.props as Props;
+const normalizedAttrs = Object.fromEntries(
+  Object.entries(attrs).flatMap(([key, value]) => {
+    if (value === false || value == null) return [];
+    if (value === true) return [[key, '']];
+    return [[key, value]];
+  }),
+);
+---
+
+<div class="sl-markdown-no-margin">
+  <mermaid-flow-player {...normalizedAttrs} diagram={diagram}>
+  </mermaid-flow-player>
+</div>

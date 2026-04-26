@@ -1,85 +1,264 @@
-/* shadcn/ui tokens driven by Starlight Theme Next tokens */
+/* =====================================================================
+   Mermaid Flow Player — design tokens
+   Editorial-architectural with diagrammatic accents.
+   - OKLCH only; neutrals tinted toward brand hue for cohesion.
+   - 4pt spacing scale, semantic names.
+   - Modular type scale (1.25 ratio), fluid display sizes.
+   - Light + dark themes both first-class.
+   ===================================================================== */
 
-/* Default (Theme Next's "dark" baseline) */
 :root {
-  --radius: 0.65rem;
+  /* ---- Brand hue (indigo, coordinates with the player's Play button) ---- */
+  --brand-h: 268;
+  --brand-c: 0.18;
 
-  --background: var(--sl-color-black);
-  --foreground: var(--sl-color-white);
+  /* Accent ramp (mostly the same across themes; theme-specific tweaks below) */
+  --accent:           oklch(0.55 var(--brand-c) var(--brand-h));
+  --accent-strong:    oklch(0.48 0.20 var(--brand-h));
+  --accent-soft:      oklch(0.94 0.04 var(--brand-h));
+  --accent-foreground: oklch(0.99 0.005 var(--brand-h));
 
-  --card: var(--sl-color-gray-6);
-  --card-foreground: var(--sl-color-white);
+  /* ---- Spacing scale (4pt) ---- */
+  --space-2xs: 0.25rem;   /* 4  */
+  --space-xs:  0.5rem;    /* 8  */
+  --space-sm:  0.75rem;   /* 12 */
+  --space-md:  1rem;      /* 16 */
+  --space-lg:  1.5rem;    /* 24 */
+  --space-xl:  2rem;      /* 32 */
+  --space-2xl: 3rem;      /* 48 */
+  --space-3xl: 4rem;      /* 64 */
+  --space-4xl: 6rem;      /* 96 */
 
-  --popover: var(--sl-color-gray-6);
-  --popover-foreground: var(--sl-color-white);
+  /* ---- Type scale (modular, 1.25; display uses fluid clamps) ---- */
+  --text-xs:   0.78rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.125rem;
+  --text-lg:   1.375rem;
+  --text-xl:   1.75rem;
+  --text-2xl:  2.25rem;
+  --text-display-sm: clamp(2rem, 3vw + 1rem, 3rem);
+  --text-display:    clamp(2.5rem, 5vw + 1rem, 4.75rem);
+  --text-display-lg: clamp(3rem, 7vw + 1rem, 6rem);
 
-  --primary: var(--sl-color-accent);
-  --primary-foreground: var(--sl-color-white);
+  /* ---- Tracking ---- */
+  --tracking-tight: -0.025em;
+  --tracking-snug:  -0.015em;
+  --tracking-wide:   0.14em;
 
-  --secondary: var(--sl-color-gray-6);
-  --secondary-foreground: var(--sl-color-white);
+  /* ---- Radii (more restrained than before) ---- */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius:    var(--radius-md);
 
-  --muted: var(--sl-color-gray-6);
-  --muted-foreground: var(--sl-color-gray-2);
+  /* ---- Type stacks ----
+     Match wrangler-deploy docs: system stack for body & display,
+     JetBrains Mono for code/labels. Distinctive without bringing in
+     a marketing font that fights the OS chrome. */
+  --font-system: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                 'Helvetica Neue', Arial, 'Noto Sans', sans-serif,
+                 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-display: var(--font-system);
+  --font-body:    var(--font-system);
+  --font-mono:    'JetBrains Mono', 'SF Mono', 'Fira Code',
+                  ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --accent: var(--sl-color-accent-low);
-  --accent-foreground: var(--sl-color-white);
-
-  --destructive: #ef4444;
-
-  --border: var(--sl-color-gray-5);
-  --input: var(--sl-color-gray-5);
-  --ring: var(--sl-color-accent-high);
-
-  --sidebar: var(--sl-color-bg-sidebar);
-  --sidebar-foreground: var(--sl-color-white);
-  --sidebar-primary: var(--sl-color-accent);
-  --sidebar-primary-foreground: var(--sl-color-white);
-  --sidebar-accent: var(--sl-color-gray-6);
-  --sidebar-accent-foreground: var(--sl-color-white);
-  --sidebar-border: var(--sl-color-gray-5);
-  --sidebar-ring: var(--sl-color-accent-high);
-
-  --chart-1: var(--sl-color-accent);
-  --chart-2: var(--sl-color-gray-4);
-  --chart-3: var(--sl-color-gray-3);
-  --chart-4: var(--sl-color-gray-5);
-  --chart-5: var(--sl-color-accent-low);
+  /* ---- Motion ---- */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Light mode overrides (Starlight sets data-theme="light") */
+/* =====================================================================
+   DARK THEME (default for Starlight Theme Next)
+   Deep ink-navy surfaces, warm cream text, low-chroma neutrals
+   tinted ever so slightly toward the brand hue.
+   ===================================================================== */
+:root,
+:root[data-theme="dark"] {
+  /* Surface ramp — bg, surface (raised), surface-2 (sunken-ish), well */
+  --surface-0: oklch(0.16 0.012 var(--brand-h));   /* page bg */
+  --surface-1: oklch(0.20 0.012 var(--brand-h));   /* sidebar / subtle panels */
+  --surface-2: oklch(0.235 0.013 var(--brand-h));  /* cards, inline code bg */
+  --surface-3: oklch(0.27 0.014 var(--brand-h));   /* hover */
+
+  /* Text ramp */
+  --ink-1: oklch(0.97 0.01 var(--brand-h));   /* headings, primary text */
+  --ink-2: oklch(0.85 0.01 var(--brand-h));   /* body */
+  --ink-3: oklch(0.66 0.01 var(--brand-h));   /* muted */
+  --ink-4: oklch(0.50 0.01 var(--brand-h));   /* very muted, captions */
+
+  /* Lines */
+  --line-1: oklch(0.30 0.012 var(--brand-h) / 0.7); /* hairline */
+  --line-2: oklch(0.40 0.014 var(--brand-h) / 0.6); /* stronger rule */
+
+  /* Light text on dark wants slightly more leading */
+  --leading-add: 0.05;
+
+  /* Theme-tuned accent (reads as "lit" against deep ink) */
+  --accent:        oklch(0.70 0.16 var(--brand-h));
+  --accent-strong: oklch(0.62 0.18 var(--brand-h));
+  --accent-soft:   oklch(0.30 0.08 var(--brand-h));
+  --accent-foreground: oklch(0.16 0.008 var(--brand-h));
+
+  /* ---- Map to Starlight Theme Next CSS variables ---- */
+  --sl-color-bg:           var(--surface-0);
+  --sl-color-bg-nav:       var(--surface-0);
+  --sl-color-bg-sidebar:   var(--surface-0);
+  --sl-color-bg-inline-code: var(--surface-2);
+  --sl-color-bg-accent:    var(--accent);
+
+  --sl-color-text:         var(--ink-2);
+  --sl-color-text-accent:  var(--accent);
+  --sl-color-text-invert:  var(--surface-0);
+  --sl-color-white:        var(--ink-1);
+  --sl-color-gray-1:       var(--ink-1);
+  --sl-color-gray-2:       var(--ink-2);
+  --sl-color-gray-3:       var(--ink-3);
+  --sl-color-gray-4:       var(--ink-4);
+  --sl-color-gray-5:       var(--line-1);
+  --sl-color-gray-6:       var(--surface-2);
+  --sl-color-gray-7:       var(--surface-1);
+  --sl-color-black:        var(--surface-0);
+
+  --sl-color-hairline:           var(--line-1);
+  --sl-color-hairline-light:     var(--line-1);
+  --sl-color-hairline-shade:     var(--line-2);
+
+  --sl-color-accent:        var(--accent);
+  --sl-color-accent-low:    var(--accent-soft);
+  --sl-color-accent-high:   var(--accent-strong);
+
+  /* shadcn-ish pass-through (kept for any consumers) */
+  --background: var(--surface-0);
+  --foreground: var(--ink-1);
+  --card: var(--surface-1);
+  --card-foreground: var(--ink-1);
+  --popover: var(--surface-2);
+  --popover-foreground: var(--ink-1);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-foreground);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--ink-1);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--ink-3);
+  --accent-bg: var(--accent-soft);
+  --accent-fg: var(--accent);
+  --destructive: oklch(0.65 0.20 25);
+  --border: var(--line-1);
+  --input: var(--line-1);
+  --ring: var(--accent);
+
+  --sidebar: var(--surface-0);
+  --sidebar-foreground: var(--ink-2);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--accent-foreground);
+  --sidebar-accent: var(--surface-2);
+  --sidebar-accent-foreground: var(--ink-1);
+  --sidebar-border: var(--line-1);
+  --sidebar-ring: var(--accent);
+
+  --chart-1: var(--accent);
+  --chart-2: var(--ink-3);
+  --chart-3: var(--ink-4);
+  --chart-4: var(--line-2);
+  --chart-5: var(--accent-soft);
+
+  color-scheme: dark;
+}
+
+/* =====================================================================
+   LIGHT THEME — first-class, equally polished.
+   Warm bone surfaces, deep ink text. Same accent, retuned chroma.
+   ===================================================================== */
 :root[data-theme="light"] {
-  --background: var(--sl-color-black);
-  --foreground: var(--sl-color-white);
+  --surface-0: oklch(0.985 0.004 var(--brand-h));  /* page bg — warm bone */
+  --surface-1: oklch(0.965 0.005 var(--brand-h));  /* sidebar */
+  --surface-2: oklch(0.945 0.006 var(--brand-h));  /* cards, inline code */
+  --surface-3: oklch(0.92  0.007 var(--brand-h));  /* hover */
 
-  --card: var(--sl-color-gray-7);
-  --card-foreground: var(--sl-color-white);
+  --ink-1: oklch(0.18 0.014 var(--brand-h));
+  --ink-2: oklch(0.30 0.012 var(--brand-h));
+  --ink-3: oklch(0.46 0.010 var(--brand-h));
+  --ink-4: oklch(0.60 0.008 var(--brand-h));
 
-  --popover: var(--sl-color-gray-7);
-  --popover-foreground: var(--sl-color-white);
+  --line-1: oklch(0.84 0.008 var(--brand-h));
+  --line-2: oklch(0.74 0.010 var(--brand-h));
 
-  --primary: var(--sl-color-accent);
-  --primary-foreground: var(--sl-color-black);
+  --leading-add: 0;
 
-  --secondary: var(--sl-color-gray-6);
-  --secondary-foreground: var(--sl-color-white);
+  --accent:        oklch(0.52 0.20 var(--brand-h));
+  --accent-strong: oklch(0.44 0.22 var(--brand-h));
+  --accent-soft:   oklch(0.95 0.04 var(--brand-h));
+  --accent-foreground: oklch(0.99 0.005 var(--brand-h));
 
-  --muted: var(--sl-color-gray-6);
-  --muted-foreground: var(--sl-color-gray-3);
+  --sl-color-bg:           var(--surface-0);
+  --sl-color-bg-nav:       var(--surface-0);
+  --sl-color-bg-sidebar:   var(--surface-0);
+  --sl-color-bg-inline-code: var(--surface-2);
+  --sl-color-bg-accent:    var(--accent);
 
-  --accent: var(--sl-color-accent-low);
-  --accent-foreground: var(--sl-color-accent-high);
+  --sl-color-text:         var(--ink-2);
+  --sl-color-text-accent:  var(--accent-strong);
+  --sl-color-text-invert:  var(--surface-0);
+  --sl-color-white:        var(--ink-1);  /* "white" in Starlight = primary text */
+  --sl-color-gray-1:       var(--ink-1);
+  --sl-color-gray-2:       var(--ink-2);
+  --sl-color-gray-3:       var(--ink-3);
+  --sl-color-gray-4:       var(--ink-4);
+  --sl-color-gray-5:       var(--line-1);
+  --sl-color-gray-6:       var(--surface-2);
+  --sl-color-gray-7:       var(--surface-1);
+  --sl-color-black:        var(--surface-0);
 
-  --border: var(--sl-color-gray-5);
-  --input: var(--sl-color-gray-5);
-  --ring: var(--sl-color-accent);
+  --sl-color-hairline:       var(--line-1);
+  --sl-color-hairline-light: var(--line-1);
+  --sl-color-hairline-shade: var(--line-2);
 
-  --sidebar: var(--sl-color-black);
-  --sidebar-foreground: var(--sl-color-white);
+  --sl-color-accent:      var(--accent);
+  --sl-color-accent-low:  var(--accent-soft);
+  --sl-color-accent-high: var(--accent-strong);
 
-  --chart-1: var(--sl-color-accent);
-  --chart-2: var(--sl-color-gray-4);
-  --chart-3: var(--sl-color-gray-3);
-  --chart-4: var(--sl-color-gray-5);
-  --chart-5: var(--sl-color-accent-low);
+  --background: var(--surface-0);
+  --foreground: var(--ink-1);
+  --card: var(--surface-1);
+  --card-foreground: var(--ink-1);
+  --popover: var(--surface-1);
+  --popover-foreground: var(--ink-1);
+  --primary: var(--accent);
+  --primary-foreground: var(--accent-foreground);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--ink-1);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--ink-3);
+  --accent-bg: var(--accent-soft);
+  --accent-fg: var(--accent-strong);
+  --destructive: oklch(0.55 0.22 25);
+  --border: var(--line-1);
+  --input: var(--line-1);
+  --ring: var(--accent);
+
+  --sidebar: var(--surface-0);
+  --sidebar-foreground: var(--ink-2);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--accent-foreground);
+  --sidebar-accent: var(--surface-2);
+  --sidebar-accent-foreground: var(--ink-1);
+  --sidebar-border: var(--line-1);
+  --sidebar-ring: var(--accent);
+
+  --chart-1: var(--accent);
+  --chart-2: var(--ink-3);
+  --chart-3: var(--ink-4);
+  --chart-4: var(--line-2);
+  --chart-5: var(--accent-soft);
+
+  color-scheme: light;
+}
+
+/* Markdown spacing helper used by Starlight (kept) */
+.sl-markdown-no-margin :not(a, strong, em, del, span, input, code, br)
+  + :not(a, strong, em, del, span, input, code, br, :where(.not-content *)) {
+  margin-top: 0;
 }

@@ -14,11 +14,9 @@ Complete reference for Mermaid Flow Player API.
     createScenarioBuilder,
     createRegistry,
     createEdgeDetector,
-  } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 </script>
 ```
-
-## createFlowPlayer(options)
 
 Creates a new flow player instance.
 
@@ -51,7 +49,7 @@ interface FlowPlayerOptions {
 
 ```html
 <script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
   const player = createFlowPlayer({
     root: document.getElementById('diagram'),
@@ -236,7 +234,7 @@ const current = player.getCurrentNode();
 Full auto mode — zero config.
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
 ```
 
 ### autoInit(options?)
@@ -245,7 +243,7 @@ Add controls and narration.
 
 ```html
 <script type="module">
-  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-init.js';
+  import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js';
   setTimeout(() => autoInit({ controls: true, narration: true }), 1000);
 </script>
 ```
@@ -256,7 +254,7 @@ Auto-play with triggers.
 
 ```html
 <script type="module">
-  import { autoPlay } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-play.js';
+  import { autoPlay } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-play.js';
   autoPlay({ trigger: 'scroll', speed: 1.5 });
 </script>
 ```
@@ -267,7 +265,7 @@ Enhance diagrams with data attributes only.
 
 ```html
 <script type="module">
-  import { autoEnhance } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto-enhance.js';
+  import { autoEnhance } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-enhance.js';
   autoEnhance();
 </script>
 ```
@@ -279,7 +277,7 @@ Enhance diagrams with data attributes only.
 Create a builder for any diagram type:
 
 ```javascript
-import { createScenarioBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { createScenarioBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const builder = createScenarioBuilder('flowchart');
 const scenario = builder
@@ -324,7 +322,7 @@ state.state('Idle').transition('Idle', 'Active').state('Active');
 ## Scenario Registry
 
 ```javascript
-import { createRegistry } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { createRegistry } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const registry = createRegistry();
 
@@ -346,7 +344,7 @@ await player.play(scenario);
 ## Plugin System
 
 ```javascript
-import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
 const myPlugin = {
   name: 'my-plugin',

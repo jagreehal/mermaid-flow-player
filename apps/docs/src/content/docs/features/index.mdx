@@ -2,20 +2,14 @@
 title: Features
 ---
 
-import LiveExample from '~/components/LiveExample.astro';
+import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
 
 Mermaid Flow Player provides a rich set of features for animating diagrams.
 
-<LiveExample diagram={`
-graph LR
-  A[Auto Modes] --> B[Animations]
-  B --> C[Edge Detection]
-  C --> D[Themes]
-  D --> E[Plugins]
-`} />
-
 ## Core Features
 
+- **[Web Component](installation)** — `<mermaid-flow-player>` with declarative attributes
+- **[Kitchen Sink Showcase](features/showcase)** — Full feature gallery with copy-paste examples
 - **[Auto Modes](features/auto-modes)** — Zero-config usage with 4 progressive enhancement layers
 - **[Animations & Easing](features/animations)** — 30+ easing functions for professional timing
 - **[Edge Detection](features/edge-detection)** — Multi-strategy edge animation system
@@ -34,5 +28,38 @@ graph LR
 
 ## Diagram Types
 
-All features work with [7 diagram types](diagram-types/flowcharts):
-Flowcharts, Sequence, State, Gantt, Journey, Class, and ER diagrams.
+All features work with 7 diagram types:
+[Flowcharts](diagram-types/flowcharts), [Sequence](diagram-types/sequence), [State](diagram-types/state), [Gantt](diagram-types/gantt), [Journey](diagram-types/journey), [Class](diagram-types/class), and [ER](diagram-types/er) diagrams.
+
+## Live Demos
+
+### Full Controls with Minimap
+
+<FlowPlayerElement
+  controls
+  minimap
+  diagram={`graph LR
+  A --> B --> C --> D`}
+/>
+
+### Interactive Mode
+
+<FlowPlayerElement
+  mode="interactive"
+  diagram={`graph TD
+  Start --> A
+  Start --> B
+  A --> End
+  B --> End`}
+/>
+
+### Dark Theme
+
+<FlowPlayerElement
+  controls
+  theme="dark"
+  diagram={`graph LR
+  A --> B --> C`}
+/>
+
+For the full kitchen-sink reference, see [Kitchen Sink Showcase](features/showcase).

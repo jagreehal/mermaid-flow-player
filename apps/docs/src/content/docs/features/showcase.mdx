@@ -1,0 +1,490 @@
+---
+title: Kitchen Sink Showcase
+description: Feature-by-feature reference with live demos and copy-paste examples
+---
+
+import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
+import { BRANCH, FLOW, THEME, TTS_FLOW } from './showcase-diagrams';
+
+This page mirrors the feature showcase from `packages/mermaid-flow-player/index.html`, but adds the code you need to recreate each example in your own app.
+
+## 1. Default
+
+The default web component shows playback controls and keeps narration hidden until you opt in.
+
+<FlowPlayerElement controls diagram={FLOW} />
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+```
+
+## 2. Controls Presets
+
+Use `controls` to switch between the built-in presets.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3><code>controls="none"</code></h3>
+    <FlowPlayerElement controls="none" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>controls="playback"</code></h3>
+    <FlowPlayerElement controls="playback" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>controls="viewer"</code></h3>
+    <FlowPlayerElement controls="viewer" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>controls="full"</code></h3>
+    <FlowPlayerElement controls="full" diagram={FLOW} />
+  </div>
+</div>
+
+```html
+<mermaid-flow-player controls="none">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player controls="playback">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player controls="viewer">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player controls="full">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+```
+
+## 3. Narration
+
+Add `narration` to show step text, then optionally set `narration-text` for the initial copy.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3><code>narration</code></h3>
+    <FlowPlayerElement narration diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>narration narration-text="..."</code></h3>
+    <FlowPlayerElement narration narration-text="Follow the decision path" diagram={FLOW} />
+  </div>
+</div>
+
+```html
+<mermaid-flow-player narration>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player narration narration-text="Follow the decision path">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+```
+
+## 4. Mode
+
+Sequential mode plays through the flow in order. Interactive mode lets users choose the next path.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3><code>mode="sequential"</code></h3>
+    <FlowPlayerElement mode="sequential" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>mode="interactive"</code></h3>
+    <FlowPlayerElement mode="interactive" diagram={BRANCH} />
+  </div>
+</div>
+
+```html
+<mermaid-flow-player mode="sequential">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player mode="interactive">
+flowchart TD
+  Start --> Choice
+  Choice --> PathA[Path A]
+  Choice --> PathB[Path B]
+  PathA --> End
+  PathB --> End
+</mermaid-flow-player>
+```
+
+## 5. Theme
+
+Use the `theme` attribute to match the diagram to light, dark, or system settings.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3><code>theme="light"</code></h3>
+    <FlowPlayerElement controls theme="light" diagram={THEME} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>theme="dark"</code></h3>
+    <FlowPlayerElement controls theme="dark" diagram={THEME} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>theme="auto"</code></h3>
+    <FlowPlayerElement controls theme="auto" diagram={THEME} />
+  </div>
+</div>
+
+```html
+<mermaid-flow-player controls theme="light">
+flowchart LR
+  A[Start] --> B[Transform]
+  B --> C{Valid?}
+  C -->|Yes| D[Accept]
+  C -->|No| E[Reject]
+</mermaid-flow-player>
+
+<mermaid-flow-player controls theme="dark">
+flowchart LR
+  A[Start] --> B[Transform]
+  B --> C{Valid?}
+  C -->|Yes| D[Accept]
+  C -->|No| E[Reject]
+</mermaid-flow-player>
+
+<mermaid-flow-player controls theme="auto">
+flowchart LR
+  A[Start] --> B[Transform]
+  B --> C{Valid?}
+  C -->|Yes| D[Accept]
+  C -->|No| E[Reject]
+</mermaid-flow-player>
+```
+
+## 6. Minimap
+
+Enable the minimap with a single boolean attribute.
+
+<FlowPlayerElement minimap diagram={FLOW} />
+
+```html
+<mermaid-flow-player minimap>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+```
+
+## 7. Other Options
+
+These are the extra flags shown in the demo.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3><code>speed="2"</code></h3>
+    <FlowPlayerElement speed="2" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>visited="false"</code></h3>
+    <FlowPlayerElement visited="false" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>edge="off"</code></h3>
+    <FlowPlayerElement edge="off" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>autoplay</code></h3>
+    <FlowPlayerElement autoplay diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>debug</code></h3>
+    <FlowPlayerElement debug diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>auto-center</code></h3>
+    <FlowPlayerElement auto-center diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3><code>sync-url</code></h3>
+    <FlowPlayerElement sync-url diagram={FLOW} />
+  </div>
+</div>
+
+```html
+<mermaid-flow-player speed="2">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player visited="false">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player edge="off">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player autoplay>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player debug>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player auto-center>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player sync-url>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+```
+
+## 8. Key Combinations
+
+These combinations match the kitchen-sink demo and are useful as starting points.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3>Minimal</h3>
+    <FlowPlayerElement controls="none" narration="false" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3>Full dark with minimap</h3>
+    <FlowPlayerElement controls="full" minimap theme="dark" diagram={FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3>Interactive viewer</h3>
+    <FlowPlayerElement mode="interactive" controls="viewer" diagram={BRANCH} />
+  </div>
+  <div class="showcase-card">
+    <h3>Custom controls</h3>
+    <FlowPlayerElement controls="play-pause,next,restart,fit" diagram={FLOW} />
+  </div>
+</div>
+
+```html
+<mermaid-flow-player controls="none" narration="false">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player controls="full" minimap theme="dark">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player mode="interactive" controls="viewer">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+
+<mermaid-flow-player controls="play-pause,next,restart,fit">
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+```
+
+## 9. Mermaid Diagram Themes
+
+Mermaid theme directives belong inside the diagram text, not on the player element.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3>Default</h3>
+    <FlowPlayerElement controls diagram={THEME} />
+  </div>
+  <div class="showcase-card">
+    <h3>Dark</h3>
+    <FlowPlayerElement controls theme="dark" diagram={THEME} />
+  </div>
+  <div class="showcase-card">
+    <h3>Forest</h3>
+    <FlowPlayerElement controls diagram={THEME} />
+  </div>
+  <div class="showcase-card">
+    <h3>Neutral</h3>
+    <FlowPlayerElement controls diagram={THEME} />
+  </div>
+</div>
+
+```html
+<mermaid-flow-player>
+%%{init: {'theme': 'dark'}}%%
+flowchart LR
+  A[Start] --> B[Transform]
+  B --> C{Valid?}
+  C -->|Yes| D[Accept]
+  C -->|No| E[Reject]
+</mermaid-flow-player>
+
+<mermaid-flow-player>
+%%{init: {'theme': 'forest'}}%%
+flowchart LR
+  A[Start] --> B[Transform]
+  B --> C{Valid?}
+  C -->|Yes| D[Accept]
+  C -->|No| E[Reject]
+</mermaid-flow-player>
+
+<mermaid-flow-player>
+%%{init: {'theme': 'neutral'}}%%
+flowchart LR
+  A[Start] --> B[Transform]
+  B --> C{Valid?}
+  C -->|Yes| D[Accept]
+  C -->|No| E[Reject]
+</mermaid-flow-player>
+
+<mermaid-flow-player>
+%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#fde68a', 'primaryTextColor': '#92400e', 'primaryBorderColor': '#d97706', 'lineColor': '#b45309', 'secondaryColor': '#fef3c7', 'tertiaryColor': '#fffbeb'}}}%%
+flowchart LR
+  A[Start] --> B[Transform]
+  B --> C{Valid?}
+  C -->|Yes| D[Accept]
+  C -->|No| E[Reject]
+</mermaid-flow-player>
+```
+
+## 10. Events and Text-to-Speech
+
+The kitchen-sink demo uses `mfp:step` for spoken narration. The same pattern works with the API hooks or the web component events.
+
+<div class="showcase-grid sl-markdown-no-margin">
+  <div class="showcase-card">
+    <h3>Sequential TTS</h3>
+    <FlowPlayerElement id="showcase-tts-sequential" narration narration-text="Press Play to hear the flow narrated" speed="0.5" diagram={TTS_FLOW} />
+  </div>
+  <div class="showcase-card">
+    <h3>Interactive TTS</h3>
+    <FlowPlayerElement id="showcase-tts-interactive" mode="interactive" narration narration-text="Click a dashed node to advance" diagram={TTS_FLOW} />
+  </div>
+</div>
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player id="tts-player" controls narration>
+flowchart TD
+  A[Request] --> B[Auth]
+  B --> C{OK?}
+  C -->|yes| D[Process]
+  C -->|no| E[Reject]
+  D --> F[Confirm]
+</mermaid-flow-player>
+
+<script>
+  const player = document.getElementById('tts-player');
+
+  player.addEventListener('mfp:step', (event) => {
+    const { step, narration } = event.detail;
+    const text = narration || step.id;
+    if (!text || !('speechSynthesis' in window)) return;
+
+    speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.1;
+    speechSynthesis.speak(utterance);
+  });
+</script>
+```
+
+```javascript
+import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
+
+const player = createFlowPlayer({
+  root: document.getElementById('diagram'),
+  hooks: {
+    onStepStart(step, note) {
+      if (!('speechSynthesis' in window)) return;
+      const text = note || step.id;
+      if (!text) return;
+
+      speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 1.1;
+      speechSynthesis.speak(utterance);
+    },
+  },
+});
+```
+
+## Next Step
+
+If you want, the same patterns can be split into separate pages for controls, themes, narration, and events. This page keeps the full kitchen-sink view in one place.

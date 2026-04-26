@@ -3,29 +3,60 @@ interface Props {
   diagram: string;
   width?: string;
   height?: string;
+  label?: string;
 }
 
-const { diagram, width = '100%', height = 'auto' } = Astro.props;
+const { diagram, width = '100%', height = 'auto', label = 'live example' } = Astro.props;
 ---
 
-<div class="live-example">
-  <div class="mermaid" style={`width: ${width}; height: ${height};`}>
-    {diagram}
+<figure class="live-example">
+  <figcaption class="live-example__meta">
+    <span class="live-example__coord">live</span>
+    <span class="live-example__label">{label}</span>
+  </figcaption>
+  <div class="live-example__stage">
+    <div class="mermaid" style={`width: ${width}; height: ${height};`}>
+      {diagram}
+    </div>
   </div>
-</div>
+</figure>
 
 <style>
   .live-example {
-    border: 1px solid var(--sl-color-gray-5, #e0e0e0);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-    background: var(--sl-color-gray-7, #fafafa);
+    margin: var(--space-lg) 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-sm);
   }
 
-  .live-example .mermaid {
-    background: var(--sl-color-gray-7, white);
-    padding: 1rem;
-    border-radius: 4px;
+  .live-example__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .live-example__coord {
+    color: var(--ink-1);
+    font-weight: 600;
+  }
+
+  .live-example__label {
+    color: var(--ink-3);
+  }
+
+  .live-example__stage {
+    border: 1px solid var(--line-1);
+    border-radius: var(--radius-md);
+    background: var(--surface-1);
+    padding: var(--space-md);
+  }
+
+  .live-example__stage .mermaid {
+    background: transparent;
   }
 </style>

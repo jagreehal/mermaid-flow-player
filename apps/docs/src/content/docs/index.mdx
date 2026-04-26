@@ -3,84 +3,512 @@ title: Mermaid Flow Player
 description: Animate Mermaid diagrams with a semantic API
 template: splash
 hero:
-  title: Mermaid Flow Player
-  tagline: Animate Mermaid-rendered diagrams with a semantic API. Target nodes by stable IDs and play animation scenarios — no Mermaid internals required.
-  actions:
-    - text: Get Started
-      link: installation
-      icon: right-arrow
-      variant: primary
-    - text: View on GitHub
-      link: https://github.com/jagreehal/mermaid-flow-player
-      icon: external
-      variant: minimal
+  title: ' '
+  tagline: ' '
 ---
 
-import LiveExample from '~/components/LiveExample.astro';
+import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
 
-## See It in Action
+<div class="home">
+  <header class="home__hero">
+    <p class="home__eyebrow">
+      <span class="home__eyebrow-dot" aria-hidden="true"></span>
+      <span>Mermaid Flow Player</span>
+      <span class="home__eyebrow-sep" aria-hidden="true">·</span>
+      <span>v0.1</span>
+    </p>
 
-<LiveExample diagram={`
-graph LR
-  A[Build] --> B[Test]
-  B --> C{Pass?}
-  C -->|Yes| D[Deploy]
-  C -->|No| E[Fix]
-  E --> A
-`} />
+    <h1 class="home__title">
+      Diagrams that <em class="home__title-em">play</em>,
+      narrate, and remember where you left off.
+    </h1>
 
-Click **Play** above to watch the animation step through each node.
+    <p class="home__lede">
+      Render Mermaid once, then let people step through the flow with controls,
+      narration, minimap, and URL state — without depending on Mermaid's internal DOM.
+    </p>
 
-## Quick Start (CDN)
+    <div class="home__actions">
+      <a class="home__btn home__btn--primary" href="installation">
+        Install
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M4 8h8M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+      <a class="home__btn home__btn--ghost" href="features/showcase">Open showcase</a>
+      <a class="home__btn home__btn--quiet" href="api/reference">API reference</a>
+    </div>
+  </header>
 
-Add two script tags — that's it:
+  <section class="home__stage" aria-label="Live player preview">
+    <div class="home__stage-meta">
+      <span class="home__stage-coord">01 ─ live</span>
+      <span class="home__stage-flag">controls · minimap · narration</span>
+    </div>
 
-```html
-<!-- 1. Mermaid -->
-<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+    <div class="home__player">
+      <FlowPlayerElement
+        controls
+        minimap
+        narration
+        diagram={"flowchart TD\nStart[Start] --> Build[Build]\nBuild --> Check{Works?}\nCheck -->|Yes| Ship[Ship]\nCheck -->|No| Fix[Fix]\nFix --> Build\nShip --> Review[Review]"}
+      />
+    </div>
+  </section>
 
-<!-- 2. Mermaid Flow Player (auto mode — zero config) -->
-<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
-```
+  <section class="home__feats" aria-label="What you get">
+    <div class="home__feats-head">
+      <span class="home__feats-coord">02 ─ features</span>
+      <h2 class="home__feats-title">Composable pieces, sane defaults.</h2>
+    </div>
 
-The script injects styles automatically. Optional: add the CSS link if you want to load styles separately (e.g. for custom styling).
+    <ol class="home__feats-list">
+      <li>
+        <span class="home__feats-num">/01</span>
+        <strong>Semantic node targeting.</strong>
+        <p>Reference nodes by their Mermaid IDs (<code>A</code>, <code>B</code>, <code>X1</code>) — never by brittle DOM selectors.</p>
+      </li>
+      <li>
+        <span class="home__feats-num">/02</span>
+        <strong>Three ways in.</strong>
+        <p>Drop in the auto script, the <code>&lt;mermaid-flow-player&gt;</code> web component, or the programmatic API. Same engine.</p>
+      </li>
+      <li>
+        <span class="home__feats-num">/03</span>
+        <strong>State that survives reloads.</strong>
+        <p>URL-synced step, persisted "visited" set, theme-aware rendering. Bookmarks just work.</p>
+      </li>
+      <li>
+        <span class="home__feats-num">/04</span>
+        <strong>Narration & TTS hooks.</strong>
+        <p>Per-step text plus <code>mfp:step</code> events. Wire it to <code>speechSynthesis</code> in five lines.</p>
+      </li>
+    </ol>
+  </section>
 
-Every `.mermaid` diagram on the page gets play controls automatically.
+  <section class="home__paths" aria-label="Where to go next">
+    <div class="home__paths-head">
+      <span class="home__paths-coord">03 ─ next</span>
+      <h2 class="home__paths-title">Pick a path.</h2>
+    </div>
 
-## Quick Start (npm)
+    <div class="home__paths-grid">
+      <a class="home__path" href="installation">
+        <span class="home__path-kicker">Install</span>
+        <span class="home__path-title">CDN or npm in 30 seconds</span>
+        <span class="home__path-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="home__path" href="features/showcase">
+        <span class="home__path-kicker">Showcase</span>
+        <span class="home__path-title">Every option, side-by-side</span>
+        <span class="home__path-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="home__path" href="api/reference">
+        <span class="home__path-kicker">Reference</span>
+        <span class="home__path-title">Methods, hooks, configuration</span>
+        <span class="home__path-arrow" aria-hidden="true">→</span>
+      </a>
+      <a class="home__path" href="features/themes">
+        <span class="home__path-kicker">Themes</span>
+        <span class="home__path-title">Light, dark, custom Mermaid themes</span>
+        <span class="home__path-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</div>
 
-```bash
-npm install mermaid-flow-player
-```
+<style>{`
+  /* =================================================================
+     HOMEPAGE — editorial layout
+     - Hairline rules instead of card chrome
+     - Bricolage display for the headline; Geist for body; Geist Mono for coords
+     - The live player is presented as a "stage", not a wrapped card
+     ================================================================= */
 
-```typescript
-import { createFlowPlayer } from 'mermaid-flow-player';
-import 'mermaid-flow-player/css';
+  .home {
+    --gap: var(--space-3xl);
+    display: grid;
+    gap: var(--gap);
+    padding: var(--space-xl) 0 var(--space-3xl);
+    font-family: var(--font-body);
+    color: var(--ink-2);
+  }
 
-const player = createFlowPlayer({
-  root: document.getElementById('diagram')
-});
+  /* ---------- HERO ---------- */
+  .home__hero {
+    display: grid;
+    gap: var(--space-md);
+    max-width: 60ch;
+  }
 
-await player.ready();
-await player.play(player.path('A', 'B', 'C'));
-```
+  .home__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
 
-## Features
+  .home__eyebrow-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent), transparent 80%);
+    animation: home-pulse 2.4s var(--ease-out-quart) infinite;
+  }
+  @keyframes home-pulse {
+    0%, 70%, 100% {
+      box-shadow: 0 0 0 4px color-mix(in oklch, var(--accent), transparent 80%);
+    }
+    35% {
+      box-shadow: 0 0 0 8px color-mix(in oklch, var(--accent), transparent 92%);
+    }
+  }
 
-- **Zero-config** — Auto modes work out of the box
-- **7 Diagram Types** — [Flowcharts](diagram-types/flowcharts), [Sequence](diagram-types/sequence), [State](diagram-types/state), [Gantt](diagram-types/gantt), [Journey](diagram-types/journey), [Class](diagram-types/class), [ER](diagram-types/er)
-- **30+ Easing Functions** — [Animations & easing](features/animations)
-- **4 Auto Modes** — [Auto, AutoInit, AutoPlay, AutoEnhance](features/auto-modes)
-- **Scenario Builder** — [Fluent chainable API](features/builder-api)
-- **Plugin System** — [Extensible architecture](features/plugins)
-- **Themes** — [Light, dark, auto with persistence](features/themes)
-- **Edge Animation** — [Multi-strategy detection](features/edge-detection)
-- **Interactive Mode** — [Step-through with path selection](features/interactive)
-- **Narration** — [Auto-updating narration text](features/narration)
-- **URL Config** — [Query parameter configuration](features/query-params)
+  .home__eyebrow-sep {
+    color: var(--ink-4);
+    margin-inline: 0.15rem;
+  }
 
-## Next Steps
+  .home__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-variation-settings: "opsz" 96;
+    font-weight: 600;
+    font-size: var(--text-display);
+    line-height: 0.98;
+    letter-spacing: var(--tracking-tight);
+    color: var(--ink-1);
+    text-wrap: balance;
+  }
 
-- [Installation](installation) — CDN and npm setup
-- [Features](features) — Explore all capabilities
-- [API Reference](api/reference) — Full API docs
+  .home__title-em {
+    font-style: italic;
+    font-weight: 500;
+    color: var(--accent);
+  }
+
+  .home__lede {
+    margin: 0;
+    max-width: 52ch;
+    font-size: var(--text-md);
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+
+  /* ---------- ACTIONS ---------- */
+  .home__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+  }
+
+  .home__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-height: 2.5rem;
+    padding: 0 var(--space-md);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      transform 200ms var(--ease-out-expo),
+      background-color 200ms var(--ease-out-expo),
+      border-color 200ms var(--ease-out-expo),
+      color 200ms var(--ease-out-expo);
+  }
+
+  .home__btn:hover { transform: translateY(-1px); }
+  .home__btn:active { transform: translateY(0); }
+
+  .home__btn--primary {
+    background: var(--ink-1);
+    color: var(--surface-0);
+    border: 1px solid var(--ink-1);
+  }
+  .home__btn--primary:hover {
+    background: var(--accent-strong);
+    border-color: var(--accent-strong);
+    color: var(--accent-foreground);
+  }
+  .home__btn--primary svg {
+    transition: transform 220ms var(--ease-out-expo);
+  }
+  .home__btn--primary:hover svg {
+    transform: translateX(3px);
+  }
+
+  .home__btn--ghost {
+    background: transparent;
+    color: var(--ink-1);
+    border: 1px solid var(--line-2);
+  }
+  .home__btn--ghost:hover {
+    border-color: var(--ink-1);
+    background: var(--surface-2);
+  }
+
+  .home__btn--quiet {
+    background: transparent;
+    color: var(--ink-3);
+    border: 1px solid transparent;
+    padding-inline: var(--space-xs);
+  }
+  .home__btn--quiet:hover {
+    color: var(--ink-1);
+    background: var(--surface-2);
+  }
+
+  /* ---------- STAGE (live player) ---------- */
+  .home__stage {
+    display: grid;
+    gap: var(--space-sm);
+    border-top: 1px solid var(--line-1);
+    padding-top: var(--space-md);
+  }
+
+  .home__stage-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .home__stage-coord {
+    color: var(--ink-1);
+    font-weight: 600;
+  }
+
+  .home__player {
+    /* Subtle inset surface — calm, no big shadow */
+    background: var(--surface-1);
+    border: 1px solid var(--line-1);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+  }
+
+  .home__player :global(mermaid-flow-player) {
+    width: 100%;
+  }
+
+  /* ---------- FEATURES ---------- */
+  .home__feats {
+    display: grid;
+    gap: var(--space-lg);
+    border-top: 1px solid var(--line-1);
+    padding-top: var(--space-lg);
+  }
+
+  .home__feats-head {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .home__feats-coord {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .home__feats-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    line-height: 1.05;
+    letter-spacing: var(--tracking-snug);
+    color: var(--ink-1);
+    max-width: 22ch;
+  }
+
+  .home__feats-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 0;
+    border-top: 1px solid var(--line-1);
+  }
+
+  .home__feats-list li {
+    display: grid;
+    grid-template-columns: 4rem 1fr;
+    align-items: baseline;
+    gap: var(--space-md);
+    padding: var(--space-lg) 0;
+    border-bottom: 1px solid var(--line-1);
+  }
+
+  @media (min-width: 720px) {
+    .home__feats-list li {
+      grid-template-columns: 6rem minmax(0, 22ch) 1fr;
+    }
+  }
+
+  .home__feats-num {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--ink-4);
+    letter-spacing: var(--tracking-wide);
+  }
+
+  .home__feats-list strong {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-md);
+    color: var(--ink-1);
+    letter-spacing: var(--tracking-snug);
+    line-height: 1.3;
+  }
+
+  .home__feats-list p {
+    margin: var(--space-2xs) 0 0;
+    color: var(--ink-3);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    max-width: 56ch;
+  }
+
+  @media (min-width: 720px) {
+    .home__feats-list p {
+      grid-column: 3 / -1;
+      margin: 0;
+    }
+  }
+
+  .home__feats-list code {
+    font-family: var(--font-mono);
+    font-size: 0.86em;
+    padding: 0.1em 0.34em;
+    border-radius: var(--radius-xs);
+    background: var(--surface-2);
+    border: 1px solid var(--line-1);
+    color: var(--ink-1);
+  }
+
+  /* ---------- PATHS (next-steps grid) ---------- */
+  .home__paths {
+    display: grid;
+    gap: var(--space-lg);
+    border-top: 1px solid var(--line-1);
+    padding-top: var(--space-lg);
+  }
+
+  .home__paths-head {
+    display: grid;
+    gap: var(--space-xs);
+  }
+
+  .home__paths-coord {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .home__paths-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    color: var(--ink-1);
+    letter-spacing: var(--tracking-snug);
+  }
+
+  .home__paths-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0;
+    border-top: 1px solid var(--line-1);
+  }
+
+  @media (min-width: 720px) {
+    .home__paths-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .home__path {
+    position: relative;
+    display: grid;
+    gap: var(--space-2xs);
+    padding: var(--space-lg);
+    text-decoration: none;
+    color: inherit;
+    border-bottom: 1px solid var(--line-1);
+    transition:
+      background-color 200ms var(--ease-out-expo),
+      color 200ms var(--ease-out-expo);
+  }
+
+  /* Inner column hairlines on wide layouts */
+  @media (min-width: 720px) {
+    .home__path:nth-child(odd) {
+      border-inline-end: 1px solid var(--line-1);
+    }
+  }
+
+  .home__path:hover {
+    background: var(--surface-1);
+  }
+
+  .home__path:hover .home__path-arrow {
+    transform: translateX(4px);
+    color: var(--accent);
+  }
+
+  .home__path-kicker {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .home__path-title {
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--ink-1);
+    letter-spacing: var(--tracking-snug);
+  }
+
+  .home__path-arrow {
+    position: absolute;
+    top: var(--space-lg);
+    right: var(--space-lg);
+    font-family: var(--font-mono);
+    color: var(--ink-3);
+    transition:
+      transform 220ms var(--ease-out-expo),
+      color 220ms var(--ease-out-expo);
+  }
+
+  /* ---------- SPLASH TEMPLATE OVERRIDES ----------
+     Starlight's splash template injects a built-in hero block.
+     We render our own hero, so suppress the default. */
+  :global(.hero) {
+    display: none !important;
+  }
+`}</style>
