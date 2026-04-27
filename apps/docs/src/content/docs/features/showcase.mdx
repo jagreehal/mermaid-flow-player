@@ -437,6 +437,35 @@ The kitchen-sink demo uses `mfp:step` for spoken narration. The same pattern wor
   </div>
 </div>
 
+<script is:inline>{`
+  (function () {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    var ids = ['showcase-tts-sequential', 'showcase-tts-interactive'];
+    function speak(text) {
+      if (!text) return;
+      window.speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(String(text));
+      u.rate = 1.1;
+      window.speechSynthesis.speak(u);
+    }
+    function wire(el) {
+      if (!el || el.dataset.ttsWired) return;
+      el.dataset.ttsWired = '1';
+      el.addEventListener('mfp:step', function (e) {
+        var d = e.detail || {};
+        var step = d.step || {};
+        speak(d.narration || step.id);
+      });
+    }
+    function init() { ids.forEach(function (id) { wire(document.getElementById(id)); }); }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+`}</script>
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
 
