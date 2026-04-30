@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
-    "@astrojs/starlight": "^0.37.6",
+    "@astrojs/starlight": "^0.38.4",
     "@fontsource-variable/bricolage-grotesque": "^5.2.10",
     "@fontsource/geist-mono": "^5.2.7",
     "@fontsource/geist-sans": "^5.2.5",
