@@ -27,7 +27,7 @@
     "@fontsource/jetbrains-mono": "^5.2.8",
     "@tailwindcss/vite": "^4.2.1",
     "astro": "^5.18.0",
-    "starlight-theme-next": "^0.3.3",
+    "starlight-theme-next": "^0.4.0",
     "tailwindcss": "^4.2.1"
   },
   "devDependencies": {
