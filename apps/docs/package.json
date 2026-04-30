@@ -19,7 +19,7 @@
     "test:e2e:chrome": "playwright test --project=chrome"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.6",
+    "@astrojs/check": "^0.9.9",
     "@astrojs/starlight": "^0.37.6",
     "@fontsource-variable/bricolage-grotesque": "^5.2.10",
     "@fontsource/geist-mono": "^5.2.7",
