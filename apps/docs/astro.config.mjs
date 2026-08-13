@@ -30,36 +30,35 @@ export default defineConfig({
             href: siteBase.replace(/\/?$/, '/'),
           },
         },
-        // Mermaid CDN
+        // Mermaid, with auto-render OFF: the player owns rendering so the
+        // diagram source (and its `%% narrate` script) survives long enough to
+        // be read. Mermaid's default startOnLoad would replace the text with
+        // SVG before any of it could be parsed.
         {
           tag: 'script',
           attrs: {
             src: 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js',
-            defer: true,
           },
         },
-        // Flow Player web component
+        {
+          tag: 'script',
+          content: `window.mermaid?.initialize({ startOnLoad: false });`,
+        },
+        // The player. `auto.js` registers <mermaid-flow-player> and upgrades
+        // every .mermaid block into one, so pages get the element's full
+        // feature set (captions, chapters, voice, deep-links) without
+        // authoring element markup by hand. Source is the published CDN build
+        // unless PLAYER_BASE=local (see src/lib/flow-player-base.js).
         {
           tag: 'script',
           attrs: {
-            src: 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js',
-            defer: true,
+            type: 'module',
+            src: `${flowPlayerBase}/auto.js`,
+            // Opt in to JetBrains Mono. The player defaults to the system
+            // monospace stack so it never adds third-party requests to a
+            // consumer's page; this site is ours, so it takes the typography.
+            'data-mfp-font': '',
           },
-        },
-        // Flow Player autoInit for .mermaid elements
-        {
-          tag: 'script',
-          attrs: { type: 'module' },
-          content: `
-            import { autoInit } from '${flowPlayerBase}/auto-init.js';
-            document.addEventListener('DOMContentLoaded', () => {
-              setTimeout(() => {
-                autoInit({
-                  selector: '.sl-markdown-content > .mermaid, .sl-markdown-content > pre.mermaid, .live-example > .mermaid, .live-example > pre.mermaid',
-                });
-              }, 1000);
-            });
-          `,
         },
       ],
       sidebar: [

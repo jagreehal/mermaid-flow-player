@@ -17,7 +17,7 @@ test.describe('Diagram Types', () => {
     await waitForControls(page);
 
     story.when('I click Play');
-    const playButton = page.locator('.mermaid-flow-controls button', { hasText: 'Play' }).first();
+    const playButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
     await playButton.click();
 
     story.then('an active node should be visible');
@@ -34,7 +34,7 @@ test.describe('Diagram Types', () => {
     await waitForControls(page);
 
     story.when('I click Play');
-    const playButton = page.locator('.mermaid-flow-controls button', { hasText: 'Play' }).first();
+    const playButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
     await playButton.click();
 
     story.then('an active node should be visible');
@@ -53,7 +53,7 @@ test.describe('Diagram Types', () => {
 
     story.then('the diagram controls or interactive footer should be visible');
     const controlsOrFooter = page.locator(
-      '.mermaid-flow-controls button, .mermaid-flow-interactive-footer'
+      '.mfp-controls button'
     ).first();
     await expect(controlsOrFooter).toBeVisible();
   });
@@ -95,7 +95,7 @@ test.describe('Diagram Types', () => {
     await waitForControls(page);
 
     story.then('the Play button should be visible');
-    const playButton = page.locator('.mermaid-flow-controls button', { hasText: 'Play' }).first();
+    const playButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
     await expect(playButton).toBeVisible();
   });
 
@@ -108,7 +108,7 @@ test.describe('Diagram Types', () => {
     await waitForControls(page);
 
     story.then('the Play button should be visible');
-    const playButton = page.locator('.mermaid-flow-controls button', { hasText: 'Play' }).first();
+    const playButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
     await expect(playButton).toBeVisible();
   });
 });

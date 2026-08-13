@@ -1,19 +1,82 @@
 ---
 title: Auto Modes
-description: Zero-config usage with automatic enhancement
+description: Zero-config usage by upgrading existing .mermaid blocks
 ---
 
 import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
 
-There are five entry points, each tuned for a different starting point. The first two are **zero-config and one-script** — both auto-load Mermaid from a CDN if it isn't already on the page.
+There is **one player**: the `<mermaid-flow-player>` custom element. Everything
+else is a way of getting your markup into it, so no route has features the
+others lack.
 
 | Entry | Best for | Loads Mermaid? |
 |-------|----------|----------------|
-| `mermaid-flow-player.element.js` | New markup using `<mermaid-flow-player>` | Yes (if missing) |
-| `auto.js` | Existing `.mermaid` divs you want to upgrade | Yes (if missing) |
-| `auto-init.js` | Diagrams you've already rendered yourself | No — assumes Mermaid present |
-| `auto-enhance.js` | `data-flow-*` attribute-driven scenarios | No |
-| `auto-play.js` | Autoplay on load / scroll / click | No |
+| `mermaid-flow-player.element.js` | Writing `<mermaid-flow-player>` yourself | Yes (if missing) |
+| `auto.js` | Existing `.mermaid` blocks — upgrades them in place | Yes (if missing) |
+| `auto-init.js` | The same upgrade, but you choose when and what | Yes (if missing) |
+
+`auto.js` runs the upgrade on load and again when an SPA swaps the DOM. Import
+`auto-init.js` instead when you want to call it yourself.
+
+:::caution[Let the player render]
+The upgrade reads the diagram source out of the block, so Mermaid must not have
+replaced it with SVG first. Initialize Mermaid with `startOnLoad: false`, or
+just don't load Mermaid at all and let the player fetch it.
+
+A block that is already rendered still gets a player — its SVG is adopted
+rather than discarded — but narration falls back to node labels, because the
+`%% narrate` script went with the source text.
+:::
+
+## Upgrading `.mermaid` blocks
+
+Add one script, and every `<div class="mermaid">` on the page becomes a player,
+keeping its `id` and classes so your CSS and anchor links still resolve:
+
+```html
+<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
+
+<div class="mermaid">
+graph LR
+  A --> B --> C
+</div>
+```
+
+Configure a block with the same attribute names the element uses, with or
+without a `data-flow-` prefix — both spellings work, so markup copied between
+the two routes keeps working:
+
+```html
+<div class="mermaid" speed="2" captions autoplay trigger="scroll">
+graph LR
+  A --> B --> C
+</div>
+```
+
+## autoInit()
+
+```javascript
+import { autoInit, destroyAll } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js';
+
+const players = autoInit({
+  selector: '.diagram',
+  controls: 'play-pause next fit',
+});
+
+// Later: put the original blocks back
+destroyAll();
+```
+
+| Option | Description |
+|--------|-------------|
+| `selector` | Which blocks to upgrade. Default `.mermaid`. |
+| `controls` | `true` (transport + zoom), `false`, a preset (`"viewer"`, `"full"`), or an explicit token list. |
+| `narration` | Render the caption area. Default `true`. |
+| `debug` | Log indexing and narration mismatches. |
+| `queryConfig` | Override the URL query defaults. |
+
+It returns the elements it created, so `el.player` gets you the underlying
+player API.
 
 ## Web Component
 
@@ -24,6 +87,11 @@ There are five entry points, each tuned for a different starting point. The firs
 />
 
 ## Controls Options
+
+`controls` takes a preset or an explicit space-separated token list. Tokens:
+`play-pause`, `restart`, `previous`, `next`, `speed`, `all-paths`, `zoom-out`,
+`fit`, `zoom-in`, `fullscreen`, `focus`, `search`, `copy-svg`, `download-svg`,
+`open-svg`.
 
 ### None
 
@@ -41,10 +109,10 @@ There are five entry points, each tuned for a different starting point. The firs
   A --> B --> C`}
 />
 
-### Explicit Sequential Controls
+### Explicit Token List
 
 <FlowPlayerElement
-  controls="play-pause,previous,next,speed,all-paths"
+  controls="play-pause previous next speed all-paths"
   diagram={`graph LR
   A --> B --> C`}
 />
@@ -81,6 +149,9 @@ There are five entry points, each tuned for a different starting point. The firs
   A --> B --> C --> D`}
 />
 
+Add `trigger="scroll"` and playback waits until the diagram is actually on
+screen, rather than finishing above the fold before anyone sees it.
+
 ### Minimap
 
 <FlowPlayerElement
@@ -89,60 +160,11 @@ There are five entry points, each tuned for a different starting point. The firs
   A --> B --> C --> D`}
 />
 
-## autoInit()
+## Choosing a Route
 
-```javascript
-import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-const player = createFlowPlayer({
-  root: document.getElementById('diagram'),
-});
-
-await player.ready();
-await player.play(player.path('Start', 'Process', 'Check'));
-```
-
-## autoPlay()
-
-```javascript
-import { autoPlay } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-play.js';
-
-autoPlay({
-  trigger: 'scroll',
-  speed: 1.5
-});
-```
-
-### Trigger Types
-
-| Trigger | Behavior |
-|---------|----------|
-| `'load'` | Plays immediately |
-| `'scroll'` | Plays when scrolled into view |
-| `'click'` | Plays on click |
-
-## autoEnhance()
-
-```html
-<mermaid-flow-player data-flow-scenario="A,B,C">
-graph LR
-  A --> B --> C
-</mermaid-flow-player>
-```
-
-### Data Attributes
-
-| Attribute | Description |
-|-----------|-------------|
-| `data-flow-scenario` | Comma-separated node IDs |
-| `data-flow-speed` | Speed multiplier |
-| `data-flow-narration` | Narration text |
-
-## Choosing a Mode
-
-| Mode | Use Case |
-|------|----------|
-| `<mermaid-flow-player>` | Quick demos |
-| `createFlowPlayer()` | Production control |
-| `autoPlay()` | Presentations |
-| `data-flow-*` | Selective enhancement |
+| Route | Use case |
+|-------|----------|
+| `<mermaid-flow-player>` | New markup; full control over attributes |
+| `auto.js` | A docs site or Markdown pipeline already emitting `.mermaid` |
+| `autoInit()` | The same upgrade, on your schedule or a custom selector |
+| `createFlowPlayer()` | Driving playback yourself from JavaScript |

@@ -20,15 +20,20 @@ graph LR
 |-----------|--------|-------------|
 | `theme` | `light`, `dark`, `auto` | Set theme |
 | `speed` | Number (e.g. `1.5`) | Animation speed multiplier |
-| `dim` | `none`, `others` | Dimming behavior |
-| `persist` | `none`, `visited` | State persistence |
-| `edge` | `off`, `bestEffort`, `manual` | Edge animation mode |
 | `stepMs` | Number (e.g. `800`) | Milliseconds per step |
+| `visited` | `true`, `false` | Keep visited nodes highlighted |
+| `edge` | `off`, `bestEffort` | Edge animation mode |
 | `mode` | `sequential`, `interactive` | Playback mode |
-| `selector` | CSS selector (e.g. `.my-diagram`) | Diagram root selector for auto modes (default: `.mermaid`) |
-| `debug` | (flag, no value needed) | Enable debug logging |
+| `selector` | CSS selector (e.g. `.my-diagram`) | Which blocks to upgrade (default: `.mermaid`) |
+| `step` | Number | Deep-link straight to a step index |
 | `autoplay` | (flag) | Auto-play on load |
-| `trigger` | `load`, `scroll`, `click` | Auto-play trigger |
+| `trigger` | `load`, `scroll` | When autoplay fires |
+| `minimap` | `true`, `false` | Show the minimap |
+| `sync-url` | `true`, `false` | Reflect viewport state in the URL |
+| `autoCenter` | `true`, `false` | Pan to the active node |
+| `narration` | `true`, `false` | Render the caption area |
+| `narration-text` | Text | Initial caption text |
+| `debug` | (flag, no value needed) | Enable debug logging |
 
 ## Examples
 
@@ -58,13 +63,16 @@ https://your-site.com/docs?speed=2.0&edge=bestEffort
 
 ### Auto-Play on Scroll
 
+Playback waits until the diagram is on screen, so it isn't already finished by
+the time the reader scrolls to it.
+
 ```
 https://your-site.com/docs?autoplay&trigger=scroll
 ```
 
 ### Custom Diagram Selector
 
-Use a CSS selector other than `.mermaid` so only those elements get controls. Per-diagram behaviour (mode, dim, etc.) is still controlled via data attributes or multiple `autoInit()` calls.
+Use a CSS selector other than `.mermaid` so only those blocks are upgraded. Per-diagram behaviour is set with attributes on the block itself, or with multiple `autoInit()` calls.
 
 ```
 https://your-site.com/docs?selector=.my-diagram
@@ -76,10 +84,13 @@ The **web component** (`<mermaid-flow-player>`) does not use a global selector; 
 
 Parameters are merged with other config sources. Higher precedence wins:
 
-1. **JavaScript API** (highest) — `createFlowPlayer({ speed: 2 })`
-2. **URL query parameters** — `?speed=1.5`
-3. **HTML data attributes** — `data-flow-speed="1.0"`
+1. **`autoInit()` options** (highest) — `autoInit({ controls: false })`
+2. **Per-block attributes** — `speed="1.0"` or `data-flow-speed="1.0"`
+3. **URL query parameters** — `?speed=1.5`
 4. **Defaults** (lowest) — built-in defaults
+
+A block that states its own value keeps it, so one diagram can opt out of a
+site-wide `?speed=` without the URL fighting the markup.
 
 ## Parsing
 
