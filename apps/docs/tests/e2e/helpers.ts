@@ -7,7 +7,7 @@ export async function waitForDiagram(page: Page, selector = '.mermaid') {
 }
 
 export async function waitForControls(page: Page) {
-  await page.waitForSelector('.mermaid-flow-controls', { state: 'visible', timeout: 20000 });
+  await page.waitForSelector('.mfp-controls', { state: 'visible', timeout: 20000 });
 }
 
 /**
@@ -16,7 +16,7 @@ export async function waitForControls(page: Page) {
  */
 export async function waitForControlsOrInteractive(page: Page) {
   await page.waitForSelector(
-    '.mermaid-flow-controls, .mermaid-flow-interactive-footer',
+    '.mfp-controls',
     { state: 'visible', timeout: 20000 }
   );
 }
@@ -31,7 +31,7 @@ export async function expectDiagramRendered(page: Page) {
 }
 
 export async function getButtonStyles(page: Page, buttonText: string) {
-  const button = page.locator('.mermaid-flow-controls button', { hasText: buttonText });
+  const button = page.locator('.mfp-controls button', { hasText: buttonText });
   return {
     background: await button.evaluate(el => getComputedStyle(el).background),
     backgroundImage: await button.evaluate(el => getComputedStyle(el).backgroundImage),

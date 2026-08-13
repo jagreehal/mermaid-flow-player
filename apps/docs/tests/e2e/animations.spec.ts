@@ -11,7 +11,7 @@ test.describe('Animations', () => {
     await waitForDiagram(page);
     await waitForControls(page);
 
-    const playButton = page.locator('.mermaid-flow-controls button', { hasText: 'Play' }).first();
+    const playButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
     const diagram = page.locator('.mermaid').first();
 
     story.when('I click the Play button');
@@ -30,11 +30,11 @@ test.describe('Animations', () => {
     await page.goto('/features/auto-modes');
     await waitForControls(page);
 
-    const playPauseButton = page.locator('.mermaid-flow-controls button', { hasText: 'Play' }).first();
+    const playPauseButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
 
     story.when('I start the animation then click Pause');
     await playPauseButton.click();
-    const pauseButton = page.locator('.mermaid-flow-controls button', { hasText: 'Pause' }).first();
+    const pauseButton = page.locator('.mfp-controls button', { hasText: 'Pause' }).first();
     await expect(pauseButton).toBeVisible({ timeout: 10000 });
     await pauseButton.click();
 
@@ -49,7 +49,7 @@ test.describe('Animations', () => {
     await page.goto('/features/auto-modes');
     await waitForControls(page);
 
-    const playButton = page.locator('.mermaid-flow-controls button', { hasText: 'Play' }).first();
+    const playButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
     const resetButton = page.getByRole('button', { name: 'Back to start' }).first();
     const diagram = page.locator('.mermaid').first();
 

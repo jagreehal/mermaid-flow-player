@@ -50,7 +50,15 @@ export default tseslint.config(
     rules: { '@typescript-eslint/triple-slash-reference': 'off' },
   },
   {
-    files: ['apps/docs/**/*.mjs', 'apps/docs/scripts/**', 'apps/docs/astro.config.mjs'],
+    // Build-time code: the Astro config, its scripts, and the helpers they
+    // share with component frontmatter. All of this runs in Node, never in the
+    // browser, so `process` is legitimately in scope.
+    files: [
+      'apps/docs/**/*.mjs',
+      'apps/docs/scripts/**',
+      'apps/docs/astro.config.mjs',
+      'apps/docs/src/lib/**',
+    ],
     languageOptions: {
       globals: {
         URL: 'readonly',

@@ -11,7 +11,7 @@ test.describe('Button Styling', () => {
     await waitForDiagram(page);
     await waitForControls(page);
 
-    const playButton = page.locator('.mermaid-flow-controls button').first();
+    const playButton = page.locator('.mfp-controls button').first();
 
     story.then('the first button should be visible');
     await expect(playButton).toBeVisible();
@@ -30,7 +30,7 @@ test.describe('Button Styling', () => {
     await page.goto('/features/auto-modes');
     await waitForControls(page);
 
-    const playButton = page.locator('.mermaid-flow-controls button').first();
+    const playButton = page.locator('.mfp-controls button').first();
     const initialBg = await playButton.evaluate(el => getComputedStyle(el).backgroundColor);
 
     story.when('I hover over the first control button');
@@ -52,7 +52,7 @@ test.describe('Button Styling', () => {
     story.then('Play, Back to Start, Previous, and Next buttons should be visible');
     const buttons = ['Play', 'Back to Start', 'Previous', 'Next'];
     for (const buttonText of buttons) {
-      const button = page.locator('.mermaid-flow-controls button', { hasText: buttonText }).first();
+      const button = page.locator('.mfp-controls button', { hasText: buttonText }).first();
       await expect(button).toBeVisible();
     }
   });

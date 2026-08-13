@@ -229,46 +229,51 @@ const current = player.getCurrentNode();
 
 ## Auto Modes
 
-### auto(options?)
+Both entry points do the same thing: upgrade `.mermaid` blocks into
+`<mermaid-flow-player>` elements. There is one player implementation, so the
+upgraded markup behaves exactly like element markup you wrote by hand.
 
-Full auto mode — zero config.
+Mermaid must not have rendered the blocks first — initialize it with
+`startOnLoad: false`, or let the player load Mermaid itself.
+
+### auto()
+
+Zero config. Upgrades on load, and again when an SPA replaces the DOM.
 
 ```html
 <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
 ```
 
+`stopAuto()` disconnects the observer and restores the original blocks.
+
 ### autoInit(options?)
 
-Add controls and narration.
+The same upgrade, called on your terms. Returns the created elements.
 
 ```html
 <script type="module">
   import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js';
-  setTimeout(() => autoInit({ controls: true, narration: true }), 1000);
+
+  const players = autoInit({
+    selector: '.diagram',
+    controls: 'play-pause next fit',
+  });
+  await players[0].ready();
+  players[0].player.play();
 </script>
 ```
 
-### autoPlay(options?)
+| Option | Type | Default |
+|--------|------|---------|
+| `selector` | `string` | `.mermaid` |
+| `controls` | `boolean \| string` | `true` |
+| `narration` | `boolean` | `true` |
+| `debug` | `boolean` | `false` |
+| `queryConfig` | `QueryConfig` | parsed from the URL |
 
-Auto-play with triggers.
+### destroyAll()
 
-```html
-<script type="module">
-  import { autoPlay } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-play.js';
-  autoPlay({ trigger: 'scroll', speed: 1.5 });
-</script>
-```
-
-### autoEnhance(options?)
-
-Enhance diagrams with data attributes only.
-
-```html
-<script type="module">
-  import { autoEnhance } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-enhance.js';
-  autoEnhance();
-</script>
-```
+Replaces every upgraded element with the block it came from.
 
 ## Scenario Builder
 

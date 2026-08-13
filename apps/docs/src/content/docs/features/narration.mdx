@@ -91,27 +91,58 @@ The simplest way — autoInit creates a narration element for you:
 <script type="module">
   import { autoInit } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js';
 
-  setTimeout(() => {
-    autoInit({
-      selector: '.mermaid',
-      narration: true  // Creates narration container automatically
-    });
-  }, 1000);
+  autoInit({
+    selector: '.mermaid',
+    narration: true  // Renders the caption area (default)
+  });
 </script>
 ```
 
-## Narration via Data Attributes
+## Narration in the diagram source
 
-Use pipe-separated text for each step:
+Write the script in the diagram itself with `%% narrate`. It travels with the
+fenced code block, so narration survives copy-paste and a coding agent can emit
+a diagram that explains its own flow:
 
 ```html
-<div class="mermaid"
-     data-flow-scenario="A,B,C"
-     data-flow-narration="Starting build|Running tests|Deploying!">
-graph LR
+<div class="mermaid">
+flowchart LR
   A[Build] --> B[Test] --> C[Deploy]
+  %% narrate A: First we compile the project and cache the result.
+  %%   Nothing else runs until this succeeds.
+  %% narrate B: Then the suite runs against the fresh build.
+  %% narrate C: Finally we ship it.
 </div>
 ```
+
+A `%%` line indented by two or more spaces continues the previous directive, so
+long narration can wrap. The script wins over the derived node label everywhere
+at once: captions, voice, the chapter rail, the transcript and the VTT track.
+
+On a sequence diagram an id-less `%% narrate:` attaches to the message above
+it, the same way `Note over` does.
+
+Press Next on this one and read the caption: the text is the script, not the
+box labels.
+
+<LiveExample
+  label="narrate script"
+  diagram={`flowchart LR
+  A[Build] --> B[Test] --> C[Deploy]
+  %% narrate A: First we compile the project and cache the result.
+  %%   Nothing else runs until this succeeds.
+  %% narrate B: Then the suite runs against the fresh build.
+  %% narrate C: Finally we ship it.`}
+/>
+
+This works identically on upgraded `.mermaid` blocks and on
+`<mermaid-flow-player>` markup — the upgrade moves the source across intact.
+
+:::caution
+If Mermaid renders a block before the player sees it, the source (and the
+script with it) is gone. Initialize Mermaid with `startOnLoad: false`, or don't
+load it at all and let the player fetch it.
+:::
 
 ## Step Notes
 
