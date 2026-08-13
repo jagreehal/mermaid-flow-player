@@ -1,3 +1,11 @@
 # Docs-only repo (source lives in mermaid-flow-player-src)
 packages:
   - 'apps/*'
+
+# pnpm 11 refuses to silently skip a dependency's build script and exits 1.
+# CI installs `pnpm@latest`, so this surfaced the moment a run happened on a
+# current pnpm. Both of these genuinely need to build: esbuild compiles its
+# native binary for Vite/Astro, and sharp is Astro's image service.
+allowBuilds:
+  esbuild: true
+  sharp: true
