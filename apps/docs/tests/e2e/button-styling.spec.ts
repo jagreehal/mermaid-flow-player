@@ -50,9 +50,12 @@ test.describe('Button Styling', () => {
     await waitForControls(page);
 
     story.then('Play, Back to Start, Previous, and Next buttons should be visible');
-    const buttons = ['Play', 'Back to Start', 'Previous', 'Next'];
-    for (const buttonText of buttons) {
-      const button = page.locator('.mfp-controls button', { hasText: buttonText }).first();
+    // Match the accessible name, not the visible text: the buttons read
+    // "Play / Restart / Prev / Next" on screen, so `hasText: 'Back to Start'`
+    // could never match. The aria-label is also the more stable handle.
+    const buttons = ['Play animation', 'Back to start', 'Previous step', 'Next step'];
+    for (const name of buttons) {
+      const button = page.locator('.mfp-controls').getByRole('button', { name }).first();
       await expect(button).toBeVisible();
     }
   });

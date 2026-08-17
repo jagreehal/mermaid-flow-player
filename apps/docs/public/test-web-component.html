@@ -4,7 +4,13 @@
   <meta charset="UTF-8" />
   <title>Web Component Test</title>
   <!-- NO Mermaid loaded — element should lazy-load it -->
-  <script src="/local-dist/mermaid-flow-player.element.js"></script>
+  <!--
+    Relative, not root-absolute: the site is served under /mermaid-flow-player/,
+    so `/local-dist/...` resolved off the domain root and 404'd, leaving the
+    custom element undefined. Needs `pnpm link-player` (or `copy-player`) first,
+    which is what populates public/local-dist.
+  -->
+  <script src="./local-dist/mermaid-flow-player.element.js"></script>
 </head>
 <body>
   <mermaid-flow-player>
