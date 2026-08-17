@@ -7,7 +7,7 @@ test.describe('Animations', () => {
     story.init(testInfo, { tags: ['e2e', 'animations', 'play'] });
 
     story.given('I am on the auto-modes page with a diagram and controls');
-    await page.goto('/features/auto-modes');
+    await page.goto('features/auto-modes');
     await waitForDiagram(page);
     await waitForControls(page);
 
@@ -27,7 +27,7 @@ test.describe('Animations', () => {
     story.init(testInfo, { tags: ['e2e', 'animations', 'pause'] });
 
     story.given('I am on the auto-modes page with controls');
-    await page.goto('/features/auto-modes');
+    await page.goto('features/auto-modes');
     await waitForControls(page);
 
     const playPauseButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();
@@ -46,7 +46,7 @@ test.describe('Animations', () => {
     story.init(testInfo, { tags: ['e2e', 'animations', 'reset'] });
 
     story.given('I am on the auto-modes page with controls');
-    await page.goto('/features/auto-modes');
+    await page.goto('features/auto-modes');
     await waitForControls(page);
 
     const playButton = page.locator('.mfp-controls button', { hasText: 'Play' }).first();

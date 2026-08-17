@@ -6,7 +6,7 @@ test.describe('Web Component E2E', () => {
     story.init(testInfo, { tags: ['e2e', 'web-component'] });
 
     story.given('I open the test web component page');
-    await page.goto('/test-web-component.html');
+    await page.goto('test-web-component.html');
 
     story.when('the custom element is defined and Mermaid has rendered');
     await page.waitForFunction(() => customElements.get('mermaid-flow-player'), {

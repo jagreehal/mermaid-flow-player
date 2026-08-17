@@ -5,8 +5,6 @@ description: React to step start/end with audio, speech, and custom UI
 
 import TalkingStepsDemo from '~/components/TalkingStepsDemo.astro';
 
-# Event Hooks
-
 React to each animation step with **event hooks**: play audio, speak the step (text-to-speech), or update your own UI as the diagram runs. No plugin required — use the `hooks` option when creating the player.
 
 ## Talking steps demo
@@ -158,11 +156,11 @@ Browsers often block sound until the user has interacted with the page (e.g. cli
 
 If you prefer to use the **plugin system** instead of config-level hooks, you get the same timing with `beforeStep` and `afterStep`:
 
-- [Plugin System](features/plugins) — `api.beforeStep(step)` and `api.afterStep(step)` run before and after each step.
+- [Plugin System](../plugins/) — `api.beforeStep(step)` and `api.afterStep(step)` run before and after each step.
 
 Plugins are useful when you want to package your behavior (e.g. analytics or sound) and reuse it across multiple players.
 
 ## Next steps
 
-- [Narration](features/narration) — Use `narrationTarget` and step `note` for on-screen text.
-- [Plugin System](features/plugins) — Lifecycle hooks and extensions.
+- [Narration](../narration/) — Use `narrationTarget` and step `note` for on-screen text.
+- [Plugin System](../plugins/) — Lifecycle hooks and extensions.

@@ -79,20 +79,14 @@
   font-size: var(--text-base);
   line-height: calc(1.7 + var(--leading-add, 0));
   color: var(--ink-2);
-  max-width: 72ch;
 }
 
-/* Wider measure for pages with showcase grids, code blocks, etc.
-   Allow the pages themselves to opt out of the cap by wrapping their
-   content in `.wide` or similar (Starlight provides full-width frontmatter). */
-.sl-markdown-content > .showcase-grid,
-.sl-markdown-content > pre,
-.sl-markdown-content > .expressive-code,
-.sl-markdown-content > .live-example,
-.sl-markdown-content > .cdn-builder,
-.sl-markdown-content > mermaid-flow-player,
-.sl-markdown-content > .mermaid {
-  max-width: none;
+/* Cap the *prose* at a readable measure, not the content column. Capping the
+   column shrank every diagram, code block and grid to 72ch too — which on this
+   site is the actual content, and left the splash homepage as a narrow strip
+   pinned to the left of a 1080px container. */
+.sl-markdown-content > :is(p, ul, ol, dl, blockquote) {
+  max-width: 72ch;
 }
 
 .sl-markdown-content :is(h1, h2, h3, h4, h5, h6) {
@@ -480,18 +474,15 @@ mermaid-flow-player {
    SHOWCASE GRID — used on features/showcase.mdx and inline.
    No card-on-everything; hairline-framed cells with mono coordinate label.
    ===================================================================== */
+/* Two columns only when the *column* is wide enough, not the window. The old
+   `@media (min-width: 720px)` measured the viewport, so a 1280px laptop split
+   the ~650px content column into 300px cells and every diagram in the showcase
+   overflowed its player. */
 .showcase-grid {
   display: grid;
-  gap: var(--space-md);
-  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));
   margin: var(--space-lg) 0;
-}
-
-@media (min-width: 720px) {
-  .showcase-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-lg);
-  }
 }
 
 .showcase-card {

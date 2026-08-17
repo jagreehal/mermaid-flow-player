@@ -68,16 +68,6 @@ export default tseslint.config(
     },
   },
   {
-    files: ['apps/docs/test-debug.js'],
-    languageOptions: {
-      globals: {
-        window: 'readonly',
-        document: 'readonly',
-        console: 'readonly',
-      },
-    },
-  },
-  {
     files: ['**/scripts/*.cjs'],
     languageOptions: {
       globals: {

@@ -8,5 +8,6 @@
     }
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "//": "local-dist is the symlinked player build (pnpm link-player) and playwright-report is generated HTML — type-checking either makes `pnpm build` fail locally with dozens of errors from bundled code.",
+  "exclude": ["dist", "public/local-dist", "playwright-report", "test-results"]
 }
