@@ -20,7 +20,11 @@ description: >-
 - Either entry point auto-loads Mermaid from CDN when `window.mermaid` is
   missing, so no separate mermaid.js tag is needed. To pin Mermaid too, load it
   yourself (with its own SRI) before the player script.
-- Load exactly one entry point per page, pinned and integrity-checked.
+- Load exactly one entry point per page.
+- `@latest` keeps a page on the current release without edits. A page that must
+  not change under its readers should pin a version instead, and once pinned it
+  can carry an `integrity` hash — Subresource Integrity and a floating tag are
+  mutually exclusive, since the bytes are meant to change.
 - Put raw Mermaid source directly inside the element — no `<pre>`, no code
   fence, no escaping beyond normal HTML.
 - The two entry points have **different narration defaults**. See Constraints.
@@ -37,10 +41,7 @@ description: >-
 1. Add the script tag to `<head>` (or before `</body>`):
 
    ```html
-   <script
-     src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.0.0/mermaid-flow-player.element.js"
-     integrity="sha384-IaPx9du+pVkF99Y7U2x0FMLWhBXCieuwVWQNjyrrfS85TgtjV1fjnb+1YWlSOz6N"
-     crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
    ```
 
 2. Wrap the diagram source:
@@ -60,24 +61,33 @@ description: >-
 1. Add the module script once; it needs no other markup:
 
    ```html
-   <script
-     type="module"
-     src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.0.0/auto.js"
-     integrity="sha384-JDc8KYOKlH+/daSzpHrQrKlViE1boxnczL2o+85HCdXFGOrImuYfcorO+neLFNzF"
-     crossorigin="anonymous"></script>
+   <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
    ```
 
 2. Leave the existing `.mermaid` blocks alone. Each is replaced by a
    `<mermaid-flow-player>` carrying its id and classes, so page CSS and anchor
    links still resolve.
 
-## Bumping the pinned version
+## Pinning instead
 
-Recompute the hash for the new URL:
+When the page must not move under its readers — a published article, a
+compliance context, a strict CSP — swap `@latest` for a version and add the
+hash for that exact file:
 
 ```sh
-curl -sL <url> | openssl dgst -sha384 -binary | openssl base64 -A
+curl -sL https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.0.0/auto.js \
+  | openssl dgst -sha384 -binary | openssl base64 -A
 ```
+
+```html
+<script type="module"
+  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.0.0/auto.js"
+  integrity="sha384-<computed>"
+  crossorigin="anonymous"></script>
+```
+
+Recompute the hash on every version bump; a stale hash blocks the script and
+the diagram silently does not render.
 
 ## Validation
 

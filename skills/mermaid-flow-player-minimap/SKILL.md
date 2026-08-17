@@ -14,7 +14,7 @@ description: >-
 
 ## Critical rules
 
-- Requires the element script on the page — set it up per mermaid-flow-player-embed (pinned CDN tag with SRI).
+- Requires the element script on the page — set it up per mermaid-flow-player-embed.
 - `minimap` is a boolean attribute — present means on; it is off by default.
 - The minimap only appears once there is something off-screen. While the whole diagram fits the viewport it stays hidden rather than covering the diagram with a thumbnail of the diagram, so a small diagram shows no inset even with the attribute set.
 

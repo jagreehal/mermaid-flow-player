@@ -14,7 +14,7 @@ description: >-
 
 ## Critical rules
 
-- Requires the element script on the page — set it up per mermaid-flow-player-embed (pinned CDN tag with SRI).
+- Requires the element script on the page — set it up per mermaid-flow-player-embed.
 - `mode="sequential"` (the default) plays steps in order; `mode="interactive"` lets the reader click reachable nodes to navigate, choosing branches at decision points.
 
 ## Workflow

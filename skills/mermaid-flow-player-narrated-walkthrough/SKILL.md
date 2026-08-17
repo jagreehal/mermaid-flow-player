@@ -15,7 +15,7 @@ description: >-
 
 ## Critical rules
 
-- Requires the element script on the page — set it up per mermaid-flow-player-embed (pinned CDN tag with SRI).
+- Requires the element script on the page — set it up per mermaid-flow-player-embed.
 - Captions come straight from the Mermaid message labels — no extra authoring. A `Note over`/`Note of` line becomes the commentary for its preceding message; otherwise the message label is used.
 - Every step (auto-play and manual Next/Previous) emits a bubbling `mfp:step` event (`detail.text`, `detail.index`) — hook it for custom audio, analytics, or scroll-sync.
 

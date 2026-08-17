@@ -15,7 +15,7 @@ description: >-
 
 ## Critical rules
 
-- Requires the element script on the page — set it up per mermaid-flow-player-embed (pinned CDN tag with SRI).
+- Requires the element script on the page — set it up per mermaid-flow-player-embed.
 - Narration is opt-in: without an attribute (or with `narration="false"`) no narration area is rendered.
 
 ## Options

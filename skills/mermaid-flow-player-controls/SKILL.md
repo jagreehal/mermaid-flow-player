@@ -15,7 +15,7 @@ description: >-
 
 ## Critical rules
 
-- Requires the element script on the page — set it up per mermaid-flow-player-embed (pinned CDN tag with SRI).
+- Requires the element script on the page — set it up per mermaid-flow-player-embed.
 - Pick exactly one preset via the `controls` attribute; omitting it gives the default playback controls.
 - `playback` and `full` adapt to `mode="interactive"`: the reader drives the walkthrough by clicking, so play/prev/next drop out and only Restart and All Paths remain from the transport group.
 
