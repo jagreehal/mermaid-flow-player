@@ -10,7 +10,9 @@ export default defineConfig({
   reporter: [['list'], ['html'], ['executable-stories-playwright/reporter']],
 
   use: {
-    baseURL: 'http://localhost:4321',
+    // `pnpm dev` serves on 4322 under the /mermaid-flow-player base, so specs
+    // can keep using site-root paths like '/diagram-types/flowcharts'.
+    baseURL: 'http://localhost:4322/mermaid-flow-player/',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     actionTimeout: 15_000,
@@ -19,7 +21,7 @@ export default defineConfig({
 
   webServer: {
     command: 'pnpm dev',
-    url: 'http://localhost:4321',
+    url: 'http://localhost:4322/mermaid-flow-player/',
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
   },

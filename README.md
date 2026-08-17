@@ -219,6 +219,36 @@ Configure via URL without JavaScript: `page.html?theme=dark&speed=1.5&dim=none`
 | `debug` | (presence) | `false` |
 | `autoplay` | (presence) | `false` |
 
+## Agent skills
+
+[![skills.sh](https://skills.sh/b/jagreehal/mermaid-flow-player)](https://skills.sh/jagreehal/mermaid-flow-player)
+
+Teach Claude Code, Codex, Cursor, and other compatible agents how to use this
+package:
+
+```bash
+npx skills add jagreehal/mermaid-flow-player
+```
+
+See what's on offer, or install one:
+
+```bash
+npx skills add jagreehal/mermaid-flow-player --list
+npx skills add jagreehal/mermaid-flow-player --skill mermaid-flow-player-embed
+```
+
+| Skill | Covers |
+|-------|--------|
+| `mermaid-flow-player-embed` | Getting a playable diagram on a page, either entry point |
+| `mermaid-flow-player-controls` | Which buttons the toolbar shows |
+| `mermaid-flow-player-modes` | Sequential playback vs interactive click-through |
+| `mermaid-flow-player-themes` | Light, dark, and OS-following |
+| `mermaid-flow-player-narration` | The caption line under the diagram |
+| `mermaid-flow-player-narrated-walkthrough` | Captions, chapters, speech, and scroll-driven stepping |
+| `mermaid-flow-player-minimap` | Overview inset for large diagrams |
+| `mermaid-flow-player-options` | Speed, autoplay, edges, URL sync, and the rest |
+| `mermaid-flow-player-combos` | Ready-made attribute sets for common products |
+
 ## Documentation
 
 Full documentation, live examples, CDN URL builder, and API reference: [jagreehal.github.io/mermaid-flow-player](https://jagreehal.github.io/mermaid-flow-player).

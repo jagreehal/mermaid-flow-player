@@ -23,13 +23,13 @@ export default defineConfig({
       plugins: [starlightThemeNext()],
       tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
       head: [
-        // Ensure relative links resolve under base path (dev and production)
-        {
-          tag: 'base',
-          attrs: {
-            href: siteBase.replace(/\/?$/, '/'),
-          },
-        },
+        // NB: no <base> tag. One used to live here to resolve the handful of
+        // relative links on the homepage, but <base> also rebases `#fragment`
+        // links — so every heading anchor and every "On this page" entry on
+        // every page navigated back to the homepage instead of scrolling.
+        // Starlight already emits its own links base-prefixed; author links
+        // relative to the site root instead of relying on <base>.
+        //
         // Mermaid, with auto-render OFF: the player owns rendering so the
         // diagram source (and its `%% narrate` script) survives long enough to
         // be read. Mermaid's default startOnLoad would replace the text with

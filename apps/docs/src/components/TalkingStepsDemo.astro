@@ -77,7 +77,10 @@ const STEPS = [
       const id = 'talking-steps-svg-' + Date.now();
       const { svg } = await mermaid.render(id, diagram);
       diagramEl.innerHTML = svg;
-      diagramEl.classList.add('mermaid');
+      // Deliberately NOT `.mermaid`: auto.js upgrades every `.mermaid` block
+      // into a <mermaid-flow-player>, which would replace this div — the very
+      // element this demo just built its own player on.
+      diagramEl.classList.add('talking-steps-demo__diagram--rendered');
 
       player = createFlowPlayer({
         root: diagramEl,
@@ -103,7 +106,12 @@ const STEPS = [
       await player.ready();
     }
 
+    // Render up front. Waiting for the first Play click left the page showing
+    // an empty framed box where the diagram should be.
+    const ready = init().catch(() => {});
+
     playBtn.addEventListener('click', async () => {
+      await ready;
       if (!player) await init();
       if (!player || !scenario) return;
       clearHighlight();
@@ -135,7 +143,7 @@ const STEPS = [
     min-height: 120px;
   }
 
-  .talking-steps-demo__diagram.mermaid {
+  .talking-steps-demo__diagram--rendered {
     display: flex;
     justify-content: center;
     align-items: center;

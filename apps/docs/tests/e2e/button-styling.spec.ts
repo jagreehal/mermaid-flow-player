@@ -7,7 +7,7 @@ test.describe('Button Styling', () => {
     story.init(testInfo, { tags: ['e2e', 'styling', 'controls'] });
 
     story.given('I am on the auto-modes page with diagram and controls');
-    await page.goto('/features/auto-modes');
+    await page.goto('features/auto-modes');
     await waitForDiagram(page);
     await waitForControls(page);
 
@@ -27,7 +27,7 @@ test.describe('Button Styling', () => {
     story.init(testInfo, { tags: ['e2e', 'styling', 'hover'] });
 
     story.given('I am on the auto-modes page with controls');
-    await page.goto('/features/auto-modes');
+    await page.goto('features/auto-modes');
     await waitForControls(page);
 
     const playButton = page.locator('.mfp-controls button').first();
@@ -46,7 +46,7 @@ test.describe('Button Styling', () => {
     story.init(testInfo, { tags: ['e2e', 'styling', 'controls'] });
 
     story.given('I am on the auto-modes page with controls');
-    await page.goto('/features/auto-modes');
+    await page.goto('features/auto-modes');
     await waitForControls(page);
 
     story.then('Play, Back to Start, Previous, and Next buttons should be visible');

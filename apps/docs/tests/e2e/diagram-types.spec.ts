@@ -12,7 +12,7 @@ test.describe('Diagram Types', () => {
     story.init(testInfo, { tags: ['e2e', 'diagram-types', 'flowchart'] });
 
     story.given('I am on the flowcharts page');
-    await page.goto('/diagram-types/flowcharts');
+    await page.goto('diagram-types/flowcharts');
     await waitForDiagram(page);
     await waitForControls(page);
 
@@ -29,7 +29,7 @@ test.describe('Diagram Types', () => {
     story.init(testInfo, { tags: ['e2e', 'diagram-types', 'sequence'] });
 
     story.given('I am on the sequence diagrams page');
-    await page.goto('/diagram-types/sequence');
+    await page.goto('diagram-types/sequence');
     await waitForDiagram(page);
     await waitForControls(page);
 
@@ -46,7 +46,7 @@ test.describe('Diagram Types', () => {
     story.init(testInfo, { tags: ['e2e', 'diagram-types', 'state'] });
 
     story.given('I am on the state diagrams page');
-    await page.goto('/diagram-types/state');
+    await page.goto('diagram-types/state');
     await waitForDiagram(page);
     // State page uses interactive mode (first diagram) — has Reset footer, not Play controls
     await waitForControlsOrInteractive(page);
@@ -62,7 +62,7 @@ test.describe('Diagram Types', () => {
     story.init(testInfo, { tags: ['e2e', 'diagram-types', 'gantt'] });
 
     story.given('I am on the gantt page');
-    await page.goto('/diagram-types/gantt');
+    await page.goto('diagram-types/gantt');
     await waitForDiagram(page);
     // Gantt does not get Play controls by design — only assert diagram rendered
     await expectDiagramRendered(page);
@@ -76,7 +76,7 @@ test.describe('Diagram Types', () => {
     story.init(testInfo, { tags: ['e2e', 'diagram-types', 'journey'] });
 
     story.given('I am on the user journey page');
-    await page.goto('/diagram-types/journey');
+    await page.goto('diagram-types/journey');
     await waitForDiagram(page);
     // Journey does not get Play controls by design — only assert diagram rendered
     await expectDiagramRendered(page);
@@ -90,7 +90,7 @@ test.describe('Diagram Types', () => {
     story.init(testInfo, { tags: ['e2e', 'diagram-types', 'class'] });
 
     story.given('I am on the class diagrams page');
-    await page.goto('/diagram-types/class');
+    await page.goto('diagram-types/class');
     await waitForDiagram(page);
     await waitForControls(page);
 
@@ -103,7 +103,7 @@ test.describe('Diagram Types', () => {
     story.init(testInfo, { tags: ['e2e', 'diagram-types', 'er'] });
 
     story.given('I am on the ER diagrams page');
-    await page.goto('/diagram-types/er');
+    await page.goto('diagram-types/er');
     await waitForDiagram(page);
     await waitForControls(page);
 

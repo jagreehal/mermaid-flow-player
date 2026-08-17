@@ -31,3 +31,5 @@ temp-cdn-test/
 
 # Lock files (pnpm only)
 package-lock.json
+# Scratch test output
+apps/docs/reports/
