@@ -1,6 +1,6 @@
 ---
 title: Auto Modes
-description: Zero-config usage by upgrading existing .mermaid blocks
+description: Zero-config usage by upgrading the diagrams already on your page
 ---
 
 import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
@@ -12,11 +12,12 @@ others lack.
 | Entry | Best for | Loads Mermaid? |
 |-------|----------|----------------|
 | `mermaid-flow-player.element.js` | Writing `<mermaid-flow-player>` yourself | Yes (if missing) |
-| `auto.js` | Existing `.mermaid` blocks — upgrades them in place | Yes (if missing) |
+| `auto.global.js` | The diagrams already on your page — upgrades them in place | Yes (if missing) |
 | `auto-init.js` | The same upgrade, but you choose when and what | Yes (if missing) |
 
-`auto.js` runs the upgrade on load and again when an SPA swaps the DOM. Import
-`auto-init.js` instead when you want to call it yourself.
+Auto mode runs the upgrade on load and again when an SPA swaps the DOM. Load
+`auto.global.js` in a `<script>` tag, or import `auto.js` when a bundler is doing
+the work. Import `auto-init.js` instead when you want to call it yourself.
 
 :::caution[Let the player render]
 The upgrade reads the diagram source out of the block, so Mermaid must not have
@@ -28,13 +29,25 @@ rather than discarded — but narration falls back to node labels, because the
 `%% narrate` script went with the source text.
 :::
 
-## Upgrading `.mermaid` blocks
+## Upgrading the diagrams you already have
 
-Add one script, and every `<div class="mermaid">` on the page becomes a player,
-keeping its `id` and classes so your CSS and anchor links still resolve:
+Add one script, and every diagram on the page becomes a player, keeping its
+`id` and your classes so your CSS and anchor links still resolve. Three shapes
+of markup are picked up with no configuration:
+
+| Your markup | Emitted by |
+|---|---|
+| `<div class="mermaid">` / `<pre class="mermaid">` | hand-authored, Mermaid's own docs |
+| `<pre><code class="language-mermaid">` | markdown-it, marked, Prism, Jekyll, Hugo, Eleventy |
+| `<pre class="language-mermaid">` | Shiki, Astro, Starlight, VitePress, Docusaurus |
+
+A fence carrying the class on both the `<pre>` and the `<code>` still produces
+one player, the whole `<pre>` is replaced rather than the `<code>` inside it,
+and `language-*` classes are left behind so your code styling does not follow
+the player.
 
 ```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.global.js"></script>
 
 <div class="mermaid">
 graph LR
@@ -69,7 +82,7 @@ destroyAll();
 
 | Option | Description |
 |--------|-------------|
-| `selector` | Which blocks to upgrade. Default `.mermaid`. |
+| `selector` | Which blocks to upgrade. Defaults to `.mermaid`, `pre.language-mermaid` and `pre > code.language-mermaid`. |
 | `controls` | `true` (transport + zoom), `false`, a preset (`"viewer"`, `"full"`), or an explicit token list. |
 | `narration` | Render the caption area. Default `true`. |
 | `debug` | Log indexing and narration mismatches. |
@@ -165,6 +178,6 @@ screen, rather than finishing above the fold before anyone sees it.
 | Route | Use case |
 |-------|----------|
 | `<mermaid-flow-player>` | New markup; full control over attributes |
-| `auto.js` | A docs site or Markdown pipeline already emitting `.mermaid` |
+| `auto.global.js` | A docs site or Markdown pipeline already emitting diagrams |
 | `autoInit()` | The same upgrade, on your schedule or a custom selector |
 | `createFlowPlayer()` | Driving playback yourself from JavaScript |

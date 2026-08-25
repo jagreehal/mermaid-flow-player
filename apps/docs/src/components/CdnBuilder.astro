@@ -22,8 +22,8 @@
         <div class="field">
           <label for="flow-entry">Flow player entry</label>
           <select id="flow-entry" name="flowEntry">
-            <option value="auto.js">Auto (ESM)</option>
-            <option value="auto.global.js">Auto (IIFE)</option>
+            <option value="auto.global.js">Auto (script tag)</option>
+            <option value="auto.js">Auto (ESM, for bundlers)</option>
             <option value="auto-init.js">Auto-init</option>
             <option value="index.js">Full library (ESM)</option>
             <option value="mermaid-flow-player.umd.js">Full library (UMD)</option>
@@ -387,8 +387,11 @@
         lines.push(`  <script src="${playerBase}/${entry}"><\/script>`);
         lines.push('  <!-- Use <mermaid-flow-player> in body -->');
       } else {
-        const typeModule = entry !== 'auto.global.js';
-        const attr = typeModule ? ' type="module" ' : ' ';
+        // IIFE builds are classic scripts; everything else here is ESM and
+        // needs type="module". Keyed off the build kind rather than a filename
+        // suffix, so adding a name does not silently mislabel it.
+        const isClassic = entry.endsWith('.global.js') || entry.endsWith('.min.js');
+        const attr = isClassic ? ' ' : ' type="module" ';
         lines.push(`  <script${attr}src="${playerBase}/${entry}"><\/script>`);
       }
 
@@ -432,7 +435,7 @@
       const presets = {
         quickstart: () => {
           mermaid.checked = true;
-          flowEntry.value = 'auto.js';
+          flowEntry.value = 'auto.global.js';
           css.checked = false;
           versionPin.value = '';
           theme.value = '';
