@@ -1,17 +1,46 @@
 ---
 title: Installation
-description: Drop one script onto a page and any Mermaid diagram becomes a player.
+description: Add one script tag. Your markup does not change.
 ---
 
-import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
+## One script tag
 
-## CDN — one script
+Auto mode finds the diagrams already on your page and turns each one into a
+player. Nothing about your markup changes.
 
-Both CDN entry points auto-load Mermaid from a CDN if it isn't already on the page. You don't need a separate Mermaid `<script>` — pick one entry point and you're done.
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.global.js"></script>
 
-### Web component
+<div class="mermaid">
+  flowchart LR
+  A[Start] --> B[Process] --> C[End]
+</div>
+```
 
-Best when you're authoring new markup:
+Save that as a file and open it in a browser. There is no build step and no
+server: `auto.global.js` is a plain script, so it runs from `file://` too. Mermaid
+loads itself from a CDN if it is not already on the page, and the CSS is
+bundled and injected.
+
+### What auto mode picks up
+
+| Your markup | Emitted by |
+|---|---|
+| `<div class="mermaid">` / `<pre class="mermaid">` | hand-authored, Mermaid's own docs |
+| `<pre><code class="language-mermaid">` | markdown-it, marked, Prism, Jekyll, Hugo, Eleventy |
+| `<pre class="language-mermaid">` | Shiki, Astro, Starlight, VitePress, Docusaurus |
+
+Point it somewhere else with [`?selector=`](../features/query-params/).
+
+Already loading Mermaid yourself? Auto mode detects `window.mermaid` and uses
+your version rather than fetching its own. Do not run Mermaid with
+`startOnLoad: true` first, though: the upgrade needs the diagram source, and
+Mermaid replaces it with SVG.
+
+## Authoring new diagrams
+
+When you are writing the markup anyway, use the element directly. It takes
+per-diagram options as attributes.
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
@@ -22,121 +51,58 @@ Best when you're authoring new markup:
 </mermaid-flow-player>
 ```
 
-### Auto mode
+There is one player implementation. The element is what auto mode produces, so
+both routes get the same features.
 
-Best when you have existing `.mermaid` divs (e.g. on a docs site or blog):
-
-```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
-
-<div class="mermaid">
-  flowchart LR
-  A[Start] --> B[Process] --> C[End]
-</div>
-```
-
-`auto.js` waits for the DOM, ensures Mermaid is loaded, renders every `.mermaid` block, then adds controls + narration.
-
-Already loading Mermaid yourself? Either entry point detects `window.mermaid` and uses your version instead of fetching its own.
-
-### CDN URLs
+## Which file to load
 
 | File | URL |
 |------|-----|
+| **Auto mode (script tag)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.global.js` |
+| **Auto mode (ESM, for bundlers)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js` |
 | **Web Component** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js` |
-| **Auto mode (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js` |
-| **Auto mode (IIFE)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.global.js` |
 | **Auto-init (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto-init.js` |
 | **Full library (ESM)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js` |
 | **Full library (UMD)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.umd.js` |
 | **CSS (optional)** | `https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.css` |
 
-## Live Demos
+`auto.js` and `auto.global.js` are the same code in two module formats. Use
+`auto.global.js` in a `<script>` tag and `auto.js` when a bundler imports it:
+the ESM build carries `export` statements, and browsers refuse module scripts
+on a `file://` page.
 
-### Basic Example
+`auto.global.js` was published in 1.1. Versions before that named the same
+build `auto.min.js`, which still ships and still works.
 
-<FlowPlayerElement
-  controls
-  diagram={`graph LR
-  A[Build] --> B[Test] --> C[Deploy]`}
-/>
+**Prefer to pick options in a form?** The [CDN Builder](../cdn-builder/) emits
+the script tags and query params for you.
 
-### Full Controls + Minimap
+## Versions and stability
 
-<FlowPlayerElement
-  controls
-  minimap
-  diagram={`graph LR
-  A[Load] --> B[Process] --> C[Save]
-  B --> D[Validate]`}
-/>
+The examples above pin `@latest`, which tracks every release. Pin a version
+instead when you want the page to stop changing under you:
 
-### Dark Theme
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1/auto.global.js"></script>
+```
 
-<FlowPlayerElement
-  controls
-  theme="dark"
-  diagram={`graph TD
-  A[API] --> B[Check]
-  B --> C[Process]
-  B --> D[Error]
-  C --> E[Response]`}
-/>
+The package is on 1.x and follows semver, so `@1` takes fixes and features
+without breaking changes.
 
-### Interactive Mode
+**See every option in one place:** the [Showcase](../features/showcase/) runs a
+live player for each control preset, mode, theme and narration setting.
 
-<FlowPlayerElement
-  mode="interactive"
-  controls
-  diagram={`graph TD
-  A[Start] --> B[Option1]
-  A --> C[Option2]
-  B --> D[Done]
-  C --> D`}
-/>
+## Installing from npm
 
-### Auto-Play + Speed
-
-<FlowPlayerElement
-  autoplay
-  speed="2"
-  diagram={`graph LR
-  A[Step1] --> B[Step2] --> C[Step3] --> D[Done]`}
-/>
-
-### Sequence Diagram
-
-<FlowPlayerElement
-  controls
-  diagram={`sequenceDiagram
-  participant Client
-  participant Server
-  participant DB
-  Client->>Server: Request
-  Server->>DB: Query
-  DB-->>Server: Result
-  Server-->>Client: Response`}
-/>
-
-### State Diagram
-
-<FlowPlayerElement
-  controls
-  diagram={`stateDiagram-v2
-  Idle --> Loading
-  Loading --> Ready
-  Ready --> Processing
-  Processing --> Ready`}
-/>
-
-## npm / pnpm / yarn
+The CDN needs no install. Reach for the package when a bundler is doing the
+work:
 
 ```bash
 npm install mermaid-flow-player
-# or
-pnpm add mermaid-flow-player
-# or
-yarn add mermaid-flow-player
+```
+
+```js
+import 'mermaid-flow-player/auto';
 ```
 
 ## Programmatic Control (CDN)

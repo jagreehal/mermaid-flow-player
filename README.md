@@ -1,14 +1,40 @@
 # mermaid-flow-player
 
-Animate Mermaid-rendered diagrams (flowcharts, sequence, state, gantt, journey, class, ER) with a semantic API: target nodes by ID (e.g. `A`, `B`, `X1`) and play scenarios (steps over time) without depending on Mermaid's internal DOM structure.
+Step through your Mermaid diagrams. Add one script tag and every diagram on the
+page gets play, pause and step controls, narration, and a URL that links to a
+single step.
 
-Published to [npm](https://www.npmjs.com/package/mermaid-flow-player). Use via **CDN** with no install required, or `npm install mermaid-flow-player`.
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.global.js"></script>
 
-## Quick start (one script)
+<div class="mermaid">
+  flowchart TD
+    A[Validate token] --> B[Fetch user] --> C[Render page]
+</div>
+```
 
-Drop a single script onto a page and any Mermaid diagram becomes a player. Mermaid is auto-loaded from CDN if it isn't already present, styles are injected for you, and controls + narration wire themselves up.
+Save that as a file, open it in a browser, and it plays. Your markup does not
+change. There is no build step and no server. Mermaid loads itself if it is not
+already on the page, and the CSS is bundled and injected.
 
-### Web component
+**[Try it on the docs site](https://jagreehal.github.io/mermaid-flow-player/)** — paste your own diagram into the homepage and watch it play.
+
+## Where your diagrams already live
+
+Auto mode upgrades three shapes of markup with no configuration:
+
+| Your markup | Emitted by |
+|---|---|
+| `<div class="mermaid">` / `<pre class="mermaid">` | hand-authored, Mermaid's own docs |
+| `<pre><code class="language-mermaid">` | markdown-it, marked, Prism, Jekyll, Hugo, Eleventy |
+| `<pre class="language-mermaid">` | Shiki, Astro, Starlight, VitePress, Docusaurus |
+
+Each is replaced in place by a `<mermaid-flow-player>`, keeping its `id` and
+your own classes.
+
+## Authoring new diagrams
+
+Write the diagram inside the element and set options per diagram:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/mermaid-flow-player.element.js"></script>
@@ -19,32 +45,19 @@ Drop a single script onto a page and any Mermaid diagram becomes a player. Merma
 </mermaid-flow-player>
 ```
 
-### Auto mode (existing `.mermaid` divs)
+There is one player implementation: the element is what auto mode produces, so
+both routes get the same features.
 
-```html
-<script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player/auto.js"></script>
+## Install
 
-<div class="mermaid">
-  flowchart LR
-  A[Build] --> B[Test] --> C[Deploy]
-</div>
+The CDN needs no install. For a bundler:
+
+```bash
+npm install mermaid-flow-player
 ```
 
-Both paths auto-load Mermaid from CDN if missing — you don't need a separate Mermaid script tag. Already have Mermaid loaded? They detect it and reuse your version.
-
-### Programmatic
-
-```html
-<script type="module">
-  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
-
-  const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
-  });
-
-  await player.ready();
-  await player.play(player.path('A', 'B', 'C'));
-</script>
+```js
+import 'mermaid-flow-player/auto';
 ```
 
 **CDN URL builder:** [docs site → CDN Builder](https://jagreehal.github.io/mermaid-flow-player/cdn-builder). Pick options and copy script tags or query params.
@@ -186,15 +199,14 @@ await player.nextStep();
 
 ### Auto Modes
 
-Beyond full-auto (`auto.js`), there are smaller entry points for specific patterns:
+Beyond full-auto, there are smaller entry points for specific patterns:
 
 | Entry | What it does |
 |-------|--------------|
-| `auto.js` | Loads Mermaid + renders + adds controls + narration to every `.mermaid` (one script) |
-| `auto-init.js` | Adds controls + narration to existing rendered diagrams (assumes Mermaid already loaded) |
-| `auto-enhance.js` | Reads `data-flow-*` attributes to build scenarios |
-| `auto-play.js` | Autoplays diagrams on load / scroll-into-view / click |
-| `mermaid-flow-player.element.js` | The web component (also auto-loads Mermaid) |
+| `auto.global.js` | Loads Mermaid, renders, and adds controls and narration to every diagram it finds. A plain script, so it works from `file://` |
+| `auto.js` | The same code as ESM, for a bundler to import |
+| `auto-init.js` | Upgrades blocks on demand, so you choose when and which selector |
+| `mermaid-flow-player.element.js` | The web component, for markup you are authoring yourself |
 
 Programmatic equivalent:
 
@@ -221,10 +233,8 @@ Configure via URL without JavaScript: `page.html?theme=dark&speed=1.5&dim=none`
 
 ## Agent skills
 
-[![skills.sh](https://skills.sh/b/jagreehal/mermaid-flow-player)](https://skills.sh/jagreehal/mermaid-flow-player)
-
 Teach Claude Code, Codex, Cursor, and other compatible agents how to use this
-package:
+package. [Browse them on skills.sh](https://skills.sh/s/jagreehal/mermaid-flow-player), or:
 
 ```bash
 npx skills add jagreehal/mermaid-flow-player

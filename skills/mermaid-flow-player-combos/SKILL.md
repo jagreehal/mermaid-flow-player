@@ -26,7 +26,7 @@ description: >-
 | Full dark with minimap  | `controls="full" minimap theme="dark"`      |
 | Interactive viewer      | `mode="interactive" controls="viewer"`      |
 
-Add `narration="false"` to the minimal recipe only under `auto.js`, which turns
+Add `narration="false"` to the minimal recipe only under auto mode, which turns
 captions on by default. An authored element has no caption area unless asked.
 
 ## Workflow

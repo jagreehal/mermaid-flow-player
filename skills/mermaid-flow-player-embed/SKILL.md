@@ -34,7 +34,7 @@ description: >-
 | Situation | Entry point |
 | --- | --- |
 | You are authoring the markup | `mermaid-flow-player.element.js` — you write `<mermaid-flow-player>` yourself |
-| The site already renders `.mermaid` blocks (docs generator, blog, CMS) | `auto.js` — upgrades every `.mermaid` block in place, no markup changes |
+| The site already renders diagrams (docs generator, blog, CMS) | `auto.global.js` — upgrades every `.mermaid` block and rendered ```mermaid fence in place, no markup changes |
 
 ## Workflow — authored element
 
@@ -58,13 +58,19 @@ description: >-
 
 ## Workflow — upgrade existing `.mermaid` blocks
 
-1. Add the module script once; it needs no other markup:
+1. Add the script once; it needs no other markup:
 
    ```html
-   <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.js"></script>
+   <script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.global.js"></script>
    ```
 
-2. Leave the existing `.mermaid` blocks alone. Each is replaced by a
+   Use `auto.js` instead only when a bundler imports it: that build is ESM, and
+   browsers refuse module scripts on a `file://` page. `auto.global.js` needs
+   1.1 or newer; on an older pin the same build is named `auto.min.js`.
+
+2. Leave the existing markup alone. Auto mode upgrades `.mermaid` blocks and
+   the fences a markdown pipeline renders (`pre > code.language-mermaid`, and
+   `pre.language-mermaid` from Shiki). Each is replaced by a
    `<mermaid-flow-player>` carrying its id and classes, so page CSS and anchor
    links still resolve.
 
@@ -75,13 +81,13 @@ compliance context, a strict CSP — swap `@latest` for a version and add the
 hash for that exact file:
 
 ```sh
-curl -sL https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.0.0/auto.js \
+curl -sL https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.1.0/auto.global.js \
   | openssl dgst -sha384 -binary | openssl base64 -A
 ```
 
 ```html
-<script type="module"
-  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.0.0/auto.js"
+<script
+  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.1.0/auto.global.js"
   integrity="sha384-<computed>"
   crossorigin="anonymous"></script>
 ```
@@ -93,15 +99,15 @@ the diagram silently does not render.
 
 - Open the page; expect the rendered diagram with playback controls.
 - Press Play; expect nodes to highlight in sequence.
-- With `auto.js`, expect each former `.mermaid` block to be a
+- Under auto mode, expect each former block or fence to be a
   `<mermaid-flow-player>` in the inspector.
 
 ## Constraints
 
-- Narration defaults differ by entry point: `auto.js` turns the caption area on
+- Narration defaults differ by entry point: auto mode turns the caption area on
   (opt-out via `narration="false"`), the authored element leaves it off (opt-in
   via `narration` or `narration-text`). See mermaid-flow-player-narration.
-- `auto.js` skips any `.mermaid` block already inside a `<mermaid-flow-player>`,
+- Auto mode skips any block already inside a `<mermaid-flow-player>`,
   so it is safe to load alongside authored elements.
 - All other defaults are the same either way; attributes on the element override
   them (see the sibling mermaid-flow-player-* skills).

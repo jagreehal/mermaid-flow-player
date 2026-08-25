@@ -1,0 +1,309 @@
+---
+/**
+ * The homepage hero: a diagram playing, the text that produced it, and the
+ * file you can save to get it. Editing the text re-renders the player, so the
+ * pitch proves itself on the visitor's own diagram instead of asserting itself.
+ */
+const SEED = `flowchart LR
+  A[Request] --> B{Signed in?}
+  B -->|No| C[Send to login]
+  C --> A
+  B -->|Yes| D[Load cart]
+  D --> E{In stock?}
+  E -->|No| F[Show sold out]
+  E -->|Yes| G[Charge card]
+  G --> H{Paid?}
+  H -->|Declined| I[Retry once]
+  I --> G
+  H -->|Yes| J[Create order]
+  J --> K[Send receipt]
+  %% narrate A: A request arrives. Follow this one all the way through.
+  %% narrate B: First question: do we know who this is?
+  %% narrate C: If not, they go to login and come back here.
+  %% narrate D: Signed in, so we load their cart.
+  %% narrate E: Second question: is the stock still held?
+  %% narrate F: If it went, we say so rather than taking the money.
+  %% narrate G: Stock is held, so we charge the card.
+  %% narrate H: Third question, and the one that fails most.
+  %% narrate I: A decline gets exactly one retry, then it stops.
+  %% narrate J: Payment cleared, so the order is real now.
+  %% narrate K: And the receipt goes out. That is the whole path.`;
+
+const CDN = 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/auto.global.js';
+---
+
+<div class="pg sl-markdown-no-margin" data-cdn={CDN}>
+  <div class="pg__stage" id="pg-stage">
+    <mermaid-flow-player controls narration diagram={SEED}></mermaid-flow-player>
+  </div>
+
+  <div class="pg__panels">
+    <div class="pg__panel">
+      <div class="pg__head">
+        <label class="pg__label" for="pg-src">Your diagram</label>
+        <span class="pg__note" id="pg-note" role="status" aria-live="polite"></span>
+      </div>
+      <textarea
+        id="pg-src"
+        class="pg__ta"
+        spellcheck="false"
+        rows="14"
+        aria-describedby="pg-note"
+        placeholder="Paste your own Mermaid here">{SEED}</textarea>
+    </div>
+
+    <div class="pg__panel">
+      <div class="pg__head">
+        <span class="pg__label">Save this as <code>diagram.html</code></span>
+        <button type="button" class="pg__copy" id="pg-copy">Copy</button>
+      </div>
+      <pre class="pg__out"><code id="pg-out"></code></pre>
+      <p class="pg__hint">Open it in a browser. No build step, no server, no install.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>('.pg');
+  const stage = document.querySelector<HTMLElement>('#pg-stage');
+  const ta = document.querySelector<HTMLTextAreaElement>('#pg-src');
+  const out = document.querySelector<HTMLElement>('#pg-out');
+  const note = document.querySelector<HTMLElement>('#pg-note');
+  const copy = document.querySelector<HTMLButtonElement>('#pg-copy');
+
+  if (root && stage && ta && out && note && copy) {
+    const cdn = root.dataset.cdn ?? '';
+
+    /** The diagram currently on screen. A failed edit never replaces it. */
+    let rendered = ta.value.trim();
+
+    const fileFor = (src: string): string => {
+      const body = src
+        .split('\n')
+        .map((line) => '  ' + line)
+        .join('\n');
+      return [
+        '<!doctype html>',
+        '<meta charset="utf-8">',
+        '<title>Diagram</title>',
+        '<script src="' + cdn + '"><\/script>',
+        '',
+        '<div class="mermaid">',
+        body,
+        '</div>',
+        '',
+      ].join('\n');
+    };
+
+    const paint = (): void => {
+      out.textContent = fileFor(rendered);
+    };
+    paint();
+
+    const swap = (src: string): void => {
+      const el = document.createElement('mermaid-flow-player');
+      el.setAttribute('controls', '');
+      el.setAttribute('narration', '');
+      el.setAttribute('diagram', src);
+      stage.replaceChildren(el);
+      rendered = src;
+      paint();
+    };
+
+    // Mermaid's own parser decides. Nothing reaches the stage until it agrees,
+    // so a bad paste leaves the last good diagram playing rather than blanking
+    // the hero or printing a stack trace into it.
+    const check = async (src: string): Promise<string | null> => {
+      const mermaid = (window as unknown as { mermaid?: { parse?: (s: string) => Promise<unknown> } }).mermaid;
+      if (!mermaid?.parse) return null;
+      try {
+        await mermaid.parse(src);
+        return null;
+      } catch (err) {
+        const text = err instanceof Error ? err.message : String(err);
+        const line = /line (\d+)/i.exec(text);
+        return line ? `Mermaid can't read line ${line[1]}` : "Mermaid can't read that yet";
+      }
+    };
+
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const src = ta.value.trim();
+        if (!src || src === rendered) return;
+        void check(src).then((why) => {
+          if (why) {
+            note.textContent = why + ', showing your last working version';
+            note.dataset.state = 'warn';
+            return;
+          }
+          note.textContent = '';
+          delete note.dataset.state;
+          swap(src);
+        });
+      }, 500);
+    });
+
+    copy.addEventListener('click', () => {
+      void navigator.clipboard
+        .writeText(fileFor(rendered))
+        .then(() => {
+          copy.textContent = 'Copied';
+        })
+        .catch(() => {
+          copy.textContent = 'Press Ctrl+C';
+        })
+        .finally(() => {
+          setTimeout(() => {
+            copy.textContent = 'Copy';
+          }, 1800);
+        });
+    });
+  }
+</script>
+
+<style>
+  .pg {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  /* The player draws its own frame. A second one around it reads as a box in
+     a box, and the height cap keeps the copyable file above the fold: the
+     player's own fit control scales the diagram down to match. */
+  /* The player draws its own frame. A second one around it reads as a box in
+     a box, so the stage adds none. */
+  .pg__stage {
+    min-height: 18rem;
+  }
+
+  .pg__stage :global(mermaid-flow-player) {
+    width: 100%;
+  }
+
+  .pg__panels {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 900px) {
+    .pg__panels {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .pg__panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    min-width: 0;
+  }
+
+  /* Fixed height, not min-height: the right head carries a button and an
+     inline code chip, and letting either set the height knocks the two
+     panels' contents out of line with each other. */
+  .pg__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    height: 2rem;
+    flex: none;
+  }
+
+  .pg__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--ink-3);
+  }
+
+  .pg__label code {
+    font-size: 1em;
+    text-transform: none;
+    color: var(--ink-1);
+  }
+
+  .pg__note {
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+    text-align: right;
+  }
+
+  .pg__note[data-state='warn'] {
+    color: var(--destructive);
+  }
+
+  /* Three classes deep on purpose. Starlight sets a block margin on every
+     `pre` in markdown content via `.sl-markdown-content pre:not(.expressive-code pre)`,
+     which outscores a two-class selector and pushes this pane out of line
+     with the textarea beside it. */
+  .pg .pg__panel .pg__ta,
+  .pg .pg__panel .pg__out {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: 1.65;
+    background: var(--surface-2);
+    border: 1px solid var(--line-1);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm);
+    color: var(--ink-1);
+    tab-size: 2;
+  }
+
+  /* Both panes are the same fixed height so the hero does not grow with the
+     diagram. Long sources scroll rather than pushing the page down. */
+  .pg__ta {
+    width: 100%;
+    resize: vertical;
+    height: 22rem;
+    overflow-y: auto;
+  }
+
+  .pg__ta:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    border-color: var(--accent);
+  }
+
+  .pg__out {
+    overflow: auto;
+    height: 22rem;
+    white-space: pre;
+  }
+
+  .pg__out code {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .pg__copy {
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    min-height: 1.9rem;
+    padding: 0 var(--space-sm);
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--line-2);
+    background: var(--surface-0);
+    color: var(--ink-1);
+    cursor: pointer;
+  }
+
+  .pg__copy:hover {
+    border-color: var(--ink-1);
+    background: var(--surface-2);
+  }
+
+  .pg__hint {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--ink-3);
+  }
+</style>

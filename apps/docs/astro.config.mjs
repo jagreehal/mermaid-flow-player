@@ -44,16 +44,26 @@ export default defineConfig({
           tag: 'script',
           content: `window.mermaid?.initialize({ startOnLoad: false });`,
         },
-        // The player. `auto.js` registers <mermaid-flow-player> and upgrades
-        // every .mermaid block into one, so pages get the element's full
+        // The player. Auto mode registers <mermaid-flow-player> and upgrades
+        // every diagram block into one, so pages get the element's full
         // feature set (captions, chapters, voice, deep-links) without
         // authoring element markup by hand. Source is the published CDN build
         // unless PLAYER_BASE=local (see src/lib/flow-player-base.js).
+        //
+        // A classic script, not the ESM `auto.js`: that is what these docs tell
+        // readers to use, and a docs site that loads something other than what
+        // it teaches has not tested its own advice.
+        //
+        // The name here is `auto.min.js` while the docs teach the identical
+        // `auto.global.js`. That is deliberate and temporary: this site pins
+        // `@latest`, `auto.global.js` first ships in 1.1, and deploying this
+        // branch before that release would 404 the player on every page.
+        // `auto.min.js` ships in every 1.x, so it cannot break. Switch this
+        // line once 1.1 is on npm.
         {
           tag: 'script',
           attrs: {
-            type: 'module',
-            src: `${flowPlayerBase}/auto.js`,
+            src: `${flowPlayerBase}/auto.min.js`,
             // Opt in to JetBrains Mono. The player defaults to the system
             // monospace stack so it never adds third-party requests to a
             // consumer's page; this site is ours, so it takes the typography.
