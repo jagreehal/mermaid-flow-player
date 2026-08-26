@@ -315,9 +315,16 @@ body:has(.home) main {
 
 /* Neutralize MDX paragraph wrapping inside button/link components on
    the homepage. Otherwise <p> margins push the icon to a new line and
-   <p> color rules override component color decisions. */
+   <p> color rules override component color decisions. The <p> also makes
+   the icon a sibling element, so Starlight's `* + *` rule drops a
+   content-gap margin on it and knocks it off centre. */
 .home p {
   margin: 0;
+}
+.home__btn svg,
+.home__path svg {
+  margin: 0;
+  flex: none;
 }
 .home__btn p,
 .home__path p {
@@ -335,6 +342,22 @@ body:has(.home) main {
    The themes / custom-styles documentation pages are the only place
    the player should be re-styled — and they do it on their own scope.
    ===================================================================== */
+/* Our own flex/grid wrappers space themselves with `gap`, but Starlight's
+   content-flow rule stacks a paragraph margin on top of each child after the
+   first — one card ends up a line higher than its row-mates. Clear it. */
+.sl-markdown-content :is(.live-example, .theme-gallery) > * {
+  margin-top: 0;
+}
+
+/* The player builds its controls, panels and narration as plain elements
+   inside .sl-markdown-content, so Starlight's `:not(a,strong,...) + :not(...)`
+   content-flow rule drops a paragraph margin on every one after the first —
+   which knocks the control bar's buttons out of line. The player spaces its
+   own bars with flex `gap`; clear the inherited content margin. */
+.sl-markdown-content mermaid-flow-player :not(a, strong, em, del, span, input, code, br) {
+  margin-top: 0;
+}
+
 mermaid-flow-player {
   --accent: revert;
   --accent-strong: revert;

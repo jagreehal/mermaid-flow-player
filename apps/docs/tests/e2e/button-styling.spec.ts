@@ -59,4 +59,23 @@ test.describe('Button Styling', () => {
       await expect(button).toBeVisible();
     }
   });
+
+  test('control buttons sit on one line inside markdown content', async ({ page }, testInfo) => {
+    story.init(testInfo, { tags: ['e2e', 'styling', 'controls'] });
+
+    story.given('I am on a docs page where the player lives in .sl-markdown-content');
+    await page.goto('diagram-types/flowcharts');
+    await waitForControls(page);
+
+    story.then("Starlight's content-flow margin should not offset any button");
+    // Regression: `.sl-markdown-content :not(a,...) + :not(...)` put a
+    // paragraph margin-top on every button after the first.
+    const tops = await page
+      .locator('.mfp-controls')
+      .first()
+      .locator('> button')
+      .evaluateAll(els => els.map(el => Math.round(el.getBoundingClientRect().top)));
+    expect(tops.length).toBeGreaterThan(1);
+    expect(Math.max(...tops) - Math.min(...tops)).toBeLessThanOrEqual(1);
+  });
 });
