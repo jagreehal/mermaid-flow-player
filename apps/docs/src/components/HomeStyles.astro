@@ -100,6 +100,57 @@
     gap: var(--space-sm);
   }
 
+  /* ---------- PATTERN ----------
+     The one-glance pitch: the diagram playing, and directly under it the exact
+     markup that produced it. Full width rather than two columns — halved, the
+     control bar drops its labels to icons and the CDN line scrolls out of
+     sight, which is the opposite of the point. */
+  .home__pattern {
+    display: grid;
+    gap: var(--space-md);
+    border-top: 1px solid var(--line-1);
+    padding-top: var(--space-lg);
+  }
+
+  .home__pattern-demo {
+    min-width: 0;
+    background: var(--surface-1);
+    border: 1px solid var(--line-1);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+  }
+
+  .home__pattern-demo :global(mermaid-flow-player) {
+    width: 100%;
+  }
+
+  /* Expressive Code owns the frame; it just must not add its page margin
+     here, where the grid does the spacing. */
+  .home__pattern-code {
+    min-width: 0;
+  }
+
+  .home__pattern-code :global(.expressive-code) {
+    margin: 0;
+  }
+
+  .home__pattern-meta {
+    margin: 0;
+    font-size: var(--text-sm);
+    line-height: 1.6;
+    color: var(--ink-3);
+  }
+
+  /* ---------- STAGE ---------- */
+  .home__stage-title {
+    margin: 0 0 var(--space-sm);
+    font-family: var(--font-display);
+    font-size: var(--text-md);
+    font-weight: 600;
+    letter-spacing: var(--tracking-snug);
+    color: var(--ink-1);
+  }
+
   /* ---------- JOBS ---------- */
   .home__jobs {
     display: grid;

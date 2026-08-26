@@ -10,6 +10,7 @@ hero:
 import FlowPlayerElement from '~/components/FlowPlayerElement.astro';
 import HeroPlayground from '~/components/HeroPlayground.astro';
 import HomeStyles from '~/components/HomeStyles.astro';
+import { FLOW } from './features/showcase-diagrams';
 
 <HomeStyles />
 
@@ -25,12 +26,41 @@ import HomeStyles from '~/components/HomeStyles.astro';
     </h1>
 
     <p class="home__lede">
-      Add one script tag. Every diagram on the page gets controls, and every
-      step gets a URL you can send someone.
+      Wrap a diagram in one tag and it plays. Every step gets a URL you can
+      send someone.
     </p>
   </header>
 
+  <section class="home__pattern" aria-label="The whole idea">
+    <div class="home__pattern-demo">
+      <FlowPlayerElement controls diagram={FLOW} />
+    </div>
+
+<div class="home__pattern-code">
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
+
+<mermaid-flow-player controls>
+flowchart LR
+  A[Hard] -->|Text| B(Round)
+  B --> C{Decision}
+  C -->|One| D[Result 1]
+  C -->|Two| E[Result 2]
+</mermaid-flow-player>
+```
+
+</div>
+
+    <p class="home__pattern-meta">
+      That is the whole thing. It also works on the diagrams you already have —
+      Docusaurus, VitePress, Astro, Starlight, Jekyll, Hugo, Eleventy, and
+      anything built on markdown-it, marked, Prism or Shiki.
+    </p>
+  </section>
+
   <section class="home__stage" aria-label="Try it">
+    <h2 class="home__stage-title">Paste your own diagram</h2>
     <HeroPlayground />
   </section>
 
@@ -131,13 +161,13 @@ import HomeStyles from '~/components/HomeStyles.astro';
   </section>
 
   <section class="home__more" aria-label="Read on">
-    <a class="home__btn home__btn--primary" href="installation/">
-      Every option
+    <a class="home__btn home__btn--primary" href="features/showcase/">
+      See everything it does
       <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
         <path d="M4 8h8M9 4l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </a>
-    <a class="home__btn home__btn--ghost" href="features/showcase/">Showcase</a>
+    <a class="home__btn home__btn--ghost" href="installation/">Install it</a>
     <a class="home__btn home__btn--quiet" href="api/reference/">API reference</a>
   </section>
 </div>
