@@ -1,10 +1,10 @@
 ---
 name: mermaid-flow-player-options
 description: >-
-  Tunes <mermaid-flow-player> behavior with the speed, visited, edge, autoplay,
+  Tunes <mermaid-flow-player> behavior with the speed, visited, autoplay,
   debug, auto-center, and sync-url attributes. Use this skill when changing
   playback speed, starting playback automatically on load, disabling
-  visited-node trails or edge animation, auto-centering the active node,
+  visited-node trails, auto-centering the active node,
   syncing zoom/pan state to the URL, or enabling debug logging. Do not use for
   control buttons (mermaid-flow-player-controls), narration
   (mermaid-flow-player-narration), themes (mermaid-flow-player-themes), or
@@ -24,7 +24,6 @@ description: >-
 | ------------------ | ------------------------------------------------------------- |
 | `speed="2"`        | Speed multiplier. Default `1.2`; accepted range 0–10          |
 | `visited="false"`  | Nodes don't keep a visited trail after the step moves on      |
-| `edge="off"`       | Disables edge (arrow) animation; nodes only                   |
 | `autoplay`         | Starts playback automatically once rendered                   |
 | `debug`            | Verbose console logging for troubleshooting                   |
 | `auto-center`      | Pans the viewport to keep the active node centered            |

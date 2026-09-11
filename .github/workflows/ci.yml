@@ -41,6 +41,12 @@ jobs:
       - name: Lint
         run: pnpm lint
 
+      # Catches a page or skill that outlived what it described: a link to a
+      # deleted page, a skill naming a sibling that is gone. Offline, so it
+      # cannot flake.
+      - name: Check docs and skills agree with each other
+        run: pnpm check:docs
+
       - name: Build docs
         run: pnpm build
 

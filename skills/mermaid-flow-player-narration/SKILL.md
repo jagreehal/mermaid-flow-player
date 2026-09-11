@@ -26,6 +26,21 @@ description: >-
 | `narration="false"`       | No narration area (same as default)                          |
 | `narration-text="…"`      | Shows the area with initial static text, replaced per step   |
 
+## Narration written into the diagram
+
+Captions default to each node's own label. To say something better, put the
+script in the Mermaid source, where it travels with the diagram:
+
+```
+flowchart TD
+  A[Validate token] --> B[Fetch user]
+  %% narrate A: First we check the caller's token.
+  %% narrate B: Then we load their profile.
+```
+
+A `%%` line indented by two or more spaces continues the directive above it, so
+a long line can be wrapped.
+
 ## Workflow
 
 1. Ensure the CDN script tag is on the page.

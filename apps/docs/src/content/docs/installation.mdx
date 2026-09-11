@@ -83,10 +83,10 @@ The examples above pin `@latest`, which tracks every release. Pin a version
 instead when you want the page to stop changing under you:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1/auto.global.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@2/auto.global.js"></script>
 ```
 
-The package is on 1.x and follows semver, so `@1` takes fixes and features
+The package follows semver, so `@2` takes fixes and features
 without breaking changes.
 
 **See every option in one place:** the [Showcase](../features/showcase/) runs a
@@ -111,10 +111,11 @@ import 'mermaid-flow-player/auto';
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('my-diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('my-diagram'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others',
-    edgeMode: 'bestEffort',
   });
 
   await player.ready();
@@ -133,7 +134,6 @@ import 'mermaid-flow-player/auto';
 | `narration` | `true`, `false` | `true` | Show narration area |
 | `narration-text` | string | — | Initial narration text |
 | `minimap` | — | — | Show minimap |
-| `edge` | `off`, `bestEffort` | `bestEffort` | Edge animation mode |
 | `visited` | `true`, `false` | `true` | Track visited nodes |
 | `autoplay` | — | — | Start playing on load |
 | `debug` | — | — | Enable debug logging |

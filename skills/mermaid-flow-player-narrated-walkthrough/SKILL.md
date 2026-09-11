@@ -18,6 +18,8 @@ description: >-
 - Requires the element script on the page — set it up per mermaid-flow-player-embed.
 - Captions come straight from the Mermaid message labels — no extra authoring. A `Note over`/`Note of` line becomes the commentary for its preceding message; otherwise the message label is used.
 - Every step (auto-play and manual Next/Previous) emits a bubbling `mfp:step` event (`detail.text`, `detail.index`) — hook it for custom audio, analytics, or scroll-sync.
+- A sequence diagram is stepped by **message**, not by participant. `detail.node` and `getCurrentNode()` name the message by its endpoints — `"Req->W"`, and `"Req->W#1"` where the same two participants talk twice — so Next never spends a step announcing a name.
+- `%% narrate:` on its own line attaches to the message above it, the same way `Note over` does, and wins over both the Note and the label.
 
 ## Attributes
 
@@ -44,6 +46,7 @@ description: >-
      participant AL as AuditLog
      Req->>W: POST /access-requests
      Note over Req,W: A worker receives the request and validates the caller.
+     %% narrate: Or say it here instead — this wins over the Note above.
      W->>WF: create instance
      WF->>Req: signed approval link
      Req->>W: GET /decision then Approve

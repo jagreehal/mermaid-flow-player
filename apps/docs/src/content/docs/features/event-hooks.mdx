@@ -25,8 +25,10 @@ When you call `player.play(scenario, options)`, the player runs each step in ord
 Hooks are passed once when you create the player:
 
 ```javascript
+const diagram = document.getElementById('diagram');
 const player = createFlowPlayer({
-  root: document.getElementById('diagram'),
+  root: diagram,
+  source: diagram.textContent,
   hooks: {
     onStepStart(step, note) {
       // step: { type: 'node', id: 'A', note?: string } or { type: 'edge', from, to }, etc.
@@ -152,15 +154,6 @@ hooks: {
 
 Browsers often block sound until the user has interacted with the page (e.g. clicked Play). Use a user-triggered action before calling `player.play()` so the first step’s sound is allowed.
 
-## Plugin alternative
-
-If you prefer to use the **plugin system** instead of config-level hooks, you get the same timing with `beforeStep` and `afterStep`:
-
-- [Plugin System](../plugins/) — `api.beforeStep(step)` and `api.afterStep(step)` run before and after each step.
-
-Plugins are useful when you want to package your behavior (e.g. analytics or sound) and reuse it across multiple players.
-
 ## Next steps
 
 - [Narration](../narration/) — Use `narrationTarget` and step `note` for on-screen text.
-- [Plugin System](../plugins/) — Lifecycle hooks and extensions.

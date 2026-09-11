@@ -30,8 +30,10 @@ journey
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('journey-diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('journey-diagram'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 
@@ -108,8 +110,10 @@ journey
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('journey');
   const player = createFlowPlayer({
-    root: document.getElementById('journey'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 

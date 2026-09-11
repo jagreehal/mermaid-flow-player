@@ -10,7 +10,10 @@ description: >-
   configuring specific controls, narration, themes, or interactive stepping —
   use mermaid-flow-player-controls, mermaid-flow-player-narration,
   mermaid-flow-player-themes, or mermaid-flow-player-modes. Do not use for
-  static (non-animated) Mermaid rendering; plain mermaid.js covers that.
+  driving playback from JavaScript — use mermaid-flow-player-api. Do not use
+  where the page cannot run scripts, such as a README or a pull request — use
+  mermaid-flow-player-animated-svg. Do not use for static (non-animated)
+  Mermaid rendering; plain mermaid.js covers that.
 ---
 
 # Embed Mermaid Flow Player
@@ -26,7 +29,9 @@ description: >-
   can carry an `integrity` hash — Subresource Integrity and a floating tag are
   mutually exclusive, since the bytes are meant to change.
 - Put raw Mermaid source directly inside the element — no `<pre>`, no code
-  fence, no escaping beyond normal HTML.
+  fence, no escaping beyond normal HTML. That text is also what the player reads
+  the diagram's structure from, so it has to be the diagram's real source, not a
+  paraphrase of it.
 - The two entry points have **different narration defaults**. See Constraints.
 
 ## Choose an entry point
@@ -81,13 +86,13 @@ compliance context, a strict CSP — swap `@latest` for a version and add the
 hash for that exact file:
 
 ```sh
-curl -sL https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.1.0/auto.global.js \
+curl -sL https://cdn.jsdelivr.net/npm/mermaid-flow-player@2.0.0/auto.global.js \
   | openssl dgst -sha384 -binary | openssl base64 -A
 ```
 
 ```html
 <script
-  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@1.1.0/auto.global.js"
+  src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@2.0.0/auto.global.js"
   integrity="sha384-<computed>"
   crossorigin="anonymous"></script>
 ```

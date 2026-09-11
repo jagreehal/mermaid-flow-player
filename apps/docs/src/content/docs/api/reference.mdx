@@ -11,9 +11,9 @@ Complete reference for Mermaid Flow Player API.
 <script type="module">
   import {
     createFlowPlayer,
-    createScenarioBuilder,
-    createRegistry,
-    createEdgeDetector,
+    toAnimatedSvg,
+    parseDiagram,
+    bindGraph,
   } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 </script>
 ```
@@ -23,18 +23,16 @@ Creates a new flow player instance.
 ### Options
 
 ```typescript
-interface FlowPlayerOptions {
-  root: HTMLElement;                         // Required: diagram container
-  narrationTarget?: HTMLElement | string;    // Narration display element
-  dim?: 'none' | 'others';                  // Default: 'others'
-  persist?: 'none' | 'visited';             // Default: 'visited'
-  edgeMode?: 'off' | 'bestEffort' | 'manual';
-  edgeDetection?: EdgeDetectionConfig;
+type FlowPlayerOptions = {
+  root: HTMLElement;                      // Required: the diagram's container
+  source: string;                         // Required: the Mermaid source
+  narrationTarget?: HTMLElement | string; // Narration display element
+  dim?: 'none' | 'others';                // Default: 'others'
+  visited?: boolean;                      // Default: true
   easing?: EasingConfig;
-  speed?: number;                            // Default: 1.2
-  timing?: { stepMs: number };
+  speed?: number;                         // Default: 1
+  timing?: { stepMs: number };            // Default: 1200
   mode?: 'sequential' | 'interactive';
-  plugins?: Plugin[];
   debug?: boolean;
   hooks?: {
     onStepStart?: (step: Step, narration?: string) => void;
@@ -42,8 +40,13 @@ interface FlowPlayerOptions {
     onError?: (err: unknown) => void;
     onPathChoice?: (availablePaths: string[]) => void;
   };
-}
+};
 ```
+
+`source` is the diagram's Mermaid text, and it is required. The player reads the
+diagram's structure from it — never from the rendered SVG — which is why a step
+names the id you wrote (`A`, `Still`, `Alice`) rather than whatever id Mermaid
+stamped on the element. Auto mode and `<mermaid-flow-player>` pass it for you.
 
 ### Example
 
@@ -51,11 +54,12 @@ interface FlowPlayerOptions {
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('diagram');
+
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others',
-    persist: 'visited',
-    edgeMode: 'bestEffort',
     speed: 1.5,
     debug: true
   });
@@ -202,8 +206,10 @@ const step = player.transition('Idle', 'Active', { note: 'Start' });
 Enable step-through with path selection:
 
 ```javascript
+const diagram = document.getElementById('diagram');
 const player = createFlowPlayer({
-  root: document.getElementById('diagram'),
+  root: diagram,
+  source: diagram.textContent,
   mode: 'interactive',
   hooks: {
     onPathChoice: (paths) => {
@@ -275,99 +281,34 @@ The same upgrade, called on your terms. Returns the created elements.
 
 Replaces every upgraded element with the block it came from.
 
-## Scenario Builder
+## toAnimatedSvg(scenario, options?)
 
-### createScenarioBuilder(type?)
-
-Create a builder for any diagram type:
-
-```javascript
-import { createScenarioBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-const builder = createScenarioBuilder('flowchart');
-const scenario = builder
-  .node('A', { state: 'active', note: 'Start here' })
-  .node('B', { state: 'active' })
-  .edge('A', 'B')
-  .wait(500)
-  .node('C', { state: 'success' })
-  .build();
-```
-
-### Diagram-Specific Builders
+Draw a scenario as a standalone animated SVG: no script, nothing fetched, so it
+plays where the player cannot run at all — a README, a pull request comment, an
+email, a printed page.
 
 ```javascript
-// Flowchart builder
-const flow = createScenarioBuilder('flowchart');
-flow.terminal('Start').process('Init').decision('Check').terminal('End');
-
-// Sequence builder
-const seq = createScenarioBuilder('sequence');
-seq.participant('Alice').message('Alice', 'Bob').activate('Bob').deactivate('Bob');
-
-// State builder
-const state = createScenarioBuilder('state');
-state.state('Idle').transition('Idle', 'Active').state('Active');
+const svg = player.toAnimatedSvg(
+  [
+    { type: 'node', id: 'A' },
+    { type: 'edge', from: 'A', to: 'B' },
+    { type: 'node', id: 'B' },
+  ],
+  { title: 'How a request is served' },
+);
 ```
 
-### Builder Methods
+| Option | Type | Default | What it does |
+|--------|------|---------|--------------|
+| `stepMs` | `number` | the player's own step timing | How long a step lasts when it does not say |
+| `loop` | `boolean` | `true` | `false` holds on the last step instead of repeating |
+| `title` | `string` | none | The `<title>` a screen reader announces |
+| `accent` | `string` | `#3b82f6` | The colour the current element is picked out in |
+| `restOpacity` | `number` | `0.28` | How far back everything else is held |
 
-| Method | Description |
-|--------|-------------|
-| `.node(id, opts?)` | Add a node step |
-| `.edge(from, to, opts?)` | Add an edge step |
-| `.wait(ms)` | Add a delay |
-| `.reset(opts?)` | Add a reset step |
-| `.repeat(n, fn)` | Repeat a sequence N times |
-| `.parallel(...steps)` | Run steps in parallel |
-| `.conditional(cond, trueFn, falseFn?)` | Conditional branching |
-| `.build()` | Build the scenario |
-| `.play(player, opts?)` | Build and play directly |
+A reader whose system asks for less motion gets the finished diagram, still.
 
-## Scenario Registry
-
-```javascript
-import { createRegistry } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-const registry = createRegistry();
-
-// Register a reusable template
-registry.register('happy-path', {
-  name: 'happy-path',
-  description: 'Animate the success path',
-  build: (params) => [
-    { type: 'node', id: params?.start || 'A', state: 'active' },
-    { type: 'node', id: params?.end || 'C', state: 'success' },
-  ]
-});
-
-// Build and play
-const scenario = registry.build('happy-path', { start: 'Login', end: 'Dashboard' });
-await player.play(scenario);
-```
-
-## Plugin System
-
-```javascript
-import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-const myPlugin = {
-  name: 'my-plugin',
-  version: '1.0.0',
-  install(api) {
-    api.beforePlay((scenario) => console.log('Starting:', scenario));
-    api.afterStep((step) => console.log('Completed step:', step));
-    api.onError((err) => console.error('Error:', err));
-  }
-};
-
-const player = createFlowPlayer({
-  root: document.getElementById('diagram'),
-  plugins: [myPlugin]
-});
-```
-
-See [Plugins](../../features/plugins/) for full documentation.
+See [Animated SVG](../../features/animated-svg/) for the whole story.
 
 ## Step Types
 
@@ -375,8 +316,9 @@ See [Plugins](../../features/plugins/) for full documentation.
 // Node step
 { type: 'node', id: 'A', state: 'active', pulse: true, note: 'text', ms: 500 }
 
-// Edge step
-{ type: 'edge', from: 'A', to: 'B', state: 'active', ms: 300 }
+// Edge step. `key` names the exact arrow where a pair carries more than one,
+// which `from`/`to` alone cannot: "A->B#1".
+{ type: 'edge', from: 'A', to: 'B', key: 'A->B#1', state: 'active', ms: 300 }
 
 // Wait step
 { type: 'wait', ms: 1000 }
@@ -397,11 +339,11 @@ import type {
   Scenario,
   State,
   GraphIndex,
-  Plugin,
-  PluginAPI,
+  DiagramGraph,
+  DiagramKind,
+  AnimatedSvgOptions,
+  FlowPlayerError,
   EasingFunction,
   EasingConfig,
-  ScenarioBuilder,
-  ScenarioTemplate,
 } from 'mermaid-flow-player';
 ```

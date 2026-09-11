@@ -28,8 +28,10 @@ gantt
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('gantt-diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('gantt-diagram'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 
@@ -102,8 +104,10 @@ gantt
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('gantt');
   const player = createFlowPlayer({
-    root: document.getElementById('gantt'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 

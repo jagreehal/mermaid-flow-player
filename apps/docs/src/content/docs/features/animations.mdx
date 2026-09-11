@@ -18,7 +18,8 @@ graph LR
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
-  const player = createFlowPlayer({ root: document.getElementById('diagram') });
+  const diagram = document.getElementById('diagram');
+  const player = createFlowPlayer({ root: diagram, source: diagram.textContent });
   await player.ready();
   await player.play(player.path('A', 'B', 'C'), { speed: 1.2 });
 </script>
@@ -111,8 +112,10 @@ Applied to all animations:
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
+    root: diagram,
+    source: diagram.textContent,
     easing: { default: 'ease-out-cubic' }
   });
 </script>
@@ -166,6 +169,7 @@ Or set the step duration directly:
 ```javascript
 const player = createFlowPlayer({
   root,
+  source,
   timing: { stepMs: 800 }  // 800ms per step
 });
 ```
@@ -176,8 +180,10 @@ const player = createFlowPlayer({
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
+    root: diagram,
+    source: diagram.textContent,
     easing: {
       default: 'ease-out-cubic',
       active: 'ease-out-back',
