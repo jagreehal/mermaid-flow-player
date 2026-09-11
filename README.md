@@ -65,14 +65,15 @@ import 'mermaid-flow-player/auto';
 ## Usage (programmatic)
 
 ```ts
-import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player/index.js';
+import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player';
 
 const root = document.getElementById("diagram");
+const source = root.textContent;
 const player = createFlowPlayer({
   root,
-  persist: "visited",
+  source,
+  visited: true,
   dim: "others",
-  edgeMode: "bestEffort",
 });
 
 await player.ready();
@@ -80,6 +81,26 @@ await player.play(player.path("A", "B", "C", "E", "F", "G", "J"), { speed: 1.1 }
 ```
 
 Use stable, simple node IDs in your Mermaid diagram (e.g. `A`, `B`, `X1`) so `path()` and steps line up.
+
+## Animated SVG, for where JavaScript cannot run
+
+A README, a pull request comment, an issue, an email: none of them run scripts, so none of them can
+run a player. `toAnimatedSvg` draws a scenario as one self-contained file that animates on its own.
+
+```js
+const svg = player.toAnimatedSvg(
+  [
+    { type: 'node', id: 'A' },
+    { type: 'edge', from: 'A', to: 'B' },
+    { type: 'node', id: 'B' },
+  ],
+  { title: 'How a request is served' },
+);
+```
+
+No script, no external references, nothing to fetch. Options: `stepMs` (default 1200), `loop`
+(default true), `title`, `accent`, `restOpacity`. A reader whose system asks for less motion gets the
+finished diagram, still.
 
 ## Features
 
@@ -140,54 +161,6 @@ createFlowPlayer({
 });
 ```
 
-### Enhanced Edge Animation
-
-**Multi-strategy edge detection** with automatic fallback:
-
-```ts
-createFlowPlayer({
-  root: diagram,
-  edgeMode: 'bestEffort',
-  edgeDetection: {
-    strategy: ['title', 'data-attr', 'text', 'path-trace'],
-    debug: true,
-  }
-});
-```
-
-### Scenario Builder API
-
-Build complex animations with a **fluent, chainable API**:
-
-```ts
-import { createScenarioBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-await createScenarioBuilder()
-  .node('Start', { note: 'Beginning' })
-  .wait(500)
-  .node('Process', { state: 'active' })
-  .node('End', { state: 'success' })
-  .play(player);
-```
-
-Features: chainable methods, diagram-specific builders (flowchart, sequence, state), `repeat()`, `conditional()`, template registry.
-
-### Plugin System
-
-Extend functionality with lifecycle hooks:
-
-```ts
-import { createFlowPlayer, type Plugin } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-import { AnalyticsPlugin, KeyboardControlsPlugin } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-const player = createFlowPlayer({
-  root: diagram,
-  plugins: [AnalyticsPlugin, KeyboardControlsPlugin],
-});
-```
-
-**Built-in plugins:** AnalyticsPlugin (event tracking), KeyboardControlsPlugin (Space/R/Arrow keys).
-
 ### Interactive Mode
 
 Step-through with user-controlled path selection:
@@ -217,19 +190,20 @@ autoInit({ controls: true, narration: true });
 
 ### URL Query Parameter Configuration
 
-Configure via URL without JavaScript: `page.html?theme=dark&speed=1.5&dim=none`
+Configure via URL without JavaScript: `page.html?theme=dark&speed=1.5`
 
 | Parameter | Values | Default |
-|-----------|--------|---------|
+| --- | --- | --- |
 | `theme` | `light`, `dark`, `auto` | `auto` |
 | `speed` | 0.1 to 10 | 1.2 |
-| `dim` | `none`, `others` | `others` |
-| `persist` | `none`, `visited` | `visited` |
-| `edge` | `off`, `bestEffort` | `off` |
+| `stepMs` | milliseconds per step | derived from `speed` |
+| `visited` | `true`, `false` | `true` |
 | `mode` | `sequential`, `interactive` | `sequential` |
-| `selector` | CSS selector (e.g. `.my-diagram`) | `.mermaid` (auto modes only) |
-| `debug` | (presence) | `false` |
+| `selector` | CSS selector (e.g. `.my-diagram`) | `.mermaid` (auto mode only) |
+| `step` | step index to deep-link to | none |
 | `autoplay` | (presence) | `false` |
+| `trigger` | `load`, `scroll` | `load` |
+| `debug` | (presence) | `false` |
 
 ## Agent skills
 
@@ -258,6 +232,8 @@ npx skills add jagreehal/mermaid-flow-player --skill mermaid-flow-player-embed
 | `mermaid-flow-player-minimap` | Overview inset for large diagrams |
 | `mermaid-flow-player-options` | Speed, autoplay, edges, URL sync, and the rest |
 | `mermaid-flow-player-combos` | Ready-made attribute sets for common products |
+| `mermaid-flow-player-api` | Driving a diagram from JavaScript with `createFlowPlayer` and hand-written scenarios |
+| `mermaid-flow-player-animated-svg` | One standalone animated SVG for a README, PR, or email |
 
 ## Documentation
 

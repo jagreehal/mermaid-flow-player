@@ -17,6 +17,17 @@ description: >-
 - Requires the element script on the page — set it up per mermaid-flow-player-embed.
 - `mode="sequential"` (the default) plays steps in order; `mode="interactive"` lets the reader click reachable nodes to navigate, choosing branches at decision points.
 
+## What a step is
+
+Stepping follows what a reader of that diagram follows, so it is not the same
+thing everywhere:
+
+| Type                        | A step is                                       |
+| --------------------------- | ----------------------------------------------- |
+| flowchart, state, class, ER | a node, and the edge taken to reach it          |
+| sequence                    | a message — the participants are the cast, the arrows are the plot |
+| gantt, journey              | a task, in the order written                    |
+
 ## Workflow
 
 1. Ensure the CDN script tag is on the page.

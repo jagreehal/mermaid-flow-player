@@ -22,24 +22,48 @@ sequenceDiagram
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 
   await player.ready();
-  const idx = player.index();
-  // Sequence diagrams index participants and messages
-  await player.play(player.path(...idx.nodes.keys()));
+
+  // A sequence diagram's beats are its messages, not its participants: the
+  // reader follows the arrows down the page.
+  await player.play([
+    { type: 'edge', from: 'Client', to: 'API' },
+    { type: 'edge', from: 'API', to: 'Client' },
+  ]);
 </script>
 ```
+
+## Stepping a sequence
+
+The participants are the cast; the messages are the plot. Next and Previous move
+one **message** at a time, and `getCurrentNode()` answers with the message the
+reader is on — `"Client->API"`, or `"Client->API#1"` where the same two
+participants talk more than once.
+
+That ordinal matters when you write a step by hand. `from` and `to` can only ever
+name the first arrow between a pair, so add `key` to name a later one:
+
+```javascript
+{ type: 'edge', from: 'Client', to: 'API', key: 'Client->API#1' }
+```
+
+`player.getSteps()` returns the whole exchange as a transcript — one entry per
+message, with its text and the participant who sent it — which is what drives
+chapter rails and printable walkthroughs.
 
 **Web Component:**
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/mermaid-flow-player.element.js"></script>
 
-<mermaid-flow-player controls edge="bestEffort" theme="light">
+<mermaid-flow-player controls theme="light">
 sequenceDiagram
   Alice->>Bob: Hello Bob
   Bob->>Sarah: Hi Sarah
@@ -97,30 +121,16 @@ sequenceDiagram
   S-->>U: Welcome!
 `} />
 
-## Sequence Builder
-
-```javascript
-import { SequenceBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-const scenario = new SequenceBuilder()
-  .participant('Alice')
-  .message('Alice', 'Bob', { note: 'Greeting' })
-  .activate('Bob')
-  .message('Bob', 'Alice', { note: 'Response' })
-  .deactivate('Bob')
-  .build();
-
-await player.play(scenario);
-```
-
 ## Programmatic Control
 
 ```html
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('seq-diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('seq-diagram'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 

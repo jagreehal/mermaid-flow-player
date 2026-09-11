@@ -225,10 +225,6 @@ These are the extra flags shown in the demo.
     <FlowPlayerElement visited="false" diagram={FLOW} />
   </div>
   <div class="showcase-card">
-    <h3><code>edge="off"</code></h3>
-    <FlowPlayerElement edge="off" diagram={FLOW} />
-  </div>
-  <div class="showcase-card">
     <h3><code>autoplay</code></h3>
     <FlowPlayerElement autoplay diagram={FLOW} />
   </div>
@@ -256,14 +252,6 @@ flowchart LR
 </mermaid-flow-player>
 
 <mermaid-flow-player visited="false">
-flowchart LR
-  A[Hard] -->|Text| B(Round)
-  B --> C{Decision}
-  C -->|One| D[Result 1]
-  C -->|Two| E[Result 2]
-</mermaid-flow-player>
-
-<mermaid-flow-player edge="off">
 flowchart LR
   A[Hard] -->|Text| B(Round)
   B --> C{Decision}
@@ -497,8 +485,10 @@ flowchart TD
 ```javascript
 import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+const diagram = document.getElementById('diagram');
 const player = createFlowPlayer({
-  root: document.getElementById('diagram'),
+  root: diagram,
+  source: diagram.textContent,
   hooks: {
     onStepStart(step, note) {
       if (!('speechSynthesis' in window)) return;

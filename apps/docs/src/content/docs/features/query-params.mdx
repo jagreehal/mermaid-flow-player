@@ -22,7 +22,6 @@ graph LR
 | `speed` | Number (e.g. `1.5`) | Animation speed multiplier |
 | `stepMs` | Number (e.g. `800`) | Milliseconds per step |
 | `visited` | `true`, `false` | Keep visited nodes highlighted |
-| `edge` | `off`, `bestEffort` | Edge animation mode |
 | `mode` | `sequential`, `interactive` | Playback mode |
 | `selector` | CSS selector (e.g. `.my-diagram`) | Which blocks to upgrade (default: `.mermaid`) |
 | `step` | Number | Deep-link straight to a step index |
@@ -58,7 +57,7 @@ https://your-site.com/docs?mode=interactive
 ### Fast with Edge Animation
 
 ```
-https://your-site.com/docs?speed=2.0&edge=bestEffort
+https://your-site.com/docs?speed=2.0
 ```
 
 ### Auto-Play on Scroll
@@ -114,11 +113,11 @@ For programmatic use:
   // { theme: 'dark', speed: 1.5, debug: true, ... }
 
   // Use parsed config
+  const diagram = document.getElementById('diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
-    dim: config.dim,
-    persist: config.persist,
-    edgeMode: config.edgeMode,
+    root: diagram,
+    source: diagram.textContent,
+    visited: config.visited,
     timing: config.stepMs ? { stepMs: config.stepMs } : undefined,
     debug: config.debug,
   });
@@ -149,7 +148,7 @@ const config3 = parseQueryParams();
 Create links that configure the viewing experience:
 
 ```html
-<a href="diagrams/architecture?theme=dark&speed=0.8&edge=bestEffort">
+<a href="diagrams/architecture?theme=dark&speed=0.8">
   View Architecture (Dark, Slow, with Edges)
 </a>
 

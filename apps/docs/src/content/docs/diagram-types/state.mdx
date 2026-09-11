@@ -21,8 +21,10 @@ Animate state machines showing states and transitions. Click any state to naviga
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 
@@ -91,20 +93,20 @@ stateDiagram-v2
   Stopped --> [*]`}
 </pre>
 
-## State Builder
+## Writing the walk
+
+The states and the transitions between them are both steps — on a state diagram
+the transition is usually the story, so animate it rather than jumping between
+boxes:
 
 ```javascript
-import { StateBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
-
-const scenario = new StateBuilder()
-  .state('Idle', { note: 'Waiting for input' })
-  .transition('Idle', 'Processing', { note: 'Start task' })
-  .state('Processing', { note: 'Working...' })
-  .transition('Processing', 'Success', { note: 'Done!' })
-  .state('Success', { state: 'success' })
-  .build();
-
-await player.play(scenario);
+await player.play([
+  { type: 'node', id: 'Idle', note: 'Waiting for input' },
+  { type: 'edge', from: 'Idle', to: 'Processing' },
+  { type: 'node', id: 'Processing', note: 'Working...' },
+  { type: 'edge', from: 'Processing', to: 'Success' },
+  { type: 'node', id: 'Success', state: 'success', note: 'Done!' },
+]);
 ```
 
 ## Programmatic Control
@@ -113,8 +115,10 @@ await player.play(scenario);
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('state-diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('state-diagram'),
+    root: diagram,
+    source: diagram.textContent,
     mode: 'interactive',
     dim: 'others'
   });

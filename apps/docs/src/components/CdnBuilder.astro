@@ -54,27 +54,11 @@
           </select>
         </div>
         <div class="field">
-          <label for="dim">Dim</label>
-          <select id="dim" name="dim">
+          <label for="visited">Visited</label>
+          <select id="visited" name="visited">
             <option value="">default</option>
-            <option value="none">none</option>
-            <option value="others">others</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="persist">Persist</label>
-          <select id="persist" name="persist">
-            <option value="">default</option>
-            <option value="none">none</option>
-            <option value="visited">visited</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="edge">Edge</label>
-          <select id="edge" name="edge">
-            <option value="">default</option>
-            <option value="off">off</option>
-            <option value="bestEffort">bestEffort</option>
+            <option value="true">true</option>
+            <option value="false">false</option>
           </select>
         </div>
         <div class="field">
@@ -305,9 +289,7 @@
 
     const defaults = {
       theme: '',
-      dim: '',
-      persist: '',
-      edge: '',
+      visited: '',
       speed: 1.2,
       stepMs: 1200,
       mode: '',
@@ -330,9 +312,7 @@
         includeCss: getEl('include-css').checked,
         versionPin: v,
         theme: getEl('theme').value,
-        dim: getEl('dim').value,
-        persist: getEl('persist').value,
-        edge: getEl('edge').value,
+        visited: getEl('visited').value,
         speed: parseFloat(getEl('speed').value) || 1.2,
         stepMs: parseInt(getEl('stepMs').value, 10) || 1200,
         mode: getEl('mode').value,
@@ -346,9 +326,7 @@
     function buildQueryString(opts) {
       const p = new URLSearchParams();
       if (opts.theme) p.set('theme', opts.theme);
-      if (opts.dim) p.set('dim', opts.dim);
-      if (opts.persist) p.set('persist', opts.persist);
-      if (opts.edge) p.set('edge', opts.edge);
+      if (opts.visited) p.set('visited', opts.visited);
       if (opts.speed !== defaults.speed) p.set('speed', String(opts.speed));
       if (opts.stepMs !== defaults.stepMs) p.set('stepMs', String(opts.stepMs));
       if (opts.mode) p.set('mode', opts.mode);
@@ -422,9 +400,7 @@
       const flowEntry = getEl('flow-entry');
       const versionPin = getEl('version-pin');
       const theme = getEl('theme');
-      const dim = getEl('dim');
-      const persist = getEl('persist');
-      const edge = getEl('edge');
+      const visited = getEl('visited');
       const speed = getEl('speed');
       const stepMs = getEl('stepMs');
       const mode = getEl('mode');
@@ -439,9 +415,7 @@
           css.checked = false;
           versionPin.value = '';
           theme.value = '';
-          dim.value = '';
-          persist.value = '';
-          edge.value = '';
+          visited.value = '';
           speed.value = '1.2';
           stepMs.value = '1200';
           mode.value = '';
@@ -455,9 +429,7 @@
           css.checked = true;
           versionPin.value = '';
           theme.value = 'dark';
-          dim.value = '';
-          persist.value = '';
-          edge.value = '';
+          visited.value = '';
           speed.value = '0.5';
           stepMs.value = '1200';
           mode.value = '';
@@ -471,9 +443,7 @@
           css.checked = true;
           versionPin.value = '';
           theme.value = '';
-          dim.value = '';
-          persist.value = '';
-          edge.value = '';
+          visited.value = '';
           speed.value = '1.2';
           stepMs.value = '1200';
           mode.value = 'interactive';
@@ -487,9 +457,7 @@
           css.checked = true;
           versionPin.value = '';
           theme.value = '';
-          dim.value = '';
-          persist.value = '';
-          edge.value = '';
+          visited.value = '';
           speed.value = '1.2';
           stepMs.value = '1200';
           mode.value = '';
@@ -503,9 +471,7 @@
           css.checked = true;
           versionPin.value = '';
           theme.value = '';
-          dim.value = '';
-          persist.value = '';
-          edge.value = '';
+          visited.value = '';
           speed.value = '1.2';
           stepMs.value = '1200';
           mode.value = '';

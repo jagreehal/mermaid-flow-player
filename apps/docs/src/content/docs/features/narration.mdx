@@ -57,8 +57,10 @@ graph LR
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
+    root: diagram,
+    source: diagram.textContent,
     narrationTarget: '#narration'  // CSS selector or element
   });
 
@@ -163,8 +165,10 @@ await player.play([
 Get full control over narration display:
 
 ```javascript
+const diagram = document.getElementById('diagram');
 const player = createFlowPlayer({
-  root: document.getElementById('diagram'),
+  root: diagram,
+  source: diagram.textContent,
   hooks: {
     onStepStart: (step, narration) => {
       if (narration) {

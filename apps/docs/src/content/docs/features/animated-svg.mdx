@@ -1,0 +1,96 @@
+---
+title: Animated SVG
+description: Draw a scenario as one self-contained file that plays where JavaScript cannot run
+---
+
+A README, a pull request comment, an issue, an email, a printed handout: none of
+them run scripts, so none of them can run a player. `toAnimatedSvg` draws a
+scenario as **one file that animates on its own** — no script, no external
+reference, nothing to fetch.
+
+## The whole thing
+
+```html
+<script type="module">
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
+
+  const diagram = document.getElementById('diagram');
+  const player = createFlowPlayer({ root: diagram, source: diagram.textContent });
+  await player.ready();
+
+  const svg = player.toAnimatedSvg(
+    [
+      { type: 'node', id: 'A' },
+      { type: 'edge', from: 'A', to: 'B' },
+      { type: 'node', id: 'B' },
+      { type: 'node', id: 'C' },
+    ],
+    { title: 'How a request is served' },
+  );
+
+  // Save it next to your document and reference it as an image.
+  console.log(svg);
+</script>
+```
+
+Then in your README:
+
+```markdown
+![How a request is served](./docs/request-flow.svg)
+```
+
+GitHub renders it, animation and all.
+
+## Which one do I want?
+
+It comes down to one question — **can the page run JavaScript?**
+
+| Where it goes | Use | Why |
+|---|---|---|
+| A docs site, a demo, an app you control | the player | controls, narration, deep links, interaction |
+| A README, a pull request, an issue, an email | `toAnimatedSvg` | no script survives there; a self-contained SVG does |
+
+## Options
+
+| Option | Type | Default | What it does |
+|--------|------|---------|--------------|
+| `stepMs` | `number` | the player's own step timing | How long a step lasts when it does not say |
+| `loop` | `boolean` | `true` | `false` holds on the last step instead of repeating |
+| `title` | `string` | none | The `<title>` a screen reader announces |
+| `accent` | `string` | `#3b82f6` | The colour the current element is picked out in |
+| `restOpacity` | `number` | `0.28` | How far back everything else is held |
+
+## What it does for a reader who cannot see it
+
+The `title` you pass becomes the file's `<title>`, which is what a screen reader
+announces and what a browser shows as a tooltip. Say what the diagram shows, in
+one line — the same sentence you would write as alt text.
+
+## What it does for a reader who asked for less motion
+
+Nothing moves. Under `prefers-reduced-motion: reduce` the file renders the
+**finished** diagram — every step lit, the walk complete — rather than freezing
+on the first frame. A still picture of the whole story beats a still picture of
+its first sentence.
+
+## What it will not do
+
+Every step must name something the diagram actually has. A scenario that names a
+node or an edge which is not there raises `FlowPlayerError` rather than quietly
+drawing a diagram with a step missing:
+
+```javascript
+try {
+  player.toAnimatedSvg(steps);
+} catch (error) {
+  if (error.code === 'UNKNOWN_NODE') {
+    console.error('No such node:', error.subjects);
+  }
+}
+```
+
+## Determinism
+
+The same diagram and the same scenario produce the same bytes, every time. That
+is worth knowing if you generate these in CI: the file only changes when the
+diagram or the walk does, so it will not churn your git history on every build.

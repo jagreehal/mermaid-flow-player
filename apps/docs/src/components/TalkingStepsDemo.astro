@@ -84,26 +84,33 @@ const STEPS = [
 
       player = createFlowPlayer({
         root: diagramEl,
+        source: diagram,
         hooks: {
-          onStepStart(step, note) {
-            if (step.type === 'node' && step.id) {
-              highlightStep(step.id);
-              if (typeof speechSynthesis !== 'undefined' && (note || step.id)) {
-                speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(note || step.id);
-                u.rate = 0.95;
-                speechSynthesis.speak(u);
-              }
-            }
-          },
-          onStepEnd(step) {
-            // optional: could mark step as "done" here
+          onStepStart(step) {
+            if (step.type === 'node' && step.id) highlightStep(step.id);
           },
         },
       });
 
       scenario = steps.map((s) => ({ type: 'node', id: s.id, note: s.label }));
       await player.ready();
+    }
+
+    // Resolves when the line has been said, so the next step waits for it
+    // rather than cutting it off.
+    function say(text) {
+      if (typeof speechSynthesis === 'undefined') return Promise.resolve();
+      return new Promise((resolve) => {
+        speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.rate = 0.95;
+        u.onend = resolve;
+        u.onerror = resolve;
+        // A browser that never reports the end (no voices, tab muted) must
+        // not leave the walkthrough stuck on one step.
+        setTimeout(resolve, 10000);
+        speechSynthesis.speak(u);
+      });
     }
 
     // Render up front. Waiting for the first Play click left the page showing
@@ -118,8 +125,15 @@ const STEPS = [
       playBtn.disabled = true;
       try {
         await player.reset();
-        await player.play(scenario, { speed: 1.2 });
+        // One step at a time: the highlight lands, the line is spoken to the
+        // end, then the next step begins.
+        for (const step of scenario) {
+          const spoken = say(step.note);
+          await player.play([step], { speed: 1.2 });
+          await spoken;
+        }
       } finally {
+        if (typeof speechSynthesis !== 'undefined') speechSynthesis.cancel();
         playBtn.disabled = false;
         clearHighlight();
       }

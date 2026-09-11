@@ -42,8 +42,10 @@ graph LR
 ## Programmatic API
 
 ```javascript
+const diagram = document.getElementById('diagram');
 const player = createFlowPlayer({
-  root: document.getElementById('diagram'),
+  root: diagram,
+  source: diagram.textContent,
   mode: 'interactive',
 });
 

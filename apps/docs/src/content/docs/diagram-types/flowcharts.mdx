@@ -24,9 +24,10 @@ graph TB
 <script type="module">
   import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
+  const diagram = document.getElementById('diagram');
   const player = createFlowPlayer({
-    root: document.getElementById('diagram'),
-    edgeMode: 'bestEffort',
+    root: diagram,
+    source: diagram.textContent,
     dim: 'others'
   });
 
@@ -85,25 +86,27 @@ graph LR
   F --> A
 `} />
 
-## With Scenario Builder
+## Writing the walk yourself
+
+A scenario is an array of steps, played in order. `player.path(...)` builds the
+node steps for a straight run; write the array out when you want notes, edges or
+pauses between them.
 
 ```html
 <script type="module">
-  import { createFlowPlayer, FlowchartBuilder } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
+  import { createFlowPlayer } from 'https://cdn.jsdelivr.net/npm/mermaid-flow-player@latest/index.js';
 
-  const player = createFlowPlayer({ root: document.getElementById('diagram') });
+  const diagram = document.getElementById('diagram');
+  const player = createFlowPlayer({ root: diagram, source: diagram.textContent });
   await player.ready();
 
-  const scenario = new FlowchartBuilder()
-    .terminal('Start')
-    .process('Init')
-    .process('Process')
-    .decision('Check')
-    .node('Save')
-    .terminal('End')
-    .build();
-
-  await player.play(scenario);
+  await player.play([
+    { type: 'node', id: 'Start', note: 'A request arrives.' },
+    { type: 'edge', from: 'Start', to: 'Check' },
+    { type: 'node', id: 'Check', note: 'We decide where it goes.' },
+    { type: 'wait', ms: 400 },
+    { type: 'node', id: 'Save', state: 'success' },
+  ]);
 </script>
 ```
 

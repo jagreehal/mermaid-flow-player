@@ -1,12 +1,13 @@
 {
   "name": "mermaid-flow-player-docs",
   "version": "0.1.0",
-  "description": "Mermaid Flow Player — documentation site (public repo)",
+  "description": "Mermaid Flow Player \u2014 documentation site (public repo)",
   "private": true,
   "scripts": {
     "dev": "pnpm --filter docs dev",
     "build": "pnpm --filter docs build",
     "type-check": "pnpm --filter docs type-check",
+    "check:docs": "pnpm --filter docs check:docs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
